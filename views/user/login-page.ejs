@@ -1,0 +1,340 @@
+
+
+<%- include('../partials/user/header2') %>
+
+<style>
+    .error-message {
+      color: red;
+      font-size: 0.7em;
+      margin: 0;
+      padding: 0;
+    }
+</style>
+
+        <main class="main">
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
+                        <li class="breadcrumb-item active" aria-current="page">Login</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/demos/demo-9/banners/banner9.jpg')">
+            	<div class="container">
+            		<div class="form-box">
+            			<div class="form-tab">
+	            			<ul class="nav nav-pills nav-fill" role="tablist">
+							    <li class="nav-item">
+							        <a class="nav-link active" id="signin-tab-2" data-toggle="tab" href="#signin-2" role="tab" aria-controls="signin-2" aria-selected="false">Sign In</a>
+							    </li>
+							    <li class="nav-item">
+							        <a class="nav-link" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
+							    </li>
+							</ul>
+							<div class="tab-content">
+							    <div class="tab-pane fade show active" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
+							    	<form id="login-form" action="#">
+							    		<div class="form-group">
+                                            <label for="singin-email">Username or email address *</label>
+                                            <input type="text" class="form-control" id="email"  required>
+							    			
+							    		</div><!-- End .form-group -->
+
+							    		<div class="form-group">
+                                            <label for="singin-password">Password *</label>
+                                            <input type="password" class="form-control" id="password" required>
+							    			
+							    		</div><!-- End .form-group -->
+
+							    		<div class="form-footer">
+							    			<button type="submit" class="btn btn-outline-primary-2">
+			                					<span>LOG IN</span>
+			            						<i class="icon-long-arrow-right"></i>
+			                				</button>
+
+			                				<div class="custom-control custom-checkbox">
+												<input type="checkbox" class="custom-control-input" id="signin-remember-2">
+												<label class="custom-control-label" for="signin-remember-2">Remember Me</label>
+											</div><!-- End .custom-checkbox -->
+
+											<a href="#" class="forgot-link">Forgot Your Password?</a>
+							    		</div><!-- End .form-footer -->
+                                        <div id="error-message" style="color: #ff4b2b;"></div>
+							    	</form>
+							    	<div class="form-choice">
+								    	<p class="text-center">or sign in with</p>
+								    	<div class="row">
+								    		<div class="col-sm-6">
+								    			<a href="/auth/google" class="btn btn-login btn-g">
+								    				<i class="icon-google"></i>
+								    				Login With Google
+								    			</a>
+								    		</div><!-- End .col-6 -->
+								    		<div class="col-sm-6">
+								    			<a href="#" class="btn btn-login btn-f">
+								    				<i class="icon-facebook-f"></i>
+								    				Login With Facebook
+								    			</a>
+								    		</div><!-- End .col-6 -->
+								    	</div><!-- End .row -->
+							    	</div><!-- End .form-choice -->
+							    </div><!-- .End .tab-pane -->
+							    <div class="tab-pane fade" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+							    	<form id="signup-form" action="#">
+							    		<div class="form-group">
+                                            <label for="register-name">Your Name *</label>
+                                            <input type="text" class="form-control" id="name" name="name" required>
+                                            <p id="name-error" class="error-message"></p>
+							    			
+							    		</div><!-- End .form-group -->
+
+							    		<div class="form-group">
+                                            <label for="register-email">Your email address *</label>
+                                            <input type="email" class="form-control" id="email1" name="email" required>
+                                            <p id="email-error" class="error-message"></p>
+							    			
+							    		</div><!-- End .form-group -->
+
+                                        <div class="form-group">
+                                            <label for="register-phone">Your Phone no: *</label>
+                                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                                            <p id="phone-error" class="error-message"></p>
+                                        </div><!-- End .form-group -->
+
+                                        <div class="form-group">
+                                            <label for="register-password">Password *</label>
+                                            <input type="password" class="form-control" id="password1" name="password" required>
+                                            <p id="password-error" class="error-message"></p>
+                                        </div><!-- End .form-group -->
+
+                                        <div class="form-group">
+                                            <label for="confirm-password">Confirm Password *</label>
+                                            <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
+                                            <p id="confirm-password-error" class="error-message"></p>
+                                        </div><!-- End .form-group -->
+        
+							    		<div class="form-footer">
+							    			<button type="submit" class="btn btn-outline-primary-2">
+			                					<span>SIGN UP</span>
+			            						<i class="icon-long-arrow-right"></i>
+			                				</button>
+                                            <p id="general-error" class="error-message"></p>
+
+			                				<div class="custom-control custom-checkbox">
+												<input type="checkbox" class="custom-control-input" id="register-policy-2" required>
+												<label class="custom-control-label" for="register-policy-2">I agree to the <a href="#">privacy policy</a> *</label>
+											</div><!-- End .custom-checkbox -->
+							    		</div><!-- End .form-footer -->
+							    	</form>
+							    	<div class="form-choice">
+								    	<p class="text-center">or sign in with</p>
+								    	<div class="row">
+								    		<div class="col-sm-6">
+								    			<a href="/auth/google" class="btn btn-login btn-g">
+								    				<i class="icon-google"></i>
+								    				Login With Google
+								    			</a>
+								    		</div><!-- End .col-6 -->
+								    		<div class="col-sm-6">
+								    			<a href="#" class="btn btn-login  btn-f">
+								    				<i class="icon-facebook-f"></i>
+								    				Login With Facebook
+								    			</a>
+								    		</div><!-- End .col-6 -->
+								    	</div><!-- End .row -->
+							    	</div><!-- End .form-choice -->
+							    </div><!-- .End .tab-pane -->
+							</div><!-- End .tab-content -->
+						</div><!-- End .form-tab -->
+            		</div><!-- End .form-box -->
+            	</div><!-- End .container -->
+            </div><!-- End .login-page section-bg -->
+        </main><!-- End .main -->
+
+       
+
+<script>
+
+document.getElementById('signup-form').addEventListener('submit', async function(e){
+
+e.preventDefault()
+
+clearErrors();
+
+const name = document.getElementById('name').value.trim();
+const email = document.getElementById('email1').value.trim();
+const phone = document.getElementById('phone').value.trim();
+const password = document.getElementById('password1').value.trim();
+const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+const values = {
+    name,
+    email,
+    phone,
+    password,
+    confirmPassword
+}
+
+console.log('register form datas', values);
+
+
+if( name.length == 0 || email1.length == 0 || phone.length == 0 || confirmPassword.length == 0 || password1.length == 0){
+   document.getElementById('general-error').innerText = 'Please fill all the feilds..!'
+   return
+}
+
+// Name Validation
+const namePattern =/^[a-zA-Z][a-zA-Z\s]*$/;
+
+if (!name || name.length < 3 ){
+    document.getElementById('name-error').innerText = 'Name must be 3 characters long..!';
+    return
+}else if (! namePattern.test(name)){
+    document.getElementById('name-error').innerText = 'Name must start with a letter and contain letters';
+    return
+}else if (name.startsWith(' ')){
+    document.getElementById('name-error').innerText = 'Name cannot start with a space..!'
+    return;
+}
+
+// Email Validation.
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+if (!email || !emailPattern.test(email)) {
+    document.getElementById('email-error').innerText = 'Please enter a valid email address..!';
+    return;
+}
+
+//Phone Validation
+const phonePattern =/^[0-9]{10}$/;
+if(!phone || !phonePattern.test(phone)) {
+    document.getElementById('phone-error').innerText = 'Phone number must be exactly 10 digits..!';
+    return;
+}
+
+//Password Validation
+if(!password || password.length < 6) {
+    document.getElementById('password-error').innerText= 'Password must be at least 6 characters long..!';
+    return;
+}
+if(password !== confirmPassword){
+    document.getElementById('confirm-password-error').innerText =' Password do not match..!'
+    return;
+}
+
+let userData = {
+    name,
+    email,
+    phone,
+    password
+}
+// const formData = new FormData(this)
+console.log('form data',userData);
+
+try {
+const response = await fetch('/user/signup', {
+    method: 'POST',
+    headers : {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+    
+  })
+    if(!response.ok) {
+       const errData = await response.json()
+       throw new Error(errData.message || 'An unexpected error occured');
+
+    }
+
+    const data = await response.json()
+
+
+    window.location.href ='/user/otp'
+    
+}
+catch (err) {
+    console.error(err)
+      document.getElementById('general-error').innerText =  err.message
+
+}
+})
+
+
+
+function clearErrors() {
+document.getElementById('general-error').innerText = "";
+document.getElementById('name-error').innerText = "";
+document.getElementById('email-error').innerText = "";
+document.getElementById('phone-error').innerText = "";
+document.getElementById('password-error').innerText = "";
+document.getElementById('confirm-password-error').innerText = "";
+}
+
+
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
+            e.preventDefault()
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            let errorMessageDiv = document.getElementById('error-message');
+
+            errorMessageDiv.innerText = ""
+
+            	// Validate  email
+		 const emailPattern =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		    if (! emailPattern.test(email)){
+			errorMessageDiv.innerText = ' Please enter valid email..';
+			return;
+		 }
+        
+         //Validate password length
+		if (password.length < 6 ){
+			errorMessageDiv.innerText = 'Password must contain 6 characters';
+			return;
+		}
+
+        try {
+			const response = await fetch('/user/login',{
+				method: 'POST',
+				headers:{
+					'Content-Type' : 'application/json' 
+				},
+				body : JSON.stringify({email, password}),
+			});
+
+			if (! response.ok){
+
+				//Handle HTTP errors
+				const errorData = await response.json()
+				throw new Error (errorData.message || 'Login failed') 
+			}
+
+			const data = await response.json()
+			console.log('Log in successfull',data);  // redirect
+			// After successful login 
+			window.location.href = '/';
+			
+			
+		} catch (error) {
+			// Display error messages to the user
+			errorMessageDiv.innerText = error.message;
+			console.log('an error occured',error);
+		}
+
+
+        })
+
+
+
+    </script>
+
+
+
+
+
+
+
+      
+<%- include('../partials/user/footer') %>    

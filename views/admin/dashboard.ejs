@@ -1,0 +1,57 @@
+<%- include('../partials/admin/header') %>
+<div style="padding: 20px; color: #ffffff; background-color: #1a202c;">
+    <h1 style="font-size: 24px; margin-bottom: 20px;">Dashboard</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Sales</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">$ 28,222.00</div>
+            <div style="font-size: 0.875rem; color: #48bb78;">+35%</div>
+        </div>
+        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Expenses</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">$ 1,295.00</div>
+            <div style="font-size: 0.875rem; color: #f56565;">-12%</div>
+        </div>
+        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Visitors</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">6,269</div>
+            <div style="font-size: 0.875rem; color: #48bb78;">+25%</div>
+        </div>
+        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Orders</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">625</div>
+            <div style="font-size: 0.875rem; color: #48bb78;">+42%</div>
+        </div>
+    </div>
+
+    <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Sales Overview</h2>
+        <div style="height: 300px; background-color: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+            Chart placeholder
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <div style="flex: 1; background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Filter</h3>
+            <div style="display: flex; gap: 1rem;">
+                <input type="date" style="padding: 0.5rem; background-color: #1a202c; border: 1px solid #4a5568; color: #ffffff; border-radius: 4px;">
+                <input type="date" style="padding: 0.5rem; background-color: #1a202c; border: 1px solid #4a5568; color: #ffffff; border-radius: 4px;">
+                <button style="background-color: #4a5568; color: #ffffff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Apply Filter</button>
+            </div>
+        </div>
+        <div style="flex: 1; background-color: #2d3748; padding: 1rem; border-radius: 4px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Visited Customers</h3>
+            <div style="height: 150px; background-color: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                Customer chart placeholder
+            </div>
+        </div>
+    </div>
+
+    <a href="#" style="display: inline-flex; align-items: center; background-color: #2d3748; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">
+        <span class="material-icons" style="margin-right: 0.5rem;">download</span>
+        Download Report
+    </a>
+</div>
+<%- include('../partials/admin/footer') %>

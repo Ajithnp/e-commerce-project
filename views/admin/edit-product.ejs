@@ -1,0 +1,622 @@
+
+  
+    <%- include('../partials/admin/header') %>
+    <!-- <link rel="stylesheet" href="/admin/CSS/vendors/bootstrap.css"> -->
+    <style>
+        .error-message {
+        color: red;
+    }
+    
+    </style>
+    
+    </head>
+    <body>
+        <div class="add-product-container">
+            <div class="page-header">
+                <h1 class="page-title">Edit PRODUCT</h1>
+                <button class="back-button">
+                    <span class="material-icons">arrow_back</span>
+                    Back
+                </button>
+            </div>
+            
+            <div class="form-container">
+                <form id="edit-product-form" class="add-product-form" enctype="multipart/form-data">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName">Product Name*</label>
+                            <input type="text" id="productName" name="productName" value="<%= product.productName %>">
+                            <div id="productName-error" class="error-message"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description*</label>
+                            <textarea id="description" name="description"><%= product.description %></textarea>
+                            <div id="description-error" class="error-message"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="brand">Brand*</label>
+                            <select id="brand" name="brand" required>
+                                <%for(let i=0; i<brand.length; i++) {%>
+                                <option value="<%= brand[i].brandName%>">
+                                    <%=brand[i].brandName%>
+                                </option>
+                                <% } %>
+                             
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Category*</label>
+                            <select id="category" name="category" required>
+                                <%for(let i=0; i<cat.length; i++) {%>
+                                <option value="<%=cat[i].name%>">
+                                    <%=cat[i].name%>
+                                </option>
+                                <% } %>
+                              
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regularPrice">Regular Price*</label>
+                            <input type="number" id="regularPrice" name="regularPrice" value="<%= product.regularPrice %>"> 
+                            <div id="regularPrice-error" class="error-message"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="salePrice">Sale Price</label>
+                            <input type="number" id="salePrice" name="salePrice" value="<%= product.salePrice %>" >
+                            <p id="salePrice-error" class="error-message"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productOffer">Product Offer (%)</label>
+                            <input type="number" id="productOffer" name="productOffer" value="<%= product.productOffer %>">
+                            <div id="productOffer-error" class="error-message"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Is Blocked</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="isBlocked" value="false" checked> No
+                                </label>
+                                <label>
+                                    <input type="radio" name="isBlocked" value="true"> Yes
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Tags</label>
+                            <div class="check-group">
+                                <% const availableTags = ['Noise cancellation', 'High battery power', 'Waterproof', 'Limited edition', 'Gaming']; %>
+                                <% availableTags.forEach(tag => { %>
+                                    <label>
+                                        <input type="checkbox" name="tags" value="<%= tag %>" 
+                                        <% if (product.tags && product.tags.includes(tag)) { %> checked <% } %> 
+                                        > <%= tag %>
+                                    </label>
+                                <% }); %>
+                            </div>
+                        </div>
+                        
+                        <!-- <div class="form-group">
+                            <label>Tags</label>
+                            <div class="check-group">
+                                <label><input type="checkbox" name="tags" value="Noise cancellation"> Noise cancellation</label>
+                                <label><input type="checkbox" name="tags" value="High battery power"> High battery power</label>
+                                <label><input type="checkbox" name="tags" value="Waterproof">Waterproof </label>
+                                <label><input type="checkbox" name="tags" value="Limited edition"> Limited Edition</label>
+                                <label><input type="checkbox" name="tags" value="Gaming"> Gaming</label>
+                            </div>
+                        </div> -->
+    
+    
+                    </div>
+                    
+                    <div id="color-stock-container">
+                        <h3>Color Stock</h3>
+                        <% if (product.colorStock && product. colorStock.length > 0) {%>
+                            <%product.colorStock.forEach(function(colorItem, index) {%>
+                        <div class="color-stock-item">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="color-<%= index %>">Color*</label>
+                                    <select id="color-<%= index %>" name="colorStock[<%= index %>][color]" required>
+                                        <option value="">Select Color</option>
+                                        <option value="white" <% if (colorItem.color == 'white'){ %> selected <% } %>>White</option>
+                                        <option value="black" <% if (colorItem.color == 'black'){ %> selected <% } %>> Black</option>
+                                        <option value="blue" <% if (colorItem.color == 'blue'){ %> selected <% } %>> Blue</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quantity-<%= index %>">Quantity*</label>
+                                    <input type="number" id="quantity-<%= index %>" name="colorStock[<%= index %>][quantity]" value="<%= colorItem.quantity %>">
+                                    <div id="productQuantity-error-<%= index %>" class="error-message"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="status-<%= index %>">Status*</label>
+                                <select id="status-<%= index %>" name="colorStock[<%= index %>][status]" required>
+                                    <option value="In stock" <% if (colorItem.status == 'In stock') { %>selected <% } %>>In stock</option>
+                                    <option value="Available" <% if (colorItem.status == 'Available') { %>selected <% } %>>Available</option>
+                                    <option value="Out of stock" <% if (colorItem.status == 'Out of stock') { %>selected <% } %>>Out of stock</option>
+                                    <option value="Discontinued" <% if (colorItem.status == 'Discontinued') { %>selected <% } %>>Discontinued</option>
+                                </select>
+                            </div>
+                        </div>
+                        <% }); %>
+                        <% } else { %>
+                            <p>No color stocks available. Please add new ones.</p>
+                            <% } %>
+                    </div>
+                    
+                    <button type="button" id="add-color-stock" class="secondary-button">Add Another Color Stock</button>
+                    
+                    <div class="form-group">
+                        <label for="additionalInfo">Additional Information</label>
+                        <textarea id="additionalInfo" name="additionalInfo"><%= product.additionalInfo %></textarea>
+                        <div id="additionalInfo-error" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Images*</label>
+
+                        <%for(let i=0; i<product.productImage.length; i++){%>
+                                  
+                            <div class="col-md-12" >
+                                <div class="mb-4">
+                                    <div class="col-12">
+                                        <td>
+                                            <input type="hidden" value="<%=product.productImage[i]%>" id="imageDatas">
+                                            <img class="rounded" style="width: 100px; height: 110px;"
+                                                src="/uploads/re-image/<%=product.productImage[i]%>"
+                                                alt="">
+                                            <i onclick="deleteSingleImage('<%=product.productImage[i]%>', '<%=product._id%>')" style="position: absolute; margin-left: .5rem; cursor: pointer;" class="fa-thin fa-x"></i>
+                                        </td>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            <%}%>
+                   
+
+
+                        <div class="image-upload-container">
+                            <div class="image-upload">
+                                <label for="image1">Image 1:</label>
+                                <input type="file" id="image1" name="productImage" accept="image/*" data-preview="preview1">
+                                <div id="productImage-error" class="error-message"></div>
+                                <div class="preview-container">
+                                    <img id="preview1" class="cropped-preview" alt="Image 1 Preview" style="display: none;">
+                                    <button type="button" class="close-button" data-input="image1" aria-label="Remove image 1">&times;</button>
+                                </div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="image2">Image 2:</label>
+                                <input type="file" id="image2" name="productImage" accept="image/*" data-preview="preview2">
+                                <div class="preview-container">
+                                    <img id="preview2" class="cropped-preview" alt="Image 2 Preview" style="display: none;">
+                                    <button type="button" class="close-button" data-input="image2" aria-label="Remove image 2">&times;</button>
+                                </div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="image3">Image 3:</label>
+                                <input type="file" id="image3" name="productImage" accept="image/*" data-preview="preview3">
+                                <div class="preview-container">
+                                    <img id="preview3" class="cropped-preview" alt="Image 3 Preview" style="display: none;">
+                                    <button type="button" class="close-button" data-input="image3" aria-label="Remove image 3">&times;</button>
+                                </div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="image4">Image 4:</label>
+                                <input type="file" id="image4" name="productImage" accept="image/*" data-preview="preview4">
+                                <div class="preview-container">
+                                    <img id="preview4" class="cropped-preview" alt="Image 4 Preview" style="display: none;">
+                                    <button type="button" class="close-button" data-input="image4" aria-label="Remove image 4">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-button">Edit Product</button>
+                </form>
+            </div>
+        </div>
+    
+        <div id="cropModal" class="modal">
+            <div class="modal-content">
+                <div class="crop-area">
+                    <img id="image-to-crop" src="" alt="Image to crop">
+                </div>
+                <div class="button-container">
+                    <button id="cropButton" class="button">Crop</button>
+                    <button id="closeModal" class="button">Close</button>
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+      
+        <script>
+            let colorStockCount = 1;
+    
+            document.getElementById('add-color-stock').addEventListener('click', function() {
+                const colorStockContainer = document.getElementById('color-stock-container');
+                const newColorStock = document.createElement('div');
+                newColorStock.className = 'color-stock-item';
+                newColorStock.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="color-${colorStockCount}">Color*</label>
+                            <select id="color-${colorStockCount}" name="colorStock[${colorStockCount}][color]" required>
+                                <option value="">Select Color</option>
+                                <option value="white">White</option>
+                                <option value="black">Black</option>
+                                <option value="blue">Blue</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity-${colorStockCount}">Quantity*</label>
+                            <input type="number" id="quantity-${colorStockCount}" name="colorStock[${colorStockCount}][quantity]" required min="0">
+                             <div id="productQuantity-error-${colorStockCount}" class="error-message"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="status-${colorStockCount}">Status*</label>
+                        <select id="status-${colorStockCount}" name="colorStock[${colorStockCount}][status]" required>
+                            <option value="In stock">In stock</option>
+                            <option value="Available">Available</option>
+                            <option value="Out of stock">Out of stock</option>
+                            <option value="Discontinued">Discontinued</option>
+                        </select>
+                    </div>
+                    <button type="button" class="remove-color-stock-button">Remove Color Stock</button>
+                `;
+                
+                colorStockContainer.appendChild(newColorStock);
+                colorStockCount++;
+               
+    
+                  // Add validation for the quantity field
+                const quantityInput = newColorStock.querySelector(`#quantity-${colorStockCount - 1}`);
+                quantityInput.addEventListener('input', function() {
+                validateQuantity(quantityInput,`productQuantity-error-${colorStockCount}`);
+            });
+    
+            
+    
+                // Add event listener to the new remove button
+                newColorStock.querySelector('.remove-color-stock-button').addEventListener('click', function() {
+                    colorStockContainer.removeChild(newColorStock);
+                });
+            });
+
+
+            
+
+
+
+    
+            // Image cropping and preview functionality
+            let cropper;
+            const modal = document.getElementById('cropModal');
+            const imageToCrop = document.getElementById('image-to-crop');
+            const cropButton = document.getElementById('cropButton');
+            const closeModal = document.getElementById('closeModal');
+    
+            function openCropModal(input) {
+                const file = input.files[0];
+                const reader = new FileReader();
+    
+                reader.onload = function(e) {
+                    imageToCrop.src = e.target.result;
+                    modal.style.display = 'flex';
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
+                }
+    
+                reader.readAsDataURL(file);
+            }
+    
+            cropButton.addEventListener('click', function() {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const previewId = document.querySelector('.modal').dataset.previewId;
+                const preview = document.getElementById(previewId);
+                preview.src = croppedCanvas.toDataURL();
+                preview.style.display = 'block';
+                preview.nextElementSibling.style.display = 'block';
+    
+                //  Add the cropped image to the formData
+                const formData = new FormData(document.getElementById('edit-product-form'));
+                 croppedCanvas.toBlob(blob => {
+                  const fileName = `${previewId}.png`; // You can customize the file name
+                  formData.append('productImage', blob, fileName);
+                 });
+    
+    
+                modal.style.display = 'none';
+                cropper.destroy();
+            });
+    
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+                cropper.destroy();
+            });
+    
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    const previewId = this.dataset.preview;
+                    modal.dataset.previewId = previewId;
+                    openCropModal(this);
+                });
+            });
+    
+            document.querySelectorAll('.close-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const inputId = this.dataset.input;
+                    const input = document.getElementById(inputId);
+                    input.value = '';
+                    this.previousElementSibling.src = ''; 
+                    this.previousElementSibling.style.display = 'none';
+                    this.style.display = 'none';
+                });
+            });
+    
+    
+            // Form submission,
+            document.getElementById('edit-product-form').addEventListener('submit', async function(e){
+                e.preventDefault()
+    
+                if (validationForm()){
+    
+                const formData = new FormData(this)
+                console.log('form data', formData);
+                
+    
+                // Ensure all cropped images are added to the FormData
+               const previews = document.querySelectorAll('.cropped-preview');
+                 previews.forEach((preview, index) => {
+                     if (preview.src) {
+                // Convert the preview image to a Blob and append to FormData
+                     fetch(preview.src)
+                       .then(res => res.blob())
+                       .then(blob => {
+                        const fileName = `productImage${index + 1}.png`; // Customize the file name
+                        formData.append('productImage', blob, fileName);
+                    });
+               }
+           });
+           
+    
+                try {
+                    const response = await fetch('http://localhost:3001/api/v1/admin/products/editProduct/<%=product._id%>',{
+                        method: 'POST',
+                        body: formData
+                    }); 
+    
+                    const result = await response.json()
+    
+                    if(response.ok){
+                       
+                        Swal.fire({
+                        title: result.message || Success,
+                        text: "New product added..!",
+                        icon: "success"
+                      })
+                     .then(()=>{
+                        window.location.reload()
+                     })
+                     
+                        
+                    } else {
+                         // Show SweetAlert for error
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result || 'An error occurred while adding the product.',
+                        icon: "error"
+                      });
+                       
+                    }
+                } catch (error) {
+                
+    
+                    console.error('Error', error)
+                    
+                    Swal.fire({
+                    title: 'Error!',
+                    text: 'An unexpected error occurred. Please try again later.',
+                    icon: "error"
+                  });
+                    
+                }
+              }
+            })
+    
+    
+            // Validation for quantity field
+            function validateQuantity(inputElement, errorElementId) {
+             const quantityValue = parseInt(inputElement.value, 10);
+              const errorElement = document.getElementById(errorElementId);
+                if (isNaN(quantityValue) || quantityValue < 0) {
+                     errorElement.textContent = "Enter a valid quantity.";
+                        return false;
+                 } else {
+                    errorElement.textContent = "";
+                     return true;
+                   }
+            }
+    
+    
+            // Validation 
+            function validationForm(){
+                clearErrorMessages()  // clear messages
+    
+                const name = document.getElementById('productName').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const additionalInfo = document.getElementById('additionalInfo').value.trim();
+                const regularPrice = document.getElementById('regularPrice').value;
+                const salePrice = document.getElementById('salePrice').value;
+                const productOffer = document.getElementById('productOffer').value;
+                const images = document.querySelector('input[type="file"]');
+                const  imageDatas = document.getElementById("imageDatas")?.value;
+    
+                let isValid = true
+    
+    
+    
+    
+                if (name == ""){
+                    displayErrorMessage('productName-error', 'Please enter a product name..!');
+                    isValid = false;
+                }   else if(!/^[A-Za-z\s]+$/.test(name.trim())){
+                    displayErrorMessage('productName-error', "Product name should contain alphabetic characters..!")
+                    isValid = false;
+                }
+    
+                // Des:
+                if (description.trim()==""){
+                    displayErrorMessage('description-error', 'Please enter product description..!');
+                    isValid = false;
+                } 
+                else if (!/^[A-Z]/.test(description.trim())) {
+                 displayErrorMessage('description-error', 'The description must start with a capital letter.');
+                isValid = false;
+                }
+                else if (description.trim().length < 10 || description.trim().length > 300) {
+                displayErrorMessage('description-error', 'The description must be between 10 and 300 characters.');
+                isValid = false;
+                }
+                else if (!/^[A-Za-z0-9]/.test(description.trim())) {
+                displayErrorMessage('description-error', 'The description cannot start with a special character.');
+                isValid = false;
+                }  
+                else if (!/^[a-zA-Z0-9\s.,]*$/.test(description)) {
+                displayErrorMessage('description-error', 'The description can only contain letters, numbers, spaces, periods, and commas.');
+                isValid = false;
+                }
+                
+                //Additional:
+                if (additionalInfo.trim() == ""){
+                    displayErrorMessage('additionalInfo-error', 'Plese enter product additional information..!')
+                    isValid = false
+                }
+                else if (!/^[A-Za-z]/.test(additionalInfo.trim())) {
+                displayErrorMessage('additionalInfo-error', 'Additional information must start with an alphabet letter.');
+                isValid = false;
+                } 
+                
+                // Regular Price:
+                if (regularPrice == ''){
+                    displayErrorMessage('regularPrice-error', 'Please enter product regular price..!');
+                    isValid= false;
+                }
+                else if (parseFloat(regularPrice)< 0){
+                    displayErrorMessage('regularPrice-error', 'Enter valid price..!')
+                    isValid= false;
+                }
+               
+    
+                // Sale price:
+                if(salePrice == ""){
+                    displayErrorMessage('salePrice-error', 'Enter product sale price..!')
+                    isValid = false;
+                }
+                else if (parseFloat(salePrice) < 0){
+                    // displayErrorMessage('salePrice-error', 'Enter valid sale price..!');
+                    document.getElementById('salePrice-error').innerText = 'Enter valid price'
+                    isValid = false;
+                }
+                else if (parseFloat(salePrice ) > parseFloat(regularPrice) ){
+                    displayErrorMessage('salePrice-error','Sale price must be lessthan than regular price..!')
+                    isValid = false
+                }
+    
+                
+                console.log(`Regular Price: ${typeof regularPrice}, Sale Price: ${typeof salePrice}`);
+                console.log(`productname: ${name}, description: ${description}`);
+    
+                //Product Offer:
+                if(productOffer < 0 || productOffer > 100 ){
+                    displayErrorMessage('productOffer-error','Enter valid product offer..!')
+                    isValid = false;
+                }
+                
+                if (!imageDatas && images.files.length === 0) {
+                      displayErrorMessage("images-error",'Please select an image.');
+                      isValid = false;
+                  }
+    
+    
+                // Validate each dynamically added quantity field
+                 document.querySelectorAll('.color-stock-item input[type="number"]').forEach((input, index) => {
+                    if (!validateQuantity(input, `productQuantity-error-${index}`)) {
+                        isValid = false;
+                    }
+                 });
+    
+                return isValid;     
+            
+            }
+          
+               
+    
+    
+            // Error display function 
+            function displayErrorMessage(elementId, message) {
+             const errorElement = document.getElementById(elementId);
+                 if (errorElement) { // Check if the error element exists
+                       errorElement.innerText = message;
+                       errorElement.style.display = 'block'; // Show the error message
+                 } else {
+                  console.error(`Error element with ID ${elementId} not found..!`);
+                }
+            }
+          
+    
+            // Clear error Message function;
+            function clearErrorMessages(){
+            const errorElements = document.getElementsByClassName('error-message');
+            Array.from(errorElements).forEach(element =>{
+                element.innerText = '';
+            });
+        }
+
+
+
+
+        //Function delete single image
+
+       function deleteSingleImage(imageId, productId) {
+        $.ajax({
+            url: 'http://localhost:3001/api/v1/admin/products/deleteImage',
+            method: 'POST',
+            data: {imageNameToServer: imageId, productIdToServer: productId},
+
+            success: ((response)=>{
+                if (response.status ===true) {
+                    window.location.reload()
+                }else {
+                    alert ('failed to delete image . please try again..!')
+                }
+            })
+        })
+       }
+        </script>
+    
+    <%- include('../partials/admin/footer') %>
+    <!-- </body>
+    </html> -->

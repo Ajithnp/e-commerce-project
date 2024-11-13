@@ -1,0 +1,333 @@
+<%- include('../partials/admin/header') %>
+<style>
+    .brands-container {
+        padding: 20px;
+        color: #ffffff;
+        background-color: #1a202c;
+    }
+
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .top-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .search-sort {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-bar {
+        display: flex;
+        background-color: #2d3748;
+        border-radius: 4px;
+    }
+
+    .search-bar input {
+        background-color: transparent;
+        border: none;
+        color: #ffffff;
+        padding: 8px 12px;
+        width: 200px;
+    }
+
+    .search-button {
+        background-color: transparent;
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    .sort-dropdown select {
+        background-color: #2d3748;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+
+    .add-brand-btn {
+        display: inline-flex;
+        align-items: center;
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .add-brand-btn  :hover {
+        background-color: #4a5568;
+    }
+
+    .add-brand-btn .material-icons {
+        margin-right: 8px;
+        font-size: 18px;
+    }
+
+    .brands-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .brands-table th {
+        text-align: left;
+        padding: 10px;
+        background-color: #2d3748;
+        color: white;
+        font-weight: bold;
+    }
+
+    .brands-table td {
+        padding: 10px;
+        background-color: #2d3748;
+        color: #ffffff;
+    }
+
+    .brand-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .status-badge.active {
+        background-color: #48bb78;
+    }
+
+    .status-badge.inactive {
+        background-color: #f56565;
+    }
+
+    .action-cell {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .action-btn {
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 5px;
+        /* display: inline-flex; */
+        align-items: center;
+    }
+
+    .list-btn {
+        /* background-color: #48bb78; */
+        color: #ffffff;
+    }
+    .btn-danger.list-btn {
+    background-color: #e53e3e; /* Red */
+}
+
+.btn-success.list-btn {
+    background-color: #48bb78; /* Green */
+}
+
+    .unlist-btn {
+        /* background-color: #f56565; */
+        color: #ffffff;
+    }
+
+    .edit-btn {
+        background-color: #4299e1;
+        color: #ffffff;
+        padding: 5px;
+    }
+
+    .edit-btn .material-icons {
+        font-size: 18px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination-button {
+        background-color: #2d3748;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+    }
+
+    .pagination-button.active {
+        background-color: #4a5568;
+        font-weight: bold;
+        font-family: normal;
+    }
+
+    .pagination-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+
+<div class="brands-container">
+    <h1 class="page-title">BRANDS</h1>
+    
+    <div class="top-controls">
+        <div class="search-sort">
+            <div class="search-bar">
+                <input type="text" placeholder="Search brands...">
+                <button class="search-button">
+                    <span class="material-icons">search</span>
+                </button>
+            </div>
+            <div class="sort-dropdown">
+                <select>
+                    <option value="">Sort By</option>
+                    <option value="name">Name</option>
+                    <option value="status">Status</option>
+                </select>
+            </div>
+        </div>
+        
+            <a href="/api/v1/admin/brands/addBrand" class="add-brand-btn">
+            <span class="material-icons">add</span>
+            Add Brands
+        </a>
+       
+    </div>
+
+    <table class="brands-table">
+        <thead>
+            <tr>
+                <th>BRANDS</th>
+                <th>BRAND LOGO</th>
+                <th>DESCRIPTION</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%brand.forEach((model)=>{%>
+            <tr>
+                <td><%= model.brandName%></td>
+                <td><img 
+                    src="/uploads/re-image/<%=model.brandImage[0]%>"
+                    alt="<%= model.brandName%>"
+                    class="brand-logo"></td>
+                    <td><%= model.description%></td>
+                <td>
+                    <% if(model.isBlocked) {%>
+                    <span class="status-badge inactive">
+                        Blocked</span>
+                        <%}else{%>
+                            <span class="status-badge active">
+                             Active</span>
+                             <%}%>
+                </td>
+                <td class="action-cell">
+                    <%if (model.isBlocked) {%>
+                    <button class="btn btn-danger action-btn list-btn" onclick="confirmUnlist('<%= model._id %>',this)">UNLIST</button>
+                    <% } else {%>
+                        <button class="btn btn-success action-btn list-btn" onclick="confirmList('<%= model._id %>',this)">LIST</button>
+                    <% } %>
+                    <button class="action-btn edit-btn" onclick="editBrand('<%= model._id%>')">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </td>
+            </tr>
+            <%})%>
+           
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="pagination-button" disabled>
+            <span class="material-icons">chevron_left</span>
+        </button>
+        <%for (let i=1; i<=totalPage; i++) {%>
+            <a href="?page=<%= i %>" class="pagination-button <%= page === i ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+        <button class="pagination-button">
+            <span class="material-icons">chevron_right</span>
+        </button>
+    </div>
+</div>
+
+<script>
+
+function confirmList(id, button) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You want to list this Brand?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, list it !'
+        }).then((result)=> {
+            if (result.isConfirmed) {
+                // Call the back-end  API to list the category
+                fetch(`/api/v1/admin/brands/listBrand?id=${id}`, {
+                    method: 'POST'
+                }).then(response => response.json()).then(data => {
+                    Swal.fire(data.message, "",'success');
+                    location.reload() 
+                }).catch(error => {
+                    Swal.fire('Error!', error.message, 'error');
+                });
+            }
+        });
+    }
+
+    function confirmUnlist(id) {
+        Swal.fire({
+            title: 'Are you sure',
+            text: 'You want to unlist this Brand?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, unlist it!'
+        }).then((result)=>{
+            if (result.isConfirmed){
+                fetch(`/api/v1/admin/brands/unlistBrand?id=${id}`, {
+                    method: 'POST'
+                }).then(response => response.json()).then(data => {
+                    Swal.fire(data.message, '', 'success');
+                    location.reload()
+                }).catch(error =>{
+                    Swal.fire('Error!'. error.message, 'error');
+                });
+            }
+        });
+    }
+
+  
+
+    // Edit brand
+    function editBrand(id){
+        window.location.href = `/api/v1/admin/brands/editBrand?id=${id}`
+    }
+</script>
+<%- include('../partials/admin/footer') %>
+
+
+
+

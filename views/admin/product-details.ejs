@@ -1,0 +1,412 @@
+
+
+<%- include('../partials/admin/header') %>
+    <title><%= product.productName %> - Product Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #1a1f2b;
+            color: #ffffff;
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .back-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .color-dropdown {
+            margin-bottom: 16px;
+        }
+        
+        .color-dropdown select {
+            padding: 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .additional-info {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .product-container {
+            background-color: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .product-logo {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin: 0 auto 24px;
+            display: block;
+            border-radius: 16px;
+        }
+
+        .product-title {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .product-description {
+            color: #94a3b8;
+            margin-bottom: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .product-meta {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .meta-item {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .meta-label {
+            font-weight: 600;
+        }
+
+        .price-info {
+            margin-bottom: 24px;
+        }
+
+        .price-item {
+            margin-bottom: 8px;
+        }
+
+        .price-label {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .regular-price {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .sale-price {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .offer-badge {
+            background-color: #10b981;
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .btn-danger.unlist-button{
+            background-color: #10b981;
+        }
+        .btn-success.unlist-button{
+            background-color: #e53e3e;
+        }
+
+        .action-btn {
+            /* background-color: #ef4444; */
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        .unlist-btn {
+            color: #ffffff;
+        }
+
+        .edit-button {
+            background-color: #3b82f6;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-images {
+            margin-top: 24px;
+        }
+
+        .images-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .image-box {
+            aspect-ratio: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .image-box:hover img {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .images-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-logo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Product Details</h1>
+        <button class="back-button">
+            ← Back to Products
+        </button>
+    </div>
+
+    <div class="product-container">
+        <img src="/uploads/re-image/<%= product.productImage[0] %>" alt="<%= product.name %> Logo" class="product-logo">
+        <div class="product-meta">
+            <div class="meta-item">
+
+                <span class="meta-label">Product name:</span>
+                <span><%= product.productName%></span>
+           </div>
+           <div class="meta-item">
+
+            <span class="meta-label">Description:</span>
+            <span><%= product.description%></span>
+           </div>
+            <div class="meta-item">
+                <span class="meta-label">Brand:</span>
+                <span><%= product.brand.brandName%></span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Category:</span>
+                <span><%= product.category.name %></span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Color stock:</span>
+                <div class="color-dropdown">
+                    <select id="colorStock" onchange="updateColorDetails()">
+                        <% product.colorStock.forEach(function(colorItem) { %>
+                            <option value="<%= colorItem.color %>"><%= colorItem.color %></option>
+                            <% }); %>
+                    </select>
+
+                </div>
+                <span><%= product.quantity %></span>
+            </div>
+            <div id="colorDetails" class="meta-item">
+
+            </div>
+        </div>
+
+        <div class="price-info">
+            <div class="price-item">
+                <span class="price-label">Regular Price:</span>
+                <span class="regular-price">$<%= product.regularPrice.toFixed(2) %></span>
+            </div>
+            <div class="price-item">
+                <span class="price-label">Sale Price:</span>
+                <span class="sale-price">$<%= product.salePrice.toFixed(2) %></span>
+            </div>
+            <div class="offer-badge"><%= product.productOffer %>% OFF</div>
+        </div>
+
+        <div class="action-buttons">
+            <%if (product.isBlocked) {%>
+            <button id="unlist" class="btn btn-danger action-btn unlist-button" onclick="confirmUnlist('<%= product._id %>',this)">List</button>
+            <%} else {%>
+                <button id="list" class="btn btn-success action-btn unlist-button" onclick="confirmList('<%= product._id %>',this)">Unlist</button>
+                <% } %>
+            <button class="edit-button">
+                <span>✎</span>
+                Edit
+            </button>
+        </div>
+
+        <div class="additional-info">
+            <h3>Additional Information</h3>
+            <p><%= product.additionalInfo %></p>
+        </div>
+
+        <div class="product-images">
+            <h3 class="images-title">Product Images</h3>
+            <div class="images-grid">
+                <% if (product.productImage && Array.isArray(product.productImage) && product.productImage.length > 0) { %>
+                    <% product.productImage.forEach(function(image, index) { %>
+                        <div class="image-box">
+                            <img src="/uploads/re-image/<%= image %>" alt="Product view <%= index + 1 %>">
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No images available for this product.</p>
+                <% } %>
+            </div>
+        </div>
+        
+
+       
+    </div>
+
+    <script>
+
+
+function updateColorDetails () {
+    const selectedColor = document.getElementById('colorStock').value;
+    const colorDetails = document.getElementById('colorDetails');
+    const colorStock = <%- JSON.stringify(product.colorStock) %>;
+
+
+    const selectedColorStock = colorStock.find(item => item.color == selectedColor);
+
+    if(selectedColorStock) {
+        colorDetails.innerHTML = `
+        <span class="meta-label">Quantity:</span>
+                    <span>${selectedColorStock.quantity}</span>
+                    <br>
+                    <span class="meta-label">Status:</span>
+                    <span>${selectedColorStock.status}</span>
+                `;    
+
+    } else {
+        colorDetails.innerHTML = 'Color details not available';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', updateColorDetails)
+
+
+        document.querySelector('.back-button').addEventListener('click', function() {
+            window.location.href = '/api/v1/admin/products';
+        });
+
+      
+
+        
+function confirmList(id, button) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You want to list this Product?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, list it !'
+        }).then((result)=> {
+            if (result.isConfirmed) {
+                // Call the back-end  API to list the category
+                fetch(`/api/v1/admin/products/listProduct?id=${id}`, {
+                    method: 'POST'
+                }).then(response => response.json()).then(data => {
+                    Swal.fire(data.message, "",'success');
+                      // Change button text and style
+                    location.reload() 
+                }).catch(error => {
+                    Swal.fire('Error!', error.message, 'error');
+                });
+            }
+        });
+    }
+
+
+    function confirmUnlist(id) {
+        Swal.fire({
+            title: 'Are you sure',
+            text: 'You want to unlist this Product?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, unlist it!'
+        }).then((result)=>{
+            if (result.isConfirmed){
+                fetch(`/api/v1/admin/products/unlistProduct?id=${id}`, {
+                    method: 'POST'
+                }).then(response => response.json()).then(data => {
+                    Swal.fire(data.message, '', 'success');
+                    location.reload()
+                }).catch(error =>{
+                    Swal.fire('Error!'. error.message, 'error');
+                });
+            }
+        });
+    }
+
+        document.querySelector('.edit-button').addEventListener('click', function() {
+            window.location.href = '/api/v1/admin/products/editProduct/<%= product._id %>';
+        });
+    </script>
+<%- include('../partials/admin/footer') %>
