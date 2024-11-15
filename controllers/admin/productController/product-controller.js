@@ -314,7 +314,7 @@ exports.editProduct = async (req, res, next)=>{
 // List product // Soft delete
 exports.listProduct = async (req, res, next)=>{
     const { id }= req.query;
-    console.log('heeloo', id)
+   
     try {
          const product = await Product.findById(id)
 
@@ -323,7 +323,7 @@ exports.listProduct = async (req, res, next)=>{
          }
 
         await Product.updateOne({_id: id}, {$set: {isBlocked: true}})
-        res.status(200).json({message: "Product has been listed successfully"});
+        res.status(200).json({message: "Product has been listed successfully..!"});
     } catch (error) {
         console.error('Error occured while listing product', error)
         next(error)
@@ -334,18 +334,17 @@ exports.listProduct = async (req, res, next)=>{
 // Unlist product
  
 exports.unlistProduct  = async (req, res, next)=>{
-    const { id }= req.query
-    console.log('hiiii',id)
+    const { id }= req.query;
 
     try {
-        const product = await Product.findById(id)
+        const product = await Product.findById(id);
        
         if(!product){
             return res.status(401).json({ message: "Product not found..!"})
         }
 
         await Product.updateOne({_id: id}, {$set:{isBlocked: false}})
-        res.status(200).json({message: "Product has been unlisted successfully"})
+        res.status(200).json({message: "Product has been unlisted successfully..!"})
     } catch (error) {
         console.error('Error occured while unlisting product', error)
         next(error)

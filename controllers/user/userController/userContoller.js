@@ -26,10 +26,7 @@ exports.getLandingPage = async (req, res, next)=>{
                 // colorStock: {$elemMatch: { quantity: { $gt: 0}}}
             }
         )
-        console.log('helloo ', productData);
-        
-
-       
+  
         // Sort product data for we want to show onlt few images in the front end landing page..
         
 
@@ -53,17 +50,7 @@ exports.getLandingPage = async (req, res, next)=>{
     }
 }
 
-// // User signup handler...!
-// exports.userSignup = async (req, res, next)=>{
-//     try {
-//         return res.status(200).render('user/signup-page')
-        
-//     } catch (error) {
-//         console.error(error)
-//         next(error)
-        
-//     }
-// }
+
 
 // User sign-Up handler...!
 exports.userRegistration = async (req,res, next )=>{ 
@@ -89,7 +76,7 @@ exports.userRegistration = async (req,res, next )=>{
 
         req.session.userData = userData
        // Generate OTP and Time
-       const otpExpiration =  Date.now() +  60 * 1000;
+       const otpExpirationT =  Date.now() +  60 * 1000;
         const otp = generateOTP();
         console.log(`Your OTP is ${otp}`);
 
@@ -98,9 +85,13 @@ exports.userRegistration = async (req,res, next )=>{
 
         // Store OTP in session
         req.session.otp = otp;
-        req.session.otpExpiration = otpExpiration;
+        req.session.otpExpiration = otpExpirationT;
+
         res.status(201).json({ message : 'User registered successfully! Please check your email for OTP.'})
         
+        
+        // After success reidtration render OTP page.
+        // res.status(200).render('user/otp',{otpExpiration:req.session.otpExpiration})
         
     } catch (error) {
         console.error(error)

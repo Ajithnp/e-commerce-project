@@ -6,6 +6,8 @@ const storeController = require('../controllers/user/userStoreController/store-c
 const wishlistController = require('../controllers/user/userWishlistController/wishlistController')
 const cartController = require('../controllers/user/cart-controller/cartController')
 
+const auth = require('../middleware/auth')
+
 
 // Langin-page
 userRoute.route('/')
@@ -37,15 +39,17 @@ userRoute.route('/auth/google')
   // Sign success snd failure response
   
  userRoute.route('/auth/google/callback')
-        .get(passport.authenticate('google', { failureRedirect: '/user/signup'}),
+        .get(passport.authenticate('google', { failureRedirect: '/user/login'}),
         (req, res)=> {
+              // if(req.user && req.user.message) {
+              //        return res.status(400).json({code:'EMAIL_ALREADY_REGISTERED', message: 'Email already registered. please use your password to log in.'})
+              // }
                 //success login
                 // store user info: in session
                 req.session.user = {
                        name: req.user.name,
                        id: req.user._id
                 }
-                console.log('data from route', req.session.user);
                              res.redirect('/')
         }
    ); 
@@ -70,11 +74,11 @@ userRoute.route('/beats/product/productDetails/:id')
 
 // Wish list ..!
 userRoute.route('/beats/wishlist')
-       .get(wishlistController.getWishlist)
+       .get(auth.userAuth, wishlistController.getWishlist)
 
 // Cart..!
 userRoute.route('/beats/cart')
-         .get(cartController.getUserCart)       
+         .get(auth.userAuth,cartController.getUserCart)       
 
 
 

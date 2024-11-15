@@ -6,7 +6,7 @@ const userController = require('../controllers/admin/userController/user-control
 const categoryController = require('../controllers/admin/categoryController/category-controller')
 const brandController = require('../controllers/admin/brandController/brand-controller')
 const productController = require('../controllers/admin/productController/product-controller')
-const {adminAuth, requestData} = require('../middleware/auth')
+const auth = require('../middleware/auth')
 
 const multer = require('multer')
 const storage = require('../helpers/multer')
@@ -19,7 +19,7 @@ adminRoute.route('/login')
 
 // Dash board
 adminRoute.route('/')
-       .get(adminAuth,adminController.loadDashboard)
+       .get(auth.adminAuth,adminController.loadDashboard)
 
 //  logout
 adminRoute.route('/logout')
@@ -28,65 +28,65 @@ adminRoute.route('/logout')
 // Get user
 
 adminRoute.route('/users')
-       .get(adminAuth,userController.getUsers)
+       .get(auth.adminAuth,userController.getUsers)
 
 // Block user
 
 adminRoute.route('/blockCustomer/:id')
-       .post(userController.blockUser)
+       .post(auth.adminAuth,userController.blockUser)
 
 // unblock user
 
 adminRoute.route('/unblockCustomer/:id')
-        .post(userController.unblockUser)
+        .post(auth.adminAuth,userController.unblockUser)
  
         
 // Category management
 adminRoute.route('/category')
-      .get(categoryController.categoryInfo)     
+      .get(auth.adminAuth,categoryController.categoryInfo)     
       
 // Add category
 
 adminRoute.route('/addCategory')
-         .get(categoryController.addCategory)
-         .post(categoryController.addNewCategory)
+         .get(auth.adminAuth,categoryController.addCategory)
+         .post(auth.adminAuth,categoryController.addNewCategory)
 
 // Edit category
 adminRoute.route('/category/editCategory')
-         .get(categoryController.getEditCategoryPage)
-         .post(categoryController.editCategory)
+         .get(auth.adminAuth,categoryController.getEditCategoryPage)
+         .post(auth.adminAuth,categoryController.editCategory)
          
 //List category
 adminRoute.route('/category/listCategory')
-        .post(categoryController.listCategory)        
+        .post(auth.adminAuth,categoryController.listCategory)        
         
 // Unlist category
 adminRoute.route('/category/unlistCategory')
-       .post(categoryController.unlistCategory)
+       .post(auth.adminAuth,categoryController.unlistCategory)
  
 // Offer category
 adminRoute.route('/category/addOffer')
-       .post(categoryController.addOffer)       
+       .post(auth.adminAuth,categoryController.addOffer)       
 
 
 // Brand management
 adminRoute.route('/brands')
-       .get(brandController.getBrands)      
+       .get(auth.adminAuth,brandController.getBrands)      
        
        
 //Add
 adminRoute.route('/brands/addBrand')
-        .get(brandController.getAddBrandPage)
+        .get(auth.adminAuth,brandController.getAddBrandPage)
         .post(uploads.single('image'),brandController.addNewBrand)
 
 // Edit
 adminRoute.route('/brands/editBrand')
-        .get(brandController.editBrandPage)
+        .get(auth.adminAuth,brandController.editBrandPage)
         .post(uploads.single('image'),brandController.editBrand)
 
 // List
 adminRoute.route('/brands/listBrand')
-       .post(brandController.listBrand)
+       .post(auth.adminAuth,brandController.listBrand)
 
 //Unlist
 adminRoute.route('/brands/unlistBrand')
@@ -94,21 +94,21 @@ adminRoute.route('/brands/unlistBrand')
 
 // Product management...!
 adminRoute.route('/products')
-       .get(productController.getProducts)
+       .get(auth.adminAuth,productController.getProducts)
 
 // Product detailed page
 adminRoute.route('/products/details/:id')
-         .get(productController.getProductDetailes)
+         .get(auth.adminAuth,productController.getProductDetailes)
 
 
 //Add
 adminRoute.route('/products/addProduct')
-       .get(productController.addProductPage)
+       .get(auth.adminAuth,productController.addProductPage)
        .post(uploads.array('productImage',4), productController.addProduct);
 
 //Edit
 adminRoute.route('/products/editProduct/:id')
-       .get(productController.getProductEdit)
+       .get(auth.adminAuth,productController.getProductEdit)
 adminRoute.route('/products/editProduct/:id')
        .post(uploads.array('productImage',4),productController.editProduct)   
        

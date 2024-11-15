@@ -57,11 +57,13 @@
         text-align: left;
         padding: 10px;
         background-color: #2d3748;
+        color: #ffffff;
     }
 
     .users-table td {
         padding: 10px;
         background-color: #2d3748;
+        color: aliceblue;
     }
 
     .user-avatar {
@@ -168,7 +170,7 @@
                 </td>
                 <td><%= user.phone %></td>
                 <td><%= user.email %></td>
-                <td><%= user.joinedOn %></td>
+                <td><%= new Date(user.joinedOn).toLocaleDateString() %></td>
                 <td>
                     <% if (user.isBlocked == false) { %>
                     <button  class="btn btn-danger block-button "  data-user-id="<%= user._id %>">

@@ -6363,6 +6363,7 @@ p {
   background-color: #d7d7d7;
   margin-bottom: 0;
   overflow: hidden;
+  border-radius: 10px;
 }
 .product-media > a {
   display: block;

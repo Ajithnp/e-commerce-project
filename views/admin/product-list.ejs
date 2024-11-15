@@ -24,6 +24,27 @@
         gap: 10px;
     }
 
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .status-badge.active {
+        background-color: #48bb78;
+    }
+
+    .status-badge.inactive {
+        background-color: #f56565;
+    }
+
+
+
+
+
+
+
     .search-bar {
         display: flex;
         background-color: #2d3748;
@@ -83,7 +104,7 @@
     .product-logo {
         width: 100px;
         height: 100px;
-        object-fit: contain;
+        object-fit: cover;
         margin-bottom: 10px;
         border-radius: 12px;
     }
@@ -167,7 +188,14 @@
             <div class="product-card">
                 <img src="/uploads/re-image/<%= (product.productImage.length > 0 ? product.productImage[0] : 'default-image.jpg') %>" alt="<%= product.name %> Logo" class="product-logo">
                 <h2 class="product-name"><a href="/api/v1/admin/products/details/<%= product._id %>" class="product-link"><%= product.productName %></a></h2>
-                <p class="product-description"><%= product.description %></p>
+                <!-- <p class="product-description"><%= product.description %></p> -->
+                <% if(product.isBlocked) {%>
+                    <span class="status-badge inactive">
+                        Blocked</span>
+                        <%}else{%>
+                            <span class="status-badge active">
+                             Active</span>
+                           <%}%>
             </div>
         <% }); %>
     </div>

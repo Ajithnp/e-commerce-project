@@ -2,17 +2,22 @@ const Admin = require('../models/admin-model')
 const User = require ('../models/user-model')
 
 
-const adminAuth = async (req, res, next)=>{
+exports.adminAuth = async (req, res, next)=>{
     try {
         if (! req.session.admin ){
-            return res.redirect('/admin/login')
+            
+            
+            return res.redirect('/api/v1/admin/login')
+            
         }
         // Find admin by id 
         const admin = await Admin.findById(req.session.admin.id)
         if (req.session.admin){
+        
+            
             return next()
         }else{
-            return res.redirect('/admin/login')
+            return res.redirect('/api/v1/admin/login')
         }
         
     } catch (error) {
@@ -21,13 +26,34 @@ const adminAuth = async (req, res, next)=>{
     }
 }
 
-const requestData = (req, res, next)=>{
-    console.log('requested data', req.body)
-    next()
-}
 
-module.exports = {adminAuth,
-    requestData
+// For user
+exports.userAuth = async (req, res, next )=>{
+    try{
+       
+        
+        // check if user authenticated..!
+        if( !req.session.user){
+            return res.redirect('/user/login'); // Redirect if not authenticated..!
+        }
+        //Find user by ID...!
+        const user = await User.findById(req.session.user.id);
+       
+        
 
-}
+        // Check if user exists and not blocked..!
+        if (user && !user.isBlocked) {
+            return next() // Proceed to next ...!
+        }else {
+            res.redirect('/user/login')  // Redirect if user is blocked or not found..!
+        }
+    }
+    catch(error) {
+                console.log('Error in user Authentication',error.message);
+                res.status(500).send('Internal server error')
+                
+            }
+};
+
+
 

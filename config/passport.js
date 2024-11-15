@@ -19,6 +19,13 @@ passport.use(
               if (user){
                  return done(null,user)
               } else {  // Create user
+                // Existing user..!
+                const existingUser = await User.findOne({email : profile.emails[0].value});
+
+
+                if(existingUser){
+                    return done(null, false, { message: 'Email already registered. Please use your password to log in.' })
+                }
                   user = new User({
                     name: profile.displayName,
                     email: profile.emails[0].value,

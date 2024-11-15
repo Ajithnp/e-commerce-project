@@ -4,7 +4,7 @@ const bcrypt = require ('bcrypt')
 
 
 const securePassword = require ('../../../utils/hashpassword')
-const { query } = require('express')
+
 
 // Admin log-in handler
 exports.loadLogin = async (req, res, next)=>{
@@ -17,6 +17,8 @@ exports.loadLogin = async (req, res, next)=>{
         next(error)
     }
 }
+
+// Admin log-in verify Handler..!
 exports.verifyLogin = async (req, res, next)=>{
     try {
         const { email, password} =req.body
@@ -41,7 +43,7 @@ exports.verifyLogin = async (req, res, next)=>{
     }
 }
 
-// Dasboad hanler
+// Admin Dashboard Hanler..!
 exports.loadDashboard = async( req, res )=>{
     try {
         return res.status(200).render('admin/dashboard')
@@ -51,7 +53,7 @@ exports.loadDashboard = async( req, res )=>{
     }
 }
 
-// Logout handler
+// Admin Logout Handler...!
 exports.logout = async (req, res, next)=>{
     try {
         // session destroy

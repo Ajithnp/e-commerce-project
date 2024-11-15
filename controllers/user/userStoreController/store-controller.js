@@ -53,16 +53,18 @@ exports.getStorePage = async (req, res, next)=>{
 // Product Detail Page Handler....!
 exports.getProductDetail = async (req, res, next)=>{
     const {id} = req.params;
-    console.log('product id fetched', id);
-    
-
+   
     try {
         const user = req.session.user;
         // Check product is exists..?
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).populate('category');
+        
+        
 
-        if(!product){
-            return res.status(404).render('404');
+        if(!product || product.isBlocked){
+            // return res.status(404).render('404');
+            return res.redirect('/user/store')
+
         }
        
         const userDate = user ? await User.findById(user.id) : null;
