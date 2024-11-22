@@ -106,14 +106,11 @@ exports.resendOtp = async (req, res, next)=>{
     try {
 
         if(! req.session.userData || !req.session.userData.email){
-            console.log('helloo resend otp route',req.session.userData);
-            
             return res.status(400).json({ message: 'User data not found..!'})
         }
 
         const {email} = req.session.userData;
-        console.log('this log from resend route',email);
-        
+     
         const otp = generateOTP()
         const newExpirationTime = Date.now() + 1 * 60 * 1000;
         console.log('Resend otp send',otp);
@@ -290,6 +287,84 @@ exports.contactPage = async(req, res, next)=>{
         return res.status(200).render('user/contact')
     } catch (error) {
         console.error('Error occured while loading contact page..!', error);
+        next(error)
+        
+    }
+}
+
+// User forgot Password..!
+exports.forgotPassword = async(req, res, next)=>{
+    try {
+       res.status(200).render('user/forgot-password-email') 
+    } catch (error) {
+        console.error('An error occured while loading forgot email page',error);
+        next(error)   
+    }
+}
+
+// User forgot Password email verify..!
+exports.verifyEmail = async (req, res, next)=>{
+    const {email} = req.body;
+  
+    try {
+        // Check the email address already have ?
+        const existEmail = await User.findOne({email:email});
+       
+        if(!existEmail){
+            return res.status(500).json({message:'User email not registered..!'})
+        }
+       
+         res.status(200).json({ message: 'Email verified successfully!'})
+
+    } catch (error) {
+        console.error('An error occured while verifying email',error)
+        next(error)
+        
+    }
+
+}
+
+// User forgot password OTP Handler..!
+exports.forgotVerifyOtpPage = async(req, res, next)=>{
+       const {email}= req.query;
+       
+    try {
+
+        // generating OTP and it's time!
+        
+        const otp = generateOTP();
+        const expiryTime = Date.now()+ 60 * 1000;
+        console.log('Your reset password OTP',otp);
+
+        // Send OTP corresponding email!
+        await sendEmail({to: email, otp})
+        
+        res.status(200).render('user/forgot-otp',{
+            otp, expiryTime
+        })
+    } catch (error) {
+        console.error('An error occured while loading otp page',error)
+        next(error)
+    }
+}
+
+//Forgot Password resend OTP handler..!
+exports.forgotResendOtp = async (req, res, next)=>{
+    const {email} = req.query;
+    
+    try {
+        if(!email){
+            return res.status(500).json({message:'An error occured'})
+        }
+        const otp = generateOTP();
+        const expiryTime = Date.now() + 1 *60 * 1000;
+        console.log('forgot resend OTP ',otp)
+
+        await sendEmail({to: email, otp})
+        res.status(200).json({otp,expiryTime, message: "A new OTP has been send..!"})
+        
+    } catch (error) {
+        console.error('An error occured while sending resend OTP')
         next(error)
         
     }

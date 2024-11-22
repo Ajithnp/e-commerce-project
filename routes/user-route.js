@@ -5,13 +5,14 @@ const passport = require ('passport')
 const storeController = require('../controllers/user/userStoreController/store-controller')
 const wishlistController = require('../controllers/user/userWishlistController/wishlistController')
 const cartController = require('../controllers/user/cart-controller/cartController')
+const userProfileController = require('../controllers/user/user-profile-controller/user-profile-controller')
 
 const auth = require('../middleware/auth')
 
 
 // Langin-page
 userRoute.route('/')
-       .get(userController.getLandingPage)
+       .get(auth.userAuth,userController.getLandingPage)
 
 // Log-in
 userRoute.route('/user/login')
@@ -64,12 +65,12 @@ userRoute.route('/user/logout')
 
 //User -Store
 userRoute.route('/user/store')
-          .get(storeController.getStorePage)  
+          .get(auth.userAuth,storeController.getStorePage)  
           
 
 // Product detail page          
 userRoute.route('/beats/product/productDetails/:id')   
-         .get(storeController.getProductDetail)       
+         .get(auth.userAuth,storeController.getProductDetail)       
 
 
 // Wish list ..!
@@ -78,12 +79,54 @@ userRoute.route('/beats/wishlist')
 
 // Cart..!
 userRoute.route('/beats/cart')
-         .get(auth.userAuth,cartController.getUserCart)       
+         .get(auth.userAuth,cartController.getUserCart)
+
+// Add to cart..!
+userRoute.route('/beats/user/cart/add')
+         .post(cartController.addToCart) 
+         
+
+userRoute.route('/beats/user/cart/remove/:id')
+         .delete(cartController.removeCartItem)         
 
 
 
 
 
+
+
+
+
+         
+// User Profile..!
+userRoute.route('/beats/userProfile')
+       .get(userProfileController.getUserProfile)
+
+       
+// User Account info edit..!
+userRoute.route('/beats/userProfileUpdate')
+         .post(userProfileController.userProfileEdit)  
+
+     
+// User Address Add new Adress..!
+userRoute.route('/beats/user/addAddress')
+         .post(userProfileController.addNewAddress)
+
+
+// User address acess..!
+userRoute.route('/beats/user/getAddress/:id')
+          .get(userProfileController.getAddress)
+
+
+// User address Edit
+userRoute.route('/beats/user/editAddress/:id')
+         .put(userProfileController.editAddress)
+
+
+
+// User address delete..!
+userRoute.route('/beats/user/deleteAddress/:id')
+         .delete(userProfileController.deleteAddress)
 
 
 
@@ -99,5 +142,20 @@ userRoute.route('/beats/about')
 // Contact...!
 userRoute.route('/beats/contact')
        .get(userController.contactPage)
+
+
+// User forgot Password Handler..!
+userRoute.route('/beats/user/forgotPassword')
+         .get(userController.forgotPassword)
+         .post(userController.verifyEmail) 
+
+         // User forgot Password OTP ..!  
+// resend OTP  
+userRoute.route('/beats/user/forgotPassword/resendOtp')
+         .post(userController.forgotResendOtp)        
+
+       
+userRoute.route('/beats/user/forgotPassword/otpVerify')
+         .get(userController.forgotVerifyOtpPage)         
          
 module.exports = userRoute

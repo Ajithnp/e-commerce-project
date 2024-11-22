@@ -264,6 +264,8 @@
         </ul>
     </nav><!-- End .mobile-nav -->
 
+   
+
     <div class="social-icons">
         <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
         <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
@@ -300,8 +302,9 @@
 <script src="/user/assets/js/demos/demo-9.js"></script>
 
 <script src="/user/assets/js/jquery.countTo.js"></script>
+<!-- Boostrap CDN-->
 
-<script>
+<script defer>
 
         // Logout button event
         document.getElementById('logout-button').addEventListener('click', async (event)=>{
@@ -359,6 +362,437 @@
             }
         }
     });
+
+// User profile page 
+
+    
+// document.getElementById('profile-button').addEventListener('click',function(e){
+//                 e.preventDefault()
+//                 window.location.href = '/beats/userProfile';
+
+//             })
+
+ // User profile edit..!
+
+ document.getElementById('userProfile').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    clearErrors();
+
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const newPassword = document.getElementById('new-pass').value.trim();
+    const confirmPassword = document.getElementById('confirm-password').value.trim();
+
+
+    // Validations
+    isValid = true
+    let data ={}
+
+    // Name-------------
+    const namePattern = /^[a-zA-Z][a-zA-Z\s]*$/;
+
+    if(name){
+        if(name.length < 3){
+            document.getElementById('name-err').innerText = 'Name must be 3 characters long..!';
+            isValid = false;
+
+        }else if(!namePattern.test(name)){
+            document.getElementById('name-err').innerText = 'Name must start with a letter and contain letters';
+            isValid = false;
+
+        }else if(name.startsWith(' ')){
+            document.getElementById('name-err').innerText = 'Name cannot start with a space..!';
+            isValid = false;
+
+        }else{
+            data.name = name;
+        }
+
+    }
+
+    // phone--!
+
+    const phonePattern = /^[0-9]{10}$/;
+    if(!phonePattern.test(phone)){
+        document.getElementById('phone-err').innerText = 'Phone number must be exactly 10 digits..!';
+        isValid = false;
+    } else {
+        data.phone = phone;
+    }
+
+    // Password..!
+    if(newPassword){
+        if(!password){
+        document.getElementById('password-err').innerText = 'Current password is required to change your password...!';
+        isValid = false;
+        }else if (password.length < 6){
+            document.getElementById('password-err').innerText = 'Password must be at least 6 characters long..!';
+            isValid = false;
+        }else if (newPassword.length < 6){
+            document.getElementById('new-password-err').innerText = 'New password must be at least 6 characters long..!';
+            isValid = false;
+        }else if (newPassword !== confirmPassword){
+            document.getElementById('confirm-password-err').innerText = 'Passwords do not match..!'; 
+            isValid = false;
+
+        }else {
+            data.password = password;
+            data.newPassword =newPassword;
+        }
+    }
+
+    if (!isValid) return;
+
+    Swal.fire({
+        title: 'Do you want to make changes?',
+        icon: 'warning', 
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update!',
+        cancelButtonText: 'No, cancel'
+    }).then(async (result) => { 
+        if (result.isConfirmed) {
+    
+            try {
+                const response = await fetch(`/beats/userProfileUpdate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+
+                })
+                if(!response.ok){
+                    const errorData = await response.json()
+                    throw new Error(errorData.message || 'An unexpected error occured..!')
+                }
+                const successData = await response.json()
+                Swal.fire({
+                    title: successData.message,
+                    icon:'success',
+
+                }).then(()=>{
+                    location.reload();
+                });
+               
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error'
+            });
+          }
+        }
+    });
+});
+
+
+
+// New Address Add-----------------
+document.getElementById('userAddress').addEventListener('submit',async function(e){
+    e.preventDefault();
+
+    //
+    const name = document.getElementById('name1').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
+    const email = document.getElementById('email1').value.trim();
+    const companyName = document.getElementById('companyName').value.trim();
+    const streetAddress = document.getElementById('streetAddress').value.trim();
+    const landmark = document.getElementById('landmark').value.trim();
+    const country = document.getElementById('country').value.trim();
+    const state = document.getElementById('state').value.trim();
+    const dist = document.getElementById('dist').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zip = document.getElementById('zip').value.trim();
+    const altPhone = document.getElementById('altPhone').value.trim();
+
+       // Capture selected address type
+       const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+        // Validate that an address type is selected
+    if (!addressType) {
+        return Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address type.',
+            icon: 'error'
+        });
+    }
+
+    const data ={
+        name,
+        lastName,
+        email,
+        companyName,
+        streetAddress,
+        landmark,
+        country,
+        state,
+        dist,
+        city,
+        zip,
+        altPhone,
+        addressType
+    }
+
+   try{
+    const response = await fetch('/beats/user/addAddress',{
+        method: 'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(data)
+    })
+    if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'An unexpected error occured..!')
+    }
+    const successData = await response.json();
+    Swal.fire({
+        title:successData.message,
+        icon:'success',
+    }).then(()=>{
+        location.reload();
+    });
+  }catch(error){
+    console.error('An error occured',error)
+    Swal.fire({
+        title: 'Error!',
+        text:error.message,
+        icon:'error'
+    });
+  }
+});
+
+
+// Edit Address Address id fetching..!
+
+async function editAddress(addressId){
+    try{
+    const response = await fetch(`/beats/user/getAddress/${addressId}`);
+
+    if(!response.ok){
+        throw new Error('Failed to fetch address data..!')
+    }
+    const addressData = await response.json();
+
+    // Access data's 
+    document.getElementById('name-e').value = addressData.name;
+    document.getElementById('last-name-e').value = addressData.lastName;
+    document.getElementById('companyName-e').value =addressData.companyName;
+    document.getElementById('streetAddress-e').value =addressData.streetAddress;
+    document.getElementById('landmark-e').value =addressData.landmark;
+    document.getElementById('country-e').value =addressData.country;
+    document.getElementById('state-e').value =addressData.state;
+    document.getElementById('dist-e').value =addressData.district;
+    document.getElementById('city-e').value =addressData.city;
+    document.getElementById('zip-e').value =addressData.zip;
+    document.getElementById('altPhone-e').value =addressData.altPhone;
+    document.getElementById('email-e').value =addressData.email;
+    document.getElementById('hiddenId').value = addressData._id;
+    
+
+    const addressTypeRadios = document.querySelectorAll('input[name="addressType"]');
+        addressTypeRadios.forEach(radio => {
+            if (radio.value === addressData.addressType) {
+                radio.checked = true; 
+            }
+        });
+
+  }catch(error){
+    console.error('Error fetching address', error)
+    alert(error.message)
+  }
+}
+
+// Edit address function...!
+
+document.getElementById('userAddress-edit').addEventListener('submit', async function (e){
+    e.preventDefault();
+
+    const id = document.getElementById('hiddenId').value;;
+ 
+
+      // Access values 
+   const name =  document.getElementById('name-e').value.trim();
+   const lastName = document.getElementById('last-name-e').value.trim();
+   const companyName = document.getElementById('companyName-e').value.trim();
+   const streetAddress =  document.getElementById('streetAddress-e').value.trim();
+   const landmark = document.getElementById('landmark-e').value.trim();
+   const country = document.getElementById('country-e').value.trim();
+   const state = document.getElementById('state-e').value.trim();
+   const dist =  document.getElementById('dist-e').value.trim();
+   const city =  document.getElementById('city-e').value.trim();
+   const zip = document.getElementById('zip-e').value.trim();
+   const altPhone = document.getElementById('altPhone-e').value.trim();
+   const email = document.getElementById('email-e').value.trim();
+
+   const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+   if (!addressType) {
+        return Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address type.',
+            icon: 'error'
+        });
+    }
+
+
+
+
+
+   const data = {
+    name,
+    lastName,
+    companyName,
+    streetAddress,
+    landmark,
+    country,
+    state,
+    dist,
+    city,
+    zip,
+    altPhone,
+    email,
+    addressType
+   }
+
+
+   Swal.fire({
+    title: 'Do you want to make changes?',
+    icon:'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, update!',
+    cancelButtonText: 'No, cancel'
+   }).then(async (result)=>{
+    if(result.isConfirmed){
+
+        try{
+            const response = await fetch(`/beats/user/editAddress/${id}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            if(!response.ok){
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An unexpected error occured..!')
+            }
+            const successData = await response.json();
+            Swal.fire({
+                title: successData.message,
+                icon: 'success',
+    
+            }).then(()=>{
+                location.reload();
+            });
+        }catch(error){
+            console.error('An error occured edit address',error)
+            Swal.fire({
+                title: 'Error!',
+                text:error.message,
+                icon:'error'
+            });
+        }
+    }
+   });
+
+
+    
+
+});
+
+
+// Delete user address
+async function deleteAddress(addressId) {
+   const result = await Swal.fire({
+        title: 'Do you want to delete Address permanatly?',
+        icon: 'warning', 
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete!',
+        cancelButtonText: 'No, cancel'
+
+    })
+    if(result.isConfirmed){
+        try{
+        const response = await fetch(`/beats/user/deleteAddress/${addressId}`,{
+            method: 'DELETE',
+
+        })
+        if(!response.ok){
+         const errorData = await response.json();
+         throw new Error(errorData.message || 'An unexpected error occured..!')
+
+        }
+
+        const successData = await response.json();
+           Swal.fire({
+            title:successData.message,
+            icon:'success',
+        }).then(()=>{
+            location.reload();
+        });
+     }catch(error){
+        console.error('An error occured while deleting user address',error)
+        Swal.fire({
+        title: 'Error!',
+        text:error.message,
+        icon:'error'
+     });
+    }
+  }
+    
+}
+ 
+ 
+
+function clearErrors() {
+document.getElementById('general-err').innerText = "";
+document.getElementById('name-err').innerText = "";
+document.getElementById('phone-err').innerText = "";
+document.getElementById('password-err').innerText = "";
+document.getElementById('new-password-err').innerText="";
+document.getElementById('confirm-password-err').innerText = "";
+}
+
+
+
+// Remove  a item from cart functionality..!
+
+async function removeFromCart(itemId){
+
+    try {
+        const response = await fetch(`/beats/user/cart/remove/${itemId}`,{
+            method: 'DELETE',
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+
+        if(!response.ok){
+            const errroData= await response.json();
+            throw new Error(errroData.message || 'An error ocuured..!')
+        }
+        successData = await response.json()
+        location.reload();
+        
+    } catch (error) {
+        console.error('An error occured while removind an item from cart',error)
+        
+    }
+
+}
+					
+					
+
+
+
+
+// Function Toast
+
 
 
 </script>

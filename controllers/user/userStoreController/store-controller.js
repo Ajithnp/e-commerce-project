@@ -24,13 +24,61 @@ exports.getStorePage = async (req, res, next)=>{
             Brand.find({ isBlocked: false })
         ]);
 
+        // Sort Options
+        let sortOptions = {};
+
+        const sortBy = req.query.sortBy;
+
+        switch (sortBy) {
+            case 'priceLowToHigh':
+                sortOptions.salePrice = 1;
+                break;
+            case 'priceHighToLow':
+                sortOptions.salePrice =-1;
+                break;
+            case 'featured':
+                sortOptions.isFeatured = -1;
+                break;
+            case 'newArrivals':
+                sortOptions.createdAt = -1;
+                break;
+            case 'alphabeticalAtoZ':
+                sortOptions.productName = 1;
+                break;
+            case 'alphabeticalZtoA':
+                sortOptions.productName = -1;
+                break;
+            default:
+                break;                        
+        }
+
+        // const brandFilter = req.query.brand ? req.query.brand : null
+        // const brandDoc = await Brand.findOne({ brandName: brandFilter });
+
+        const brandFilter = req.query.brand ? req.query.brand : null;
+
+        // If a brand filter is provided, find the corresponding brand ID
+        let brandIdFilter = null;
+        if (brandFilter) {
+            const brandDoc = await Brand.findOne({ brandName: brandFilter });
+            if (brandDoc) {
+                brandIdFilter = brandDoc._id; // Get ObjectId of the found brand
+                console.log('brand id ',brandFilter);
+                
+            }
+        }
+        console.log('Category found in store page ', brandFilter);
+        
+
         let productData = await Product.find(
             {isBlocked: false,
                 category:{$in:categories.map(category=>category._id)},
+                // ...(categoryFilter && { category: categoryFilter }),
                 brand:{$in: brands.map(brand=>brand._id)},
+                ...(brandIdFilter && { brand: brandIdFilter }),
                 colorStock: { $elemMatch: {quantity: { $gt: 0}}}
             }
-        ).skip(skip).limit(limit).exec();
+        ).sort(sortOptions).skip(skip).limit(limit).exec();
         
         const userDate = user ? await User.findById(user.id) : null;
         console.log('userdata or null', userDate);
@@ -41,6 +89,7 @@ exports.getStorePage = async (req, res, next)=>{
             products: productData,
             page,
             totalPages,
+            brands
         });
 
     } catch (error) {

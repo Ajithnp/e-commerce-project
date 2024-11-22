@@ -34,6 +34,12 @@ app.use(session({
     }
 }));
 
+// flash messages,
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
 // passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
@@ -51,9 +57,9 @@ mongoose.connect (process.env.MONGODB_URL)
    .catch((error)=>console.log('mongoDB_connection failes...!',error));
 
 // Mounting routes
- app.use('/', userRoute)
+ app.use('/',nocache(), userRoute)
 
- app.use('/api/v1/admin', adminRoute)
+ app.use('/api/v1/admin',nocache(), adminRoute)
 
 
  // 404 error handling middleware

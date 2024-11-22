@@ -1,0 +1,374 @@
+<%- include('../partials/user/header2') %>  
+
+<style>
+    .check-group{
+        display: flex;
+        gap: 10px;
+    }
+    .buttons{
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Sign Out</a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
+
+                            </li> -->
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+
+                    <div class="col-md-8 col-lg-9">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+                                <p>Hello <span class="font-weight-normal text-dark"><%=user.name%></span> <span class="font-weight-normal text-dark"></span> <a href="#"></a>
+                                <br>
+                                From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+                                <p>No order has been made yet.</p>
+                                <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
+                                <p>No downloads available yet.</p>
+                                <a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                                <p>The following addresses will be used on the checkout page by default.</p>
+                                <div>
+                                    <a class="nav-link"  id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">
+                                    <button type="button" class="btn btn-outline-primary">+add address</button>
+
+                                    </a>
+                                    
+                                    <!-- <button type="button" id="tab-account-add-link" role="tab" aria-controls="tab-account" aria-selected="false" class="btn btn-outline-primary">+add address</button> -->
+                                </div>
+
+                                <div class="row">
+                                    <% for (let i=0; i<userAddress.length; i++) {%>
+                                    <div class="col-lg-6">
+                                        <div class="card card-dashboard">
+                                            <div class="card-body">
+                                                <h3 class="card-title">Address</h3><!-- End .card-title -->
+
+                                                <p><span><b>Name : </b></span> <%=userAddress[i].name%> <span><%=userAddress[i].lastName%></span><br>
+                                                    <span><b>Email : </b></span><%=userAddress[i].email%><br>
+                                                     <span><b>Phone : </b></span><%=userAddress[i].altPhone%><br>
+                                                    <span><b>CompanyName : </b></span><%=userAddress[i].companyName%> <br>
+                                                    <span><b>Home Address : </b></span><%=userAddress[i].streetAddress%><br>
+                                                    <span><b>Landmark : </b></span><%=userAddress[i].landmark%><br>
+                                                    <span><b>Country : </b></span><%=userAddress[i].country%><br>
+                                                    <span><b>State : </b></span><%=userAddress[i].state%><br>
+                                                    <span><b>District : </b></span><%=userAddress[i].district%><br>
+                                                    <span><b>City : </b></span><%=userAddress[i].city%><br>
+                                                    <span><b>Zip : </b></span><%=userAddress[i].zip%><br>
+                                                    <span><b>Address Type : </b></span><%=userAddress[i].addressType%><br>
+                                                <div class="buttons">
+                                                <a href="#tab-account-edit" class="nav-link" id="tab-account-edit-link" data-toggle="tab" role="tab" aria-controls="tab-account-edit" aria-selected="false" onclick="editAddress('<%=userAddress[i]._id%>')">
+                                                    <button type="button" class="btn btn-outline-primary" >Edit<i class="icon-edit"></i> </button>
+                                                </a>
+                                                <a href="#" id="delete-address" onclick="deleteAddress('<%=userAddress[i]._id%>')">
+                                                    <button type="button" class="btn btn-outline-primary">Delete<i class="icon-edit"></i> </button>
+                                                </a>
+                                                </div>
+                                            </p>
+                                            </div><!-- End .card-body -->
+                                        </div><!-- End .card-dashboard -->
+                                    </div><!-- End .col-lg-6 -->
+                                    <% } %>
+                                </div><!-- End .row -->
+                            </div><!-- .End .tab-pane -->
+
+                            <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+                                <form id="userProfile" >
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Name *</label>
+                                            <input type="text" id="name" name="name" value="<%= user.name %>" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <!-- <div class="col-sm-6">
+                                            <label>Last Name *</label>
+                                            <input type="text" class="form-control" required>
+                                        </div> -->
+                                    </div><!-- End .row -->
+
+                                    <label>Email *</label>
+                                    <input type="email" class="form-control" value="<%= user.email %>" disabled required>
+                                    <small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
+
+                                    <label>Phone No *</label>
+                                    <input type="tel" id="phone" name="phone" class="form-control" value="<%= user.phone %>" required>
+                                    <p id="phone-err" class="error-message"></p>
+
+                                    <label>Current password </label>
+                                    <input type="password" id="password" name="password" class="form-control">
+                                    <p id="password-err" class="error-message"></p>
+
+                                    <label>New password </label>
+                                    <input type="password" id="new-pass" name="newPassword" class="form-control">
+                                    <p id="new-password-err" class="error-message"></p>
+
+                                    <label>Confirm new password</label>
+                                    <input type="password" id="confirm-password" name="confirmPassword" class="form-control mb-2">
+                                    <p id="confirm-password-err" class="error-message"></p>
+
+                                    <button type="submit" class="btn btn-outline-primary-2">
+                                        <span>SAVE CHANGES</span>
+                                        <i class="icon-long-arrow-right"></i>
+                                    </button>
+                                    <p id="general-err" class="error-message"></p>
+                                </form>
+                            </div><!-- .End .tab-pane -->
+
+                            <!-- Adresss tab-->
+
+                            
+
+                            <div class="tab-pane fade" id="tab-account-add" role="tabpanel" aria-labelledby="tab-account-add-link">
+                                <form id="userAddress" >
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Name *</label>
+                                            <input type="text" id="name1" name="name1" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Last Name *</label>
+                                            <input type="text" id="last-name" name="lastName" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <label>Company Name (Optional) </label>
+                                    <input type="text" id="companyName" name="companyName" class="form-control">
+
+                                    <label>Street address *</label>
+                                    <input type="text" id="streetAddress" name="streetAddress" class="form-control" placeholder="House number and Street name" required>
+
+                                    <label>Landmark *</label>
+                                    <input type="text" id="landmark" itemid="landmark" class="form-control" placeholder="Appartments,suit,unit,etc.." required>
+
+
+
+                                    <!--Second group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Country *</label>
+                                            <input type="text" id="country" name="country" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>State *</label>
+                                            <input type="text" id="state" name="state" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Third group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>District *</label>
+                                            <input type="text" id="dist" name="dist" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Town/City *</label>
+                                            <input type="text" id="city" name="city" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Fourth group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Postalcode/Zip *</label>
+                                            <input type="text" id="zip" name="zip" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Phone *</label>
+                                            <input type="tel" id="altPhone" name="phone" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Fifth group-->
+                                    <label>Email *</label>
+                                    <input type="email" id="email1" name="email1" class="form-control" placeholder="Appartments,suit,unit,etc.." required>
+
+                                    <div class="custom-control">
+                                        <label for="">Address Type *</label>
+
+                                        <div class="check-group">
+                                            <label ><input type="radio"   name="addressType" value="Home"> Home</label>
+                                            <label ><input type="radio"  name="addressType" value="Office"> Office</label>
+                                            <label><input type="radio"   name="addressType" value="Other">Other </label>
+                                        </div>  
+                                    </div>
+
+                                    <button type="submit" class="btn btn-outline-primary-2">
+                                        <span>ADD NEW ADDRESS</span>
+                                        <i class="icon-long-arrow-right"></i>
+                                    </button>
+                                    <p id="general-err" class="error-message"></p>
+                                </form>
+                            </div><!-- .End .tab-pane -->
+
+
+                            <!--Account Edit-->
+                            <div class="tab-pane fade" id="tab-account-edit" role="tabpanel" aria-labelledby="tab-account-edit-link">
+                                <form id="userAddress-edit" >
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Name *</label>
+                                            <input type="text" id="name-e" name="name" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Last Name *</label>
+                                            <input type="text" id="last-name-e" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <label>Company Name (Optional) </label>
+                                    <input type="text" id="companyName-e" name="companyName" class="form-control">
+
+                                    <label>Street address *</label>
+                                    <input type="text" id="streetAddress-e" name="streetAddress" class="form-control" placeholder="House number and Street name" required>
+
+                                    <label>Landmark *</label>
+                                    <input type="text" id="landmark-e" name="landmark" class="form-control" placeholder="Appartments,suit,unit,etc.." required>
+
+
+
+                                    <!--Second group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Country *</label>
+                                            <input type="text" id="country-e" name="country" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>State *</label>
+                                            <input type="text" id="state-e" name="state" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Third group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>District *</label>
+                                            <input type="text" id="dist-e" name="dist" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Town/City *</label>
+                                            <input type="text" id="city-e" name="city" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Fourth group-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Postalcode/Zip *</label>
+                                            <input type="text" id="zip-e" name="zip" value="" class="form-control" required>
+                                            <p id="name-err" class="error-message"></p>
+                                        </div><!-- End .col-sm-6 -->
+
+                                        <div class="col-sm-6">
+                                            <label>Phone *</label>
+                                            <input type="tel" id="altPhone-e" name="phone" class="form-control" required>
+                                        </div>
+                                    </div><!-- End .row -->
+
+                                    <!-- Fifth group-->
+                                    <label>Email *</label>
+                                    <input type="email" id="email-e" class="form-control" placeholder="Email." required>
+
+                                    <div class="custom-control">
+                                        <label for="">Address Type *</label>
+
+                                        <div class="check-group">
+                                            <label ><input type="radio"   name="addressType" value="Home"> Home</label>
+                                            <label ><input type="radio"  name="addressType" value="Office"> Office</label>
+                                            <label><input type="radio"   name="addressType" value="Other">Other </label>
+                                        </div>  
+                                    </div>
+                                    <input type="hidden" id="hiddenId" name="id" value="">
+
+
+                                    <button type="submit" class="btn btn-outline-primary-2">
+                                        <span>SAVE CHANGES</span>
+                                        <i class="icon-long-arrow-right"></i>
+                                    </button>
+                                    <p id="general-err" class="error-message"></p>
+                                </form>
+                            </div><!-- .End .tab-pane -->
+
+                        </div>
+                    </div><!-- End .col-lg-9 -->
+                </div><!-- End .row -->
+            </div><!-- End .container -->
+        </div><!-- End .dashboard -->
+    </div><!-- End .page-content -->
+</main><!-- End .main -->
+
+
+
+<%- include('../partials/user/footer') %>  
+
+
+
+
+
+
+
+

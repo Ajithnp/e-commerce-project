@@ -213,6 +213,7 @@ exports.editProduct = async (req, res, next)=>{
             productName : data.productName,
             _id: {$ne: id}
         })
+        
         if(existingProduct){
             return res.status(400).json({message: 'Product already exists with this naame..!'});
         }
