@@ -1,0 +1,311 @@
+<%- include('../partials/user/header2') %>  
+
+<style>
+    .add-address-content {
+        max-width: 800px;
+        margin: 0 auto;
+        /* padding: 20px; */
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -10px;
+        margin-left: -10px;
+    }
+    .col-sm-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding-right: 10px;
+        padding-left: 10px;
+        box-sizing: border-box;
+    }
+    .custom-control {
+        margin-bottom: 15px;
+    }
+    .check-group {
+        display: flex;
+        gap: 15px;
+    }
+    .check-group label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    .check-group input[type="radio"] {
+        margin-right: 5px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f97316;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #ea580c;
+    }
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    @media (max-width: 768px) {
+        .col-sm-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-downloads">Downloads</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address" href="/beats/user/accountDetails" >Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account"  href="/beats/user/showAddress">Address</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Sign Out</a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
+
+                            </li> -->
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+                    <div class="add-address-content">
+                        <h2>Edit Address</h2>
+                        <form id="userAddress-edit">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name">Name *</label>
+                                    <input type="text" id="name-e" name="name1" value="<%=address.name%>" class="form-control" required>
+                                    <p id="name-err" class="error-message"></p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="last-name">Last Name *</label>
+                                    <input type="text" id="last-name-e" name="lastName" value="<%=address.lastName%>" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <label for="companyName">Company Name (Optional)</label>
+                            <input type="text" id="companyName-e" name="companyName" value="<%=address.companyName%>" class="form-control">
+                    
+                            <label for="streetAddress">Street address *</label>
+                            <input type="text" id="streetAddress-e" name="streetAddress" value="<%=address.streetAddress%>" class="form-control" placeholder="House number and Street name" required>
+                    
+                            <label for="landmark">Landmark *</label>
+                            <input type="text" id="landmark-e" name="landmark" value="<%=address.landmark%>" class="form-control" placeholder="Apartments, suite, unit, etc." required>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="country">Country *</label>
+                                    <input type="text" id="country-e" name="country" value="<%=address.country%>" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="state">State *</label>
+                                    <input type="text" id="state-e" name="state" value="<%=address.state%>" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="dist">District *</label>
+                                    <input type="text" id="dist-e" name="dist" value="<%=address.district%>" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="city">Town/City *</label>
+                                    <input type="text" id="city-e" name="city" value="<%=address.city%>" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="zip">Postalcode/Zip *</label>
+                                    <input type="text" id="zip-e" name="zip" value="<%=address.zip%>" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="altPhone">Phone *</label>
+                                    <input type="tel" id="altPhone-e" name="phone" value="<%=address.altPhone%>" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <label for="email1">Email *</label>
+                            <input type="email" id="email-e" name="email1" value="<%=address.email%>" class="form-control" required>
+                    
+                            <div class="custom-control">
+                                <label>Address Type *</label>
+                                <div class="check-group">
+                                    <label><input type="radio" name="addressType" value="Home" required <% if (address.addressType === 'Home') { %> checked <% } %> 
+                                        >Home</label>
+                                    <label><input type="radio" name="addressType" value="Office" required <% if (address.addressType === 'Office') { %> checked <% } %> 
+                                        > Office</label>
+                                    <label><input type="radio" name="addressType" value="Other" required <% if (address.addressType === 'Other') { %> checked <% } %> 
+                                        > Other </label>
+                                        <input type="hidden"  id="addressId" value="<%=address._id %>">
+                                </div>  
+                            </div>
+                    
+                            <button type="submit" class="btn">
+                                <span>SAVE CHANGES</span>
+                            </button>
+                            <p id="general-err" class="error-message"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Edit address ---- Post function
+    document.getElementById('userAddress-edit').addEventListener('submit', async function (e){
+        e.preventDefault();
+
+        let addressId = document.getElementById('addressId').value.trim();
+
+       
+
+   const name =  document.getElementById('name-e').value.trim();
+   const lastName = document.getElementById('last-name-e').value.trim();
+   const companyName = document.getElementById('companyName-e').value.trim();
+   const streetAddress =  document.getElementById('streetAddress-e').value.trim();
+   const landmark = document.getElementById('landmark-e').value.trim();
+   const country = document.getElementById('country-e').value.trim();
+   const state = document.getElementById('state-e').value.trim();
+   const dist =  document.getElementById('dist-e').value.trim();
+   const city =  document.getElementById('city-e').value.trim();
+   const zip = document.getElementById('zip-e').value.trim();
+   const altPhone = document.getElementById('altPhone-e').value.trim();
+   const email = document.getElementById('email-e').value.trim();
+
+   const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+   if (!addressType) {
+        return Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address type.',
+            icon: 'error'
+        });
+    }
+
+    let data ={
+        name,
+        lastName,
+        companyName,
+        streetAddress,
+        landmark,
+        country,
+        state,
+        dist,
+        city,
+        city,
+        zip,
+        altPhone,
+        email,
+        addressType
+    }
+
+    Swal.fire({
+    title: 'Do you want to make changes?',
+    icon:'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, update!',
+    cancelButtonText: 'No, cancel'
+   }).then(async (result)=>{
+    if(result.isConfirmed){
+
+        try{
+            const response = await fetch(`/beats/user/editAddress/${addressId}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            if(!response.ok){
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An unexpected error occured..!')
+            }
+            const successData = await response.json();
+            Swal.fire({
+                title: successData.message,
+                icon: 'success',
+    
+            }).then(()=>{
+                location.reload();
+            });
+        }catch(error){
+            console.error('An error occured edit address',error)
+            Swal.fire({
+                title: 'Error!',
+                text:error.message,
+                icon:'error'
+            });
+        }
+    }
+   });
+
+
+
+    
+
+        
+
+    })
+    
+    
+
+</script>
+
+<%- include('../partials/user/footer') %>  

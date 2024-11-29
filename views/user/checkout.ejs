@@ -1,0 +1,992 @@
+<%- include('../partials/user/header2') %>  
+<style>
+    .payment-options {
+    max-width: 600px;
+    margin: auto;
+    text-align: left;
+}
+
+.payment-option {
+    margin-bottom: 10px;
+}
+
+.payment-option label {
+    margin-left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    /* //////////////////// */
+
+.dropdown-container {
+    display: none; /* Initially hide the dropdown */
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+#toggle-cart-details{
+    padding-left: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.dropdown-container.visible {
+    display: block; /* Show the dropdown when the class is added */
+}
+
+    .delivery-addresses {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .address-container {
+        flex: 1;
+        min-width: 250px;
+        max-width: 400px;
+        background-color: #f8f8f8;
+        border: 1px solid #e1e1e1;
+        border-radius: 5px;
+        padding: 15px;
+        position: relative;
+    }
+    .address-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .address-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+    .edit-btn {
+        background: none;
+        border: none;
+        color: #c96;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .address-content {
+        display: flex;
+        align-items: flex-start;
+    }
+    .radio-input {
+        margin-right: 10px;
+        margin-top: 3px;
+    }
+    .address-details {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .add-address-btn {
+        background-color: #c96;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+        margin-bottom: 10px;
+    }
+    .add-address-btn:hover {
+        background-color: #a67c52;
+    }
+
+    /* ///// */
+    .address-form-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .check-group{
+        display: flex;
+        gap: 10px;
+    }
+        .address-form-modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 5px;
+        }
+        .address-form-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .address-form-close:hover,
+        .address-form-close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .address-form {
+            display: grid;
+            gap: 15px;
+        }
+        .address-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .address-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .address-form input, 
+        .address-form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .address-form-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .address-form-submit:hover {
+            background-color: #45a049;
+        }
+        #address-form-open-modal {
+            margin-bottom: 20px;
+        }
+    @media (max-width: 768px) {
+        .delivery-addresses {
+            flex-direction: column;
+        }
+        .address-container {
+            max-width: 100%;
+        }
+    }
+    @media (max-width: 600px) {
+            .address-form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+</style>
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">Checkout<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item"><a href="/beats/cart">Shopping cart</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="cart">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="col-lg-9">
+                            <h2 class="summary-title">Delivery Address</h2>
+                            <div class="delivery-addresses">
+                                <% for (let i=0; i<userAddress.length; i++) {%>
+                                <div class="address-container">
+                                    <div class="address-header">
+                                        <h3><%=userAddress[i].addressType%></h3>
+                                        <button class="edit-btn" onclick="openModal('<%=userAddress[i]._id%>')">Edit</button>
+                                        
+                                    </div>
+                                    <div class="address-content">
+                                        <input type="radio" name="address" checked class="radio-input" value="<%= userAddress[i]._id %>" id="address-home">
+                                        <label for="address-home" class="address-details">
+                                            <div><%=userAddress[i].name%> <%=userAddress[i].lastName%> </div>
+                                            <div><%=userAddress[i].companyName%></div>
+                                            <div><%=userAddress[i].streetAddress%></div>
+                                            <div><%=userAddress[i].landmark%></div>
+                                            <div><%=userAddress[i].country%></div>
+                                            <div><%=userAddress[i].state%></div>
+                                            <div><%=userAddress[i].district%></div>
+                                            <div><%=userAddress[i].city%></div>
+                                            <div><%=userAddress[i].zip%></div>
+                                            <div><%=userAddress[i].altPhone%></div>
+                                            <div><%=userAddress[i].email%></div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <% } %>
+                                
+                                
+                            </div>
+                            <button class="add-address-btn" onclick="openModal2()">Add New Address</button>
+                        </div>
+                        <!--  -->
+                        <div class="checkout-page">
+                            <button id="toggle-cart-details" class="btn btn-primary">Product Details</button>
+                        
+                            <div id="cart-details-dropdown" class="dropdown-container">
+                                <table class="table table-cart table-mobile">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Color</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%if(cart && cart.items.length > 0) {%>
+                                            <%cart.items.slice().reverse().forEach(item => {%>
+                                        <tr>
+                                            <td class="product-col">
+                                                <div class="product">
+                                                    <figure class="product-media">
+                                                        <a href="#">
+                                                            <img src="/uploads/re-image/<%=item.productId.productImage[0]%>" alt="Product image">
+                                                        </a>
+                                                    </figure>
+                                                    <h3 class="product-title">
+                                                        <a href="#"><%= item.productId.productName %></a>
+                                                    </h3>
+                                                </div>
+                                            </td>
+                                            <td class="price-col"><%= item.selectedColor%></td>
+                                           
+                                            <td class="price-col">$<%= item.price.toFixed(2)%></td>
+                                            <td class="quantity-col">
+                                                <div class="cart-product-quantity">
+                                                    <input type="string" class="form-control" value="<%=item.quantity%>"  data-decimals="0" disabled>
+                                                </div>
+                                            </td>
+                                            <td class="total-col">$<%= item.totalPrice.toFixed(2)%></td>
+                                          
+                                        </tr>
+                                        <% }) %>
+                                        <% } %>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!----->
+
+                      <!-- End .cart-bottom -->
+                    </div><!-- End .col-lg-9 -->
+
+                    
+                    
+                    <aside class="col-lg-3">
+                        <div class="cart-discount">
+                            <form action="#">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" required placeholder="coupon code">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+                                    </div><!-- .End .input-group-append -->
+                                </div><!-- End .input-group -->
+                            </form>
+                        </div>
+                        <div class="summary">
+                            
+                            <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+
+                            <table class="table table-summary">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <%if(cart && cart.items.length > 0) {%>
+                                        <%cart.items.slice().reverse().forEach(item => {%>
+
+                                    <tr>
+                                        <td><a href="#"><%= item.productId.productName%></a></td>
+                                        <td><%= item.totalPrice%></td>
+                                    </tr>
+                                    <% }) %>
+
+                                   
+                                    <tr class="summary-subtotal">
+                                        <td>Subtotal:</td>
+                                        <td>$<%=cart.subTotal%></td>
+                                    </tr><!-- End .summary-subtotal -->
+                                    <tr>
+                                        <td>Savings:</td>
+                                        <td>000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Coupon discount:</td>
+                                        <td>000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping:</td>
+                                        <td>Free shipping</td>
+                                    </tr>
+                                    <tr class="summary-total">
+                                        <td>Total:</td>
+                                        <td>$<%=cart.subTotal%></td>
+                                    </tr><!-- End .summary-total -->
+                                    
+                                    <% } %>
+                                </tbody>
+                            </table><!-- End .table table-summary -->
+
+                            <div class="accordion-summary" id="accordion-payment">
+                                ------------------------------------
+                                <div class="payment-options">
+                                    <h6>Select a Payment Method</h6>
+                                    <form id="payment-form">
+                                        <!-- Payment Options with Radio Buttons -->
+                                        <div class="payment-option">
+                                            <input type="radio" id="bank-transfer" name="payment" value="Bank Transfer" disabled>
+                                            <label for="bank-transfer">Direct Bank Transfer</label>
+                                        </div>
+                                        <div class="payment-option">
+                                            <input type="radio" id="wallet" name="payment" value="Wallet" disabled>
+                                            <label for="wallet">Wallet</label>
+                                        </div>
+                                        <div class="payment-option">
+                                            <input type="radio" id="cod" name="payment" value="COD">
+                                            <label for="cod">Cash on Delivery</label>
+                                        </div>
+                                        <div class="payment-option">
+                                            <input type="radio" id="paypal" name="payment" value="Paypal" disabled>
+                                            <label for="paypal">PayPal</label>
+                                        </div>
+                                        <div class="payment-option">
+                                            <input type="radio" id="credit-card" name="payment" value="Card payment" disabled>
+                                            <label for="credit-card">Credit Card (Stripe)</label>
+                                        </div>
+                                    </form>
+   
+                            </div><!-- End .accordion -->
+
+                            <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block" id="order-place">
+                                <span class="btn-text">Place Order</span>
+                                <span class="btn-hover-text">Proceed to Checkout</span>
+                            </button>
+                        </div><!-- End .summary -->
+                    </aside><!-- End .col-lg-3 -->
+                </div><!-- End .row -->
+            </div><!-- End .container -->
+        </div><!-- End .cart -->
+       
+        
+    </div><!-- End .page-content -->
+    
+</main><!-- End .main -->
+
+
+<!-- 
+<button id="address-form-open-modal">Open Address Form</button> -->
+
+    <div id="address-form-modal" class="address-form-modal">
+        <div class="address-form-modal-content">
+            <span class="address-form-close" id="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Edit Address</h2>
+            <form id="userAddress-edit" class="address-form">
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-name">Name:</label>
+                        <input type="text" id="name-e" name="name" required>
+                    </div>
+                    <div>
+                        <label for="address-form-lastName">Last Name:</label>
+                        <input type="text" id="last-name-e" name="lastName">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-email">Email:</label>
+                        <input type="email" id="email-e" name="email" required>
+                    </div>
+                    <div>
+                        <label for="address-form-companyName">Company Name:</label>
+                        <input type="text" id="companyName-e" name="companyName">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-phone">Phone:</label>
+                        <input type="tel" id="altPhone-e" name="phone" required>
+                    </div>
+                  
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-streetAddress">Street Address:</label>
+                        <input type="text" id="streetAddress-e" name="streetAddress" required>
+                    </div>
+                    <div>
+                        <label for="address-form-landmark">Landmark:</label>
+                        <input type="text" id="landmark-e" name="landmark">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-city">City:</label>
+                        <input type="text" id="city-e" name="city" required>
+                    </div>
+                    <div>
+                        <label for="address-form-district">District:</label>
+                        <input type="text" id="dist-e" name="district">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-state">State:</label>
+                        <input type="text" id="state-e" name="state" required>
+                    </div>
+                    <div>
+                        <label for="address-form-country">Country:</label>
+                        <input type="text" id="country-e" name="country" required>
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-zip">ZIP Code:</label>
+                        <input type="text" id="zip-e" name="zip" required>
+                    </div>
+                    <div>
+                        <label for="address-form-addressType">Address Type:</label>
+                        <div class="check-group">
+                            <label ><input type="radio"   name="addressType" value="Home"> Home</label>
+                            <label ><input type="radio"  name="addressType" value="Office"> Office</label>
+                            <label><input type="radio"   name="addressType" value="Other">Other </label>
+                        </div>
+                        <!-- <select id="address-form-addressType" name="addressType">
+                            <option value="Home">Home</option>
+                            <option value="Office">Office</option>
+                            <option value="Other">Other</option>
+                        </select> -->
+                    </div>
+                    <input type="hidden" id="hiddenId" name="id" value="">
+                </div>
+
+                <button type="submit" class="address-form-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Add new address-->
+
+    <div id="add-address-form-modal" class="address-form-modal">
+        <div class="address-form-modal-content">
+            <span class="address-form-close" id="close-modal" onclick="closeModal()">&times;</span>
+            <h2> Add New Address</h2>
+            <form id="userAddress-add" class="address-form">
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-name">Name:</label>
+                        <input type="text" id="name1" name="name1" required>
+                    </div>
+                    <div>
+                        <label for="address-form-lastName">Last Name:</label>
+                        <input type="text" id="last-name" name="lastName">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="address-form-companyName">Company Name:</label>
+                        <input type="text" id="companyName" name="companyName">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-phone">Phone:</label>
+                        <input type="tel" id="altPhone" name="phone" required>
+                    </div>
+                  
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-streetAddress">Street Address:</label>
+                        <input type="text" id="streetAddress" name="streetAddress" required>
+                    </div>
+                    <div>
+                        <label for="address-form-landmark">Landmark:</label>
+                        <input type="text" id="landmark" name="landmark">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-city">City:</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div>
+                        <label for="address-form-district">District:</label>
+                        <input type="text" id="dist" name="dist">
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-state">State:</label>
+                        <input type="text" id="state" name="state" required>
+                    </div>
+                    <div>
+                        <label for="address-form-country">Country:</label>
+                        <input type="text" id="country" name="country" required>
+                    </div>
+                </div>
+
+                <div class="address-form-row">
+                    <div>
+                        <label for="address-form-zip">ZIP Code:</label>
+                        <input type="text" id="zip" name="zip" required>
+                    </div>
+                    <div>
+                        <label for="address-form-addressType">Address Type:</label>
+                        <div class="check-group">
+                            <label ><input type="radio"   name="addressType" value="Home"> Home</label>
+                            <label ><input type="radio"  name="addressType" value="Office"> Office</label>
+                            <label><input type="radio"   name="addressType" value="Other">Other </label>
+                        </div>
+                        <!-- <select id="address-form-addressType" name="addressType">
+                            <option value="Home">Home</option>
+                            <option value="Office">Office</option>
+                            <option value="Other">Other</option>
+                        </select> -->
+                    </div>
+                    <input type="hidden" id="hiddenId" name="id" value="">
+                </div>
+
+                <button type="submit" class="address-form-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+
+    async function openModal(addressId) {
+    document.getElementById("address-form-modal").style.display = "block";
+
+    try {
+        const response = await fetch(`/beats/user/getAddress/${addressId}`);
+
+        if(!response.ok){
+        throw new Error('Failed to fetch address data..!')
+    }
+
+    const addressData = await response.json();
+    document.getElementById('name-e').value = addressData.name;
+    document.getElementById('last-name-e').value = addressData.lastName;
+    document.getElementById('companyName-e').value =addressData.companyName;
+    document.getElementById('streetAddress-e').value =addressData.streetAddress;
+    document.getElementById('landmark-e').value =addressData.landmark;
+    document.getElementById('country-e').value =addressData.country;
+    document.getElementById('state-e').value =addressData.state;
+    document.getElementById('dist-e').value =addressData.district;
+    document.getElementById('city-e').value =addressData.city;
+    document.getElementById('zip-e').value =addressData.zip;
+    document.getElementById('altPhone-e').value =addressData.altPhone;
+    document.getElementById('email-e').value =addressData.email;
+    document.getElementById('hiddenId').value = addressData._id;
+
+    const addressTypeRadios = document.querySelectorAll('input[name="addressType"]');
+        addressTypeRadios.forEach(radio => {
+            if (radio.value === addressData.addressType) {
+                radio.checked = true; 
+            }
+        });
+
+
+    } catch (error) {
+        console.error('Error fetching address', error)
+    alert(error.message)
+        
+    }
+
+    }
+
+    //Edit address
+
+    document.getElementById('userAddress-edit').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById('hiddenId').value;;
+        console.log('helooooo', id)
+
+        const name =  document.getElementById('name-e').value.trim();
+   const lastName = document.getElementById('last-name-e').value.trim();
+   const companyName = document.getElementById('companyName-e').value.trim();
+   const streetAddress =  document.getElementById('streetAddress-e').value.trim();
+   const landmark = document.getElementById('landmark-e').value.trim();
+   const country = document.getElementById('country-e').value.trim();
+   const state = document.getElementById('state-e').value.trim();
+   const dist =  document.getElementById('dist-e').value.trim();
+   const city =  document.getElementById('city-e').value.trim();
+   const zip = document.getElementById('zip-e').value.trim();
+   const altPhone = document.getElementById('altPhone-e').value.trim();
+   const email = document.getElementById('email-e').value.trim();
+
+   const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+   if (!addressType) {
+        return Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address type.',
+            icon: 'error'
+        });
+    }
+
+
+
+
+
+   const data = {
+    name,
+    lastName,
+    companyName,
+    streetAddress,
+    landmark,
+    country,
+    state,
+    dist,
+    city,
+    zip,
+    altPhone,
+    email,
+    addressType
+   }
+
+
+   Swal.fire({
+    title: 'Do you want to make changes?',
+    icon:'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, update!',
+    cancelButtonText: 'No, cancel'
+   }).then(async (result)=>{
+    if(result.isConfirmed){
+
+        try{
+            const response = await fetch(`/beats/user/editAddress/${id}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            if(!response.ok){
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An unexpected error occured..!')
+            }
+            const successData = await response.json();
+            Swal.fire({
+                title: successData.message,
+                icon: 'success',
+    
+            }).then(()=>{
+                location.reload();
+            });
+        }catch(error){
+            console.error('An error occured edit address',error)
+            Swal.fire({
+                title: 'Error!',
+                text:error.message,
+                icon:'error'
+            });
+        }
+    }
+   });
+
+
+    
+
+});
+
+//  New address add..!
+async function openModal2(){
+document.getElementById("add-address-form-modal").style.display = "block";
+
+
+
+// address add form,
+document.getElementById('userAddress-add').addEventListener('submit',async function (e){
+    e.preventDefault();
+    const name = document.getElementById('name1').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const companyName = document.getElementById('companyName').value.trim();
+    const streetAddress = document.getElementById('streetAddress').value.trim();
+    const landmark = document.getElementById('landmark').value.trim();
+    const country = document.getElementById('country').value.trim();
+    const state = document.getElementById('state').value.trim();
+    const dist = document.getElementById('dist').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zip = document.getElementById('zip').value.trim();
+    const altPhone = document.getElementById('altPhone').value.trim();
+
+
+
+    // Capture selected address type
+    const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+// Validate that an address type is selected
+if (!addressType) {
+return Swal.fire({
+    title: 'Error!',
+    text: 'Please select an address type.',
+    icon: 'error'
+});
+}
+
+const data ={
+name,
+lastName,
+email,
+companyName,
+streetAddress,
+landmark,
+country,
+state,
+dist,
+city,
+zip,
+altPhone,
+addressType
+}
+
+console.log('captured data,',data);
+
+
+try{
+const response = await fetch('/beats/user/addAddress',{
+method: 'POST',
+headers:{
+    'Content-Type':'application/json'
+},
+body:JSON.stringify(data)
+})
+if(!response.ok){
+const errorData = await response.json();
+throw new Error(errorData.message || 'An unexpected error occured..!')
+}
+const successData = await response.json();
+Swal.fire({
+title:successData.message,
+icon:'success',
+}).then(()=>{
+location.reload();
+});
+}catch(error){
+console.error('An error occured',error)
+Swal.fire({
+title: 'Error!',
+text:error.message,
+icon:'error'
+});
+}
+});
+};
+
+
+
+
+
+    function closeModal() {
+        document.getElementById("address-form-modal").style.display = "none";
+        document.getElementById('add-address-form-modal').style.display = "none";
+        
+   
+   }
+
+        const addressFormModal = document.getElementById("address-form-modal");
+        const addressFormModal2 = document.getElementById("add-address-form-modal");
+       
+      
+
+        window.onclick = function(event) {
+            if (event.target == addressFormModal) {
+                addressFormModal.style.display = "none";
+            }
+            if (event.target == addressFormModal2) {
+                addressFormModal2.style.display = "none";
+            }
+            
+        }
+
+      
+
+        // product details modall
+        // Get references to the button and dropdown container
+const toggleButton = document.getElementById('toggle-cart-details');
+const cartDetailsDropdown = document.getElementById('cart-details-dropdown');
+
+// Add click event listener to toggle the dropdown visibility
+toggleButton.addEventListener('click', () => {
+    cartDetailsDropdown.classList.toggle('visible'); // Toggle the 'visible' class
+});
+
+// ------------------------------------------------------------------------------------//
+
+                  //--- Place Order submission-----//
+    document.getElementById('order-place').addEventListener('click', async function (e){
+        e.preventDefault();
+
+        const selectedAddress = document.querySelector('input[name="address"]:checked');
+        const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
+
+        console.log('addresss', selectedAddress)
+        console.log('payment method', selectedPaymentMethod)
+
+        if(!selectedAddress){
+            Swal.fire({
+                icon: 'info',
+                title: 'Plese select a address',
+                showConfirmationButton: true
+            })
+            return;
+        }
+
+        if(!selectedPaymentMethod){
+            Swal.fire({
+                icon: 'info',
+                title: 'Plese select a payment method',
+                showConfirmationButton: true
+            })
+            return;
+
+        }
+
+        
+      let address = selectedAddress.value;
+      let paymentMethod = selectedPaymentMethod.value;
+      const cartItems = <%- cartItems %>; 
+
+       const orderItems = cartItems.map(item=>({
+        product: item.productId,
+        quantity : item.quantity,
+        color : item.selectedColor,
+        price : item.price,
+        totalPrice : item.totalPrice
+
+       }));
+
+       const orderDetails ={
+        userId : '<%= user._id%>',
+        orderItems,
+        address,
+        paymentMethod
+       }
+
+      Swal.fire({
+  title: "Confirm Your Order",
+  text: "Are you sure you want to place this order?",
+  icon: "question",
+  showCancelButton: true,
+  confirmButtonColor: "#48bb78",
+  cancelButtonColor: "#e53e3e",
+  confirmButtonText: "Yes, Place Order",
+  cancelButtonText: "Cancel",
+  showClass: {
+    popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `
+  },
+  hideClass: {
+    popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `
+  }
+}).then((result) => {
+  if (result.isConfirmed) {
+    fetch("/beats/user/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(orderDetails)
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to place the order");
+        }
+      })
+      .then((data) => {
+        Swal.fire(
+          "Order Placed!",
+          "Your order has been successfully placed.",
+          "success"
+        );
+        console.log("Order saved:", data);
+      })
+      .catch((error) => {
+        console.error(error);
+        Swal.fire(
+          "Error",
+          "There was an issue placing your order. Please try again later.",
+          "error"
+        );
+      });
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    Swal.fire("Cancelled", "Your order was not placed.", "error");
+  }
+});
+
+
+
+
+
+
+
+
+    })             
+
+    </script>
+
+<%- include('../partials/user/footer') %>
+
+

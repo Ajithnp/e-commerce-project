@@ -39,7 +39,13 @@ const userSchema = new mongoose.Schema({
         type : Date,
         default: Date.now()
 
-    }
+    },
+    address: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Address' // Refers to the addressSchema model name
+        }
+    ]
 
 
 

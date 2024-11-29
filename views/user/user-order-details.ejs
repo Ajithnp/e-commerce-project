@@ -1,0 +1,198 @@
+<%- include('../partials/user/header2') %> 
+<style>
+    .orders-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        /* padding: 20px; */
+        width: 820px;
+    }
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .orders-table th,
+    .orders-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .orders-table th {
+        background-color: #f3f4f6;
+        font-weight: bold;
+    }
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #f97316;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #ea580c;
+    }
+    .status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .status-processing {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+    .status-shipped {
+        background-color: #e0f2fe;
+        color: #075985;
+    }
+    .status-delivered {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+    .no-orders {
+        text-align: center;
+        padding: 40px;
+        background-color: #f3f4f6;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+        .orders-table {
+            font-size: 14px;
+        }
+        .btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+    }
+</style>
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard-link" >Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders-link">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-downloads-link" href="/beats/user/accountDetails" >Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address-link" href="/beats/user/showAddress" >Adresses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account-link">Sign Out</a>
+                            </li>
+                            
+                            
+                            
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+                  
+
+                    <div class="orders-content">
+                        <h3>My Orders</h3>
+                        
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (orders.length === 0) { %>
+                                    <tr>
+                                        <td colspan="5">No orders found.</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% orders.forEach(order => { %>
+                                <tr>
+                                    <td>#<%= order._id %></td>
+                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                    <td><span class="status status-<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span></td>
+                                    <td>$<%= order.totalAmount.toFixed(2) %></td>
+                                    <td><a href="#" class="btn">View Order</a></td>
+                                </tr>
+                                <!-- <tr>
+                                    <td>#1002</td>
+                                    <td>June 10, 2024</td>
+                                    <td><span class="status status-shipped">Shipped</span></td>
+                                    <td>$189.50</td>
+                                    <td><a href="#" class="btn">View Order</a></td>
+                                </tr>
+                                <tr>
+                                    <td>#1003</td>
+                                    <td>June 5, 2024</td>
+                                    <td><span class="status status-delivered">Delivered</span></td>
+                                    <td>$352.75</td>
+                                    <td><a href="#" class="btn">View Order</a></td>
+                                </tr> -->
+                                <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    
+                        <!-- No orders state (initially hidden) -->
+                        <div class="no-orders" style="display: none;">
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="#" class="btn">Start Shopping</a>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+ 
+    // Example JavaScript to toggle between orders and no orders state
+    function toggleOrdersView(hasOrders) {
+        const ordersTable = document.querySelector('.orders-table');
+        const noOrdersMessage = document.querySelector('.no-orders');
+        
+        if (hasOrders) {
+            ordersTable.style.display = 'table';
+            noOrdersMessage.style.display = 'none';
+        } else {
+            ordersTable.style.display = 'none';
+            noOrdersMessage.style.display = 'block';
+        }
+    }
+
+    // Usage: toggleOrdersView(true) to show orders, toggleOrdersView(false) to show no orders message
+    // toggleOrdersView(false);
+
+</script>
+
+<%- include('../partials/user/footer') %>  

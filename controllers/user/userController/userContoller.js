@@ -2,6 +2,7 @@ const User = require('../../../models/user-model')
 const Category = require('../../../models/category-model')
 const Product = require('../../../models/product-model')
 const Brand =require('../../../models/brand-model')
+const Cart = require('../../../models/cart-model')
 const bcrypt = require('bcrypt')
 
 const dotenv = require('dotenv').config()
@@ -19,6 +20,8 @@ exports.getLandingPage = async (req, res, next)=>{
         const categories = await Category.find({ isListed: false})
         const brands = await Brand.find({isBlocked :false})
 
+        let cartCount = Cart.countDocuments();
+
         let productData = await Product.find(
             {isBlocked: false,
                 category:{ $in:categories.map(category =>category._id)},
@@ -34,7 +37,8 @@ exports.getLandingPage = async (req, res, next)=>{
             const userData = await User.findOne({_id: user.id})
             return res.status(200).render('user/landing-page',{
                 user: userData,
-                products :productData
+                products :productData,
+                cartCount
             })
         }
         else{
@@ -184,10 +188,7 @@ exports.verifyOtp = async (req, res, next) =>{
            delete req.session.otp ;  // clear OTP from session after successfull registration
            delete req.session.otpExpiration ;
            delete req.session.userData;
-           console.log('session datas,', req.session.userData, req.session.otp);
-          
-           
-           
+    
             return res.status(200).json({ success: true ,message: "OTP verification successfull..!"})
         } else {
             return res.status(400).json( { message: "Invalid OTP. Please try again..!"})
@@ -313,6 +314,20 @@ exports.verifyEmail = async (req, res, next)=>{
         if(!existEmail){
             return res.status(500).json({message:'User email not registered..!'})
         }
+
+        //
+        const otp = generateOTP();
+        const expiryTime = Date.now()+ 60 * 1000;
+        console.log('Your reset password OTP',otp);
+
+       
+
+         // Send OTP corresponding email!
+         await sendEmail({to: email, otp})
+
+         req.session.otp = otp;
+         req.session.otpExpiration = expiryTime;
+         req.session.email = email;
        
          res.status(200).json({ message: 'Email verified successfully!'})
 
@@ -324,35 +339,14 @@ exports.verifyEmail = async (req, res, next)=>{
 
 }
 
-// User forgot password OTP Handler..!
-exports.forgotVerifyOtpPage = async(req, res, next)=>{
-       const {email}= req.query;
-       
-    try {
-
-        // generating OTP and it's time!
-        
-        const otp = generateOTP();
-        const expiryTime = Date.now()+ 60 * 1000;
-        console.log('Your reset password OTP',otp);
-
-        // Send OTP corresponding email!
-        await sendEmail({to: email, otp})
-        
-        res.status(200).render('user/forgot-otp',{
-            otp, expiryTime
-        })
-    } catch (error) {
-        console.error('An error occured while loading otp page',error)
-        next(error)
-    }
-}
-
 //Forgot Password resend OTP handler..!
 exports.forgotResendOtp = async (req, res, next)=>{
-    const {email} = req.query;
+    const {email} = req.body;
+    console.log('emailreceievd',email);
+    
     
     try {
+
         if(!email){
             return res.status(500).json({message:'An error occured'})
         }
@@ -361,11 +355,114 @@ exports.forgotResendOtp = async (req, res, next)=>{
         console.log('forgot resend OTP ',otp)
 
         await sendEmail({to: email, otp})
-        res.status(200).json({otp,expiryTime, message: "A new OTP has been send..!"})
+
+        req.session.otp = otp;
+        console.log('resent otp reassign session',req.session.otp);
+        
+        
+        req.session.otpExpiration = expiryTime;
+
+        res.status(200).json({otp,otpExpiration:expiryTime, message: "A new OTP has been send..!"})
         
     } catch (error) {
         console.error('An error occured while sending resend OTP')
         next(error)
         
     }
+}
+
+
+// User forgot password OTP Handler..!
+exports.forgotVerifyOtpPage = async(req, res, next)=>{
+       
+    try {
+
+        res.status(200).render('user/forgot-otp')
+    } catch (error) {
+        console.error('An error occured while loading otp page',error)
+        next(error)
+    }
+}
+
+
+// forgot password otp verify Handler..!
+exports.forgotPasswordOtpVerify = async(req, res, next)=>{
+    const {otp}= req.body;
+
+    try{
+    const storedOtp = req.session.otp?.toString();
+    console.log('stored otp',typeof storedOtp+ 'normal otp',typeof otp);
+    
+    const otpExpiration = req.session.otpExpiration || null;
+
+    //  Check if the OTP has expired..!
+    
+        if (Date.now() > otpExpiration){
+            delete req.session.otp;
+            delete req.session.otpExpiration;
+            return res.status(400).json({message: 'OTP expired'})
+
+        }
+        if(storedOtp == otp ){
+            delete req.session.otp ;  // clear OTP from session after successfull registration
+            delete req.session.otpExpiration ;
+          return res.status(200).json({
+            message: 'Email verifird',
+             redirectUrl:'/beats/user/forgotPassword/newPassword'
+        })
+        }else{
+          return res.status(400).json({message:'Invalid OTP..!'})
+            
+        }
+
+    }catch(error){
+        console.error('An error occured while verifying otp',error)
+        next(error)
+    }
+}
+
+// New reset password get..!
+
+exports.newResetPassword = async (req, res, next)=>{
+    try {
+        res.status(200).render('user/reset-newPassword')
+    } catch (error) {
+        
+    }
+} 
+
+// Reset Password password verification handler..!
+exports.confirmResetPassword = async(req, res, next)=>{
+    const email = req.session.email;
+    const {newPassword} = req.body;
+    console.log('prefrences',email, newPassword);
+    
+   try{
+
+    // Finding user details with email
+    const user = await User.findOne({email})
+    console.log('userDetails', user);
+    if(!user){
+        return res.status(404).json({message:'User not found..! try again'});
+
+    }
+
+    // Bycript new password..!
+    const resetPassword = await securePassword(newPassword)
+    user.password=resetPassword;
+
+    await user.save()
+
+    delete req.session.email;
+
+    return res.status(200).json({
+        message: 'Operation success..!',
+         redirectUrl:'/user/login'
+    })
+     
+    
+   }catch(error){
+    console.error('An error occured..!',error)
+    next(error)
+   }
 }

@@ -1,0 +1,379 @@
+<%- include('../partials/user/header2') %>
+
+<style>
+  .account-content {
+    /* padding: 2rem; */
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .account-form {
+    margin-top: 2rem;
+  }
+  .error-message{
+    color: red;
+    font-size: 15px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    margin-top: 0.25rem;
+  }
+
+  .help-text {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+  }
+
+  .password-change {
+    border: none;
+    padding: 0;
+    margin: 2rem 0;
+  }
+
+  legend {
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #f97316;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+
+  .button:hover {
+    background-color: #ea580c;
+  }
+</style>
+<main class="main">
+  <div
+    class="page-header text-center"
+    style="background-image: url('assets/images/page-header-bg.jpg')"
+  >
+    <div class="container">
+      <h1 class="page-title">My Account<span>Shop</span></h1>
+    </div>
+    <!-- End .container -->
+  </div>
+  <!-- End .page-header -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+      </ol>
+    </div>
+    <!-- End .container -->
+  </nav>
+  <!-- End .breadcrumb-nav -->
+
+  <div class="page-content">
+    <div class="dashboard">
+      <div class="container">
+        <div class="row">
+          <aside class="col-md-4 col-lg-3">
+            <ul
+              class="nav nav-dashboard flex-column mb-3 mb-md-0"
+              role="tablist"
+            >
+              <li class="nav-item">
+                <a class="nav-link active" id="tab-dashboard">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab-orders">Orders</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab-downloads">Downloads</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab-address" href="/beats/user/accountDetails">Account Details</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="tab-account" href="/beats/user/showAddress">Address</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Sign Out</a>
+              </li>
+              <!-- <li class="nav-item">
+                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
+
+                            </li> -->
+            </ul>
+          </aside>
+          <!-- End .col-lg-3 -->
+          <main class="account-content">
+            <h3>Account Details</h3>
+
+            <form class="account-form" id="account-form2">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="first-name">Name *</label>
+                  <input
+                    type="text"
+                    id="acc-name"
+                    name="name"
+                    value="<%= user.name %>"
+                    
+                  />
+                  <div id="acc-name-error" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="last-name">Email *</label>
+                  <input
+                    type="email"
+                    id="acc-email"
+                    name="email"
+                    value="<%= user.email %>"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="display-name">Phone No *</label>
+                <input
+                  type="tel"
+                  id="acc-phone"
+                  name="phone"
+                  value="<%= user.phone %>"
+                  
+                />
+                <div id="acc-phone-error" class="error-message"></div>
+              </div>
+
+              <!-- <div class="form-group">
+        <label for="email">Current password *</label>
+        <input type="password" id="acc-currentpassword" name="password" required>
+      </div> -->
+
+              <fieldset class="password-change">
+                <legend>Password change</legend>
+
+                <div class="form-group">
+                  <label for="current-password">Current password</label>
+                  <input
+                    type="password"
+                    id="acc-current-password"
+                    name="current-password"
+                  />
+                  <div id="acc-password-error" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="new-password">New password</label>
+                  <input
+                    type="password"
+                    id="acc-new-password"
+                    name="new-password"
+                  />
+                  <div id="acc-new-password-error" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm-password">Confirm new password</label>
+                  <input
+                    type="password"
+                    id="acc-confirm-password"
+                    name="confirm-password"
+                  />
+                  <div
+                    id="acc-confirm-password-error"
+                    class="error-message"
+                  ></div>
+                </div>
+              </fieldset>
+
+              <button type="submit" class="button">Save changes</button>
+            </form>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document
+    .getElementById("account-form2")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      clearErrorsValidations();
+      const name = document.getElementById("acc-name").value.trim();
+      console.log('datas', name)
+      const phone = document.getElementById("acc-phone").value.trim();
+      console.log('datas', name, phone)
+      const password = document
+        .getElementById("acc-current-password")
+        .value.trim();
+        console.log('datas', name, phone, password)
+      const newPassword = document
+        .getElementById("acc-new-password")
+        .value.trim();
+        console.log('datas', name, phone, password, newPassword)
+      const confirmPassword = document
+        .getElementById("acc-confirm-password")
+        .value.trim();
+        console.log('datas', name, phone, password, newPassword, confirmPassword)
+
+      // Validations
+      isValid = true;
+      let data = {};
+
+      console.log('datas', name, phone, password, newPassword, confirmPassword)
+
+      // Name-------------
+      const namePattern = /^[a-zA-Z][a-zA-Z\s]*$/;
+
+      if (name) {
+        if (name.length < 3) {
+          document.getElementById("acc-name-error").innerText =
+            "Name must be 3 characters long..!";
+          isValid = false;
+        } else if (!namePattern.test(name)) {
+          document.getElementById("acc-name-error").innerText =
+            "Name must start with a letter and contain letters";
+          isValid = false;
+        } else if (name.startsWith(" ")) {
+          document.getElementById("acc-name-error").innerText =
+            "Name cannot start with a space..!";
+          isValid = false;
+        } else {
+          data.name = name;
+        }
+      }
+
+      // phone--!
+
+      const phonePattern = /^[0-9]{10}$/;
+      if (!phonePattern.test(phone)) {
+        document.getElementById("acc-phone-error").innerText =
+          "Phone number must be exactly 10 digits..!";
+        isValid = false;
+      } else {
+        data.phone = phone;
+      }
+
+      // Password..!
+      if (newPassword) {
+        if (!password) {
+          document.getElementById("acc-password-error").innerText =
+            "Current password is required to change your password...!";
+          isValid = false;
+        } else if (password.length < 6) {
+          document.getElementById("acc-password-error").innerText =
+            "Password must be at least 6 characters long..!";
+          isValid = false;
+        } else if (newPassword.length < 6) {
+          document.getElementById("acc-new-password-error").innerText =
+            "New password must be at least 6 characters long..!";
+          isValid = false;
+        } else if (newPassword !== confirmPassword) {
+          document.getElementById("acc-confirm-password-error").innerText =
+            "Passwords do not match..!";
+          isValid = false;
+        } else {
+          data.password = password;
+          data.newPassword = newPassword;
+        }
+      }
+
+      if (confirmPassword) {
+        if (!newPassword) {
+          document.getElementById("acc-new-password-error").innerText =
+            "Enter new password..!";
+          isValid = false;
+        }
+      }
+
+      if (!isValid) return;
+
+      Swal.fire({
+        title: "Do you want to make changes?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, update!",
+        cancelButtonText: "No, cancel",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/beats/user/accountDetails', {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                errorData.message || "An unexpected error occured..!"
+              );
+            }
+            const successData = await response.json();
+            Swal.fire({
+              title: successData.message,
+              icon: "success",
+            }).then(() => {
+              location.reload();
+            });
+          } catch (error) {
+            console.error(error);
+            Swal.fire({
+              title: "Error!",
+              text: error.message,
+              icon: "error",
+            });
+          }
+        }
+      });
+    });
+
+  function clearErrorsValidations() {
+    // document.getElementById("general-error").innerText = "";
+    document.getElementById("acc-name-error").innerText = "";
+    document.getElementById("acc-phone-error").innerText = "";
+    document.getElementById("acc-password-error").innerText = "";
+    document.getElementById("acc-new-password-error").innerText = "";
+    document.getElementById("acc-confirm-password-error").innerText = "";
+  }
+</script>
+<%- include('../partials/user/footer') %>

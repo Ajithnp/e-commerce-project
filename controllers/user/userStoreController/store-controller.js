@@ -51,6 +51,12 @@ exports.getStorePage = async (req, res, next)=>{
             default:
                 break;                        
         }
+        const findname = req.query.q;
+        // let  productData 
+        // if(findname){
+        //    productData = await Product.find({productName:{ $regex:'.*'+findname+'.*'} });
+
+        // } else{
 
         // const brandFilter = req.query.brand ? req.query.brand : null
         // const brandDoc = await Brand.findOne({ brandName: brandFilter });
@@ -70,7 +76,7 @@ exports.getStorePage = async (req, res, next)=>{
         console.log('Category found in store page ', brandFilter);
         
 
-        let productData = await Product.find(
+           let productData = await Product.find(
             {isBlocked: false,
                 category:{$in:categories.map(category=>category._id)},
                 // ...(categoryFilter && { category: categoryFilter }),
@@ -79,7 +85,7 @@ exports.getStorePage = async (req, res, next)=>{
                 colorStock: { $elemMatch: {quantity: { $gt: 0}}}
             }
         ).sort(sortOptions).skip(skip).limit(limit).exec();
-        
+    
         const userDate = user ? await User.findById(user.id) : null;
         console.log('userdata or null', userDate);
         
@@ -130,3 +136,20 @@ exports.getProductDetail = async (req, res, next)=>{
         
     }
 }
+
+// Product search using name..!
+// exports.productSearch = async(req,res, next)=>{
+
+//         try {
+//             const findname = req.params.name;
+//             const objs = await Product.find({productName:{ $regex:'.*'+findname+'.*'} });
+//             // res.json(objs);
+//             return res.status(200).render('user/store-page',{
+//                 products:objs
+
+//             })
+//         } catch (error) {
+//             res.json({message: error});        
+//         }
+        
+// }

@@ -10,6 +10,7 @@ const userRoute = require ('./routes/user-route')
 const adminRoute = require ('./routes/admin-route')
 
 const errorHandler = require('./middleware/error-handler')
+const morgan = require('morgan')
 
 const app = express()
 
@@ -33,6 +34,11 @@ app.use(session({
         maxAge: 72*60*60*1000
     }
 }));
+
+// Morgan middleware...!
+
+// app.use(morgan('common'))
+
 
 // flash messages,
 app.use(require('connect-flash')());

@@ -35,6 +35,8 @@
     <!-- <link rel="stylesheet" href="/user/assets/css/skins/skin-demo-9.css">
     <link rel="stylesheet" href="/user/assets/css/demos/demo-9.css"> -->
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <!-- Second header -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 	
@@ -117,8 +119,9 @@
                             <form action="#" method="get">
                                 <div class="header-search-wrapper search-wrapper-wide">
                                     <label for="q" class="sr-only">Search</label>
-                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                                    <button class="btn btn-primary" id="search-btn"><i class="icon-search"></i></button>
                                     <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                                    
                                 </div><!-- End .header-search-wrapper -->
                             </form>
                         </div><!-- End .header-search -->
@@ -264,3 +267,25 @@
                 </div><!-- End .container -->
             </div><!-- End .header-bottom -->
         </header><!-- End .header -->
+
+        <!--      Search functionality     -->
+
+        <script>
+            
+          $('#q').on('input', function(){
+            let a = $(this).val();
+            // const search = document.getElementById('d').value.trim();
+            console.log(search)
+          })
+          $('#search').on('click',function(){
+            $('#q').value('')
+
+            $.ajax({
+                url:`?name=${name}`,
+                type:'GET',
+                
+            })
+          })
+
+
+        </script>

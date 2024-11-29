@@ -1,0 +1,291 @@
+
+
+<%- include('../partials/user/header2') %>  
+
+<style>
+    .add-address-content {
+        max-width: 800px;
+        margin: 0 auto;
+        /* padding: 20px; */
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -10px;
+        margin-left: -10px;
+    }
+    .col-sm-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding-right: 10px;
+        padding-left: 10px;
+        box-sizing: border-box;
+    }
+    .custom-control {
+        margin-bottom: 15px;
+    }
+    .check-group {
+        display: flex;
+        gap: 15px;
+    }
+    .check-group label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    .check-group input[type="radio"] {
+        margin-right: 5px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f97316;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #ea580c;
+    }
+    .error-message {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    @media (max-width: 768px) {
+        .col-sm-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-downloads">Downloads</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address" href="/beats/user/accountDetails">Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account"  href="/beats/user/showAddress">Address</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Sign Out</a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
+
+                            </li> -->
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+                    <div class="add-address-content">
+                        <h2>Add New Address</h2>
+                        <form id="userAddress">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="name1">Name *</label>
+                                    <input type="text" id="name1" name="name1" class="form-control" required>
+                                    <p id="name-err" class="error-message"></p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="last-name">Last Name *</label>
+                                    <input type="text" id="last-name" name="lastName" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <label for="companyName">Company Name (Optional)</label>
+                            <input type="text" id="companyName" name="companyName" class="form-control">
+                    
+                            <label for="streetAddress">Street address *</label>
+                            <input type="text" id="streetAddress" name="streetAddress" class="form-control" placeholder="House number and Street name" required>
+                    
+                            <label for="landmark">Landmark *</label>
+                            <input type="text" id="landmark" name="landmark" class="form-control" placeholder="Apartments, suite, unit, etc." required>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="country">Country *</label>
+                                    <input type="text" id="country" name="country" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="state">State *</label>
+                                    <input type="text" id="state" name="state" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="dist">District *</label>
+                                    <input type="text" id="dist" name="dist" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="city">Town/City *</label>
+                                    <input type="text" id="city" name="city" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="zip">Postalcode/Zip *</label>
+                                    <input type="text" id="zip" name="zip" class="form-control" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="altPhone">Phone *</label>
+                                    <input type="tel" id="altPhone" name="phone" class="form-control" required>
+                                </div>
+                            </div>
+                    
+                            <label for="email1">Email *</label>
+                            <input type="email" id="email1" name="email1" class="form-control" required>
+                    
+                            <div class="custom-control">
+                                <label>Address Type *</label>
+                                <div class="check-group">
+                                    <label><input type="radio" name="addressType" value="Home" required> Home</label>
+                                    <label><input type="radio" name="addressType" value="Office" required> Office</label>
+                                    <label><input type="radio" name="addressType" value="Other" required> Other</label>
+                                </div>  
+                            </div>
+                    
+                            <button type="submit" class="btn">
+                                <span>ADD NEW ADDRESS</span>
+                            </button>
+                            <p id="general-err" class="error-message"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+                    
+<script>
+
+    // New Address Add--------!
+
+
+
+    document.getElementById('userAddress').addEventListener('submit',async function(e){
+    e.preventDefault();
+
+    //
+    const name = document.getElementById('name1').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
+    const email = document.getElementById('email1').value.trim();
+    const companyName = document.getElementById('companyName').value.trim();
+    const streetAddress = document.getElementById('streetAddress').value.trim();
+    const landmark = document.getElementById('landmark').value.trim();
+    const country = document.getElementById('country').value.trim();
+    const state = document.getElementById('state').value.trim();
+    const dist = document.getElementById('dist').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const zip = document.getElementById('zip').value.trim();
+    const altPhone = document.getElementById('altPhone').value.trim();
+
+       // Capture selected address type
+       const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+        // Validate that an address type is selected
+    if (!addressType) {
+        return Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address type.',
+            icon: 'error'
+        });
+    }
+
+    const data ={
+        name,
+        lastName,
+        email,
+        companyName,
+        streetAddress,
+        landmark,
+        country,
+        state,
+        dist,
+        city,
+        zip,
+        altPhone,
+        addressType
+    }
+
+   try{
+    const response = await fetch('/beats/user/addAddress',{
+        method: 'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(data)
+    })
+    if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'An unexpected error occured..!')
+    }
+    const successData = await response.json();
+    Swal.fire({
+        title:successData.message,
+        icon:'success',
+    }).then(()=>{
+        location.reload();
+    });
+  }catch(error){
+    console.error('An error occured',error)
+    Swal.fire({
+        title: 'Error!',
+        text:error.message,
+        icon:'error'
+    });
+  }
+});
+
+
+</script>                 
+
+<%- include('../partials/user/footer') %>  

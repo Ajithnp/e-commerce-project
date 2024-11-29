@@ -10,7 +10,6 @@ const userAddress = require('../../../models/user-address')
 exports.getUserProfile = async (req, res, next)=>{
     
     const userId = req.session.user.id;
-    console.log('something wrong',userId);
     
     try {
 
@@ -19,7 +18,7 @@ exports.getUserProfile = async (req, res, next)=>{
 
            // Check is there any address user have
        const addresess = await Address.find({user:userId})
-       console.log('User have these address',addresess);
+       
 
         //Render profile page..!
         res.status(200).render('user/user-profile',{
@@ -29,6 +28,24 @@ exports.getUserProfile = async (req, res, next)=>{
         
     } catch (error) {
         console.error('An error occured while loading user profile page', error)
+        next(error)
+    }
+}
+
+// User Account access (Get)
+exports.getUserAccountDetails = async (req, res, next)=>{
+    const userId = req.session.user.id;
+
+    try {
+        const user = await User.findById(userId)
+
+        if(!user){
+            return res.status(400).json({message: 'User not found..!'});
+        }
+
+        res.status(200).render('user/user-account',{user})
+    } catch (error) {
+        console.error('An error occured while loading user account page..!');
         next(error)
     }
 }
@@ -77,6 +94,21 @@ exports.userProfileEdit = async(req, res, next)=>{
     }
 }
 
+// New Address add form (Get){
+
+exports.getNewAddressForm = async (req, res, next)=>{
+
+    try {
+        return res.status(200).render('user/user-address-new-address')
+        
+    } catch (error) {
+        console.error('An error occured while loading new address form')
+        next(error)
+        
+    }
+}
+
+
 
 // User new Address add handler...!
 exports.addNewAddress = async(req, res, next)=>{
@@ -119,27 +151,32 @@ exports.addNewAddress = async(req, res, next)=>{
     }
 }
 
-// User address Fetcher Api..!
+
+// User address page (Get).
+
 exports.getAddress = async (req, res, next)=>{
-    console.log('Heelooo ibade ethiii',req.params.id);
-    
-    const {id} = req.params;
-
+    const addressId = req.params.id;
     try {
-        const address = await Address.findById(id);
+        // Fetching Address..!
+        const address = await Address.findById(addressId)
 
-        if(!address){
-            return res.status(404).json({ message: 'Address not found' });
-        }
-        // Address pass to front-end..!
-        res.status(200).json(address);
-        
+        console.log('address fetched new', address)
+         if(!address){
+            return res.status(400).json({message: 'Addeess not found..!'});
+             
+         }
+        return res.status(200).render('user/user-edit-address',{
+            address
+         })
     } catch (error) {
-        console.error('An error occured while fetching address..',error);
-        next(error);
+        console.error('An error occured while loading edit address page',error)
+
+        next(error)
         
     }
 }
+
+
 
 // Edit User Address handler..!
 exports.editAddress = async (req, res,next)=>{
@@ -195,5 +232,24 @@ exports.deleteAddress = async (req, res, next)=>{
         console.error('An error occured while deleting address',error)
         next(error)
     
+    }
+}
+ 
+// User profile address controller..!
+
+exports.showAddress = async (req, res, next)=>{
+    const userId = req.session.user.id;
+    try {
+        const [user, addresess] = await Promise.all([
+            User.findById(userId),
+            Address.find({user:userId})
+        ])
+        res.render('user/user-address-page',{
+            user,
+            userAddress:addresess
+        })
+    } catch (error) {
+        console.error('An error occured while loading user profile page', error)
+        next(error)
     }
 }

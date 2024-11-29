@@ -13603,6 +13603,7 @@ button:focus {
   width: 135px;
 }
 .cart-product-quantity {
+  display: flex;
   width: 100px;
 }
 .cart-product-quantity .form-control {

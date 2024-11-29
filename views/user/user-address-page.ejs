@@ -1,0 +1,210 @@
+
+<%- include('../partials/user/header2') %>  
+<style>
+    .account-content {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  
+    .page-header1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+  
+    .addresses-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  
+    @media (max-width: 768px) {
+      .addresses-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  
+    .address-box {
+      border: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      position: relative;
+    }
+  
+    .address-details {
+      margin-bottom: 1rem;
+    }
+  
+    .address-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  
+    .button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: #f97316;
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+  
+    .button:hover {
+      background-color: #ea580c;
+    }
+  
+    .button-small {
+      padding: 0.5rem 1rem;
+      background-color: #f97316;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+  
+    .button-small:hover {
+      background-color: #ea580c;
+    }
+  
+    .edit-btn {
+      background-color: #3b82f6;
+    }
+  
+    .edit-btn:hover {
+      background-color: #2563eb;
+    }
+  
+    .delete-btn {
+      background-color: #ef4444;
+    }
+  
+    .delete-btn:hover {
+      background-color: #dc2626;
+    }
+  
+    .add-address-btn {
+      background-color: #10b981;
+    }
+  
+    .add-address-btn:hover {
+      background-color: #059669;
+    }
+  </style>
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">My Account<span>Shop</span></h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+                    <aside class="col-md-4 col-lg-3">
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tab-dashboard">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-orders">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-downloads">Downloads</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-address"  href="/beats/user/accountDetails">Account Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tab-account" href="/beats/user/showAddress">Address</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Sign Out</a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
+
+                            </li> -->
+                        </ul>
+                    </aside><!-- End .col-lg-3 -->
+
+                    <main class="account-content">
+                        <div class="page-header1">
+                          <h3>Addresses</h3>
+                          <button class="button add-address-btn" onclick="newAddressForm()">Add Address</button>
+                        </div>
+                        
+                        <div class="addresses-container">
+                        <% for (let i=0; i<userAddress.length; i++) {%> 
+                          <div class="address-column">
+                            <!-- <h2>Billing Address</h2> -->
+                            <div class="address-box">
+                              <p class="address-details">
+                        
+                                <%=userAddress[i].name%>  <span><%=userAddress[i].lastName%></span><br>
+                                <%=userAddress[i].email%><br>
+                                <%=userAddress[i].altPhone%><br>
+                                <%=userAddress[i].companyName%><br>
+                                <%=userAddress[i].streetAddress%><br>
+                                <%=userAddress[i].landmark%><br>
+                                <%=userAddress[i].country%><br>
+                                <%=userAddress[i].state%><br>
+                                <%=userAddress[i].district%><br>
+                                <%=userAddress[i].city%><br>
+                                <%=userAddress[i].zip%><br>
+                                <span><b>Address Type : </b></span><%=userAddress[i].addressType%><br>
+
+                              </p>
+                              <div class="address-actions">
+                                <button class="button-small edit-btn" id="address-edit-btn" onclick="editUserAddress('<%=userAddress[i]._id%>')">Edit</button>
+                                <button class="button-small delete-btn" onclick="deleteAddress('<%=userAddress[i]._id%>')">Delete</button>
+                              </div>
+                            </div>
+                          </div>
+                          <% } %>
+                        </div>
+                      </main>
+                      
+                     
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+  function newAddressForm(){
+    window.location.href = '/beats/user/addAddress'
+  }
+
+
+  // Edit Address function (get)
+  function editUserAddress(addressId){
+
+  window.location.href = `/beats/user/editAddress/${addressId}`;
+  }
+</script>
+
+
+
+  
+
+<%- include('../partials/user/footer') %>  

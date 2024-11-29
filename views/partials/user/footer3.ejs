@@ -370,19 +370,35 @@ async function addToCart(productId) {
         })
         if(!response.ok){
             const errorData = await response.json()
-            throw new Eroor(errorData.message || 'An error occured..!')
+            throw new Error(errorData.message || 'An error occured..!')
+            // throw new Eroor(errorData.message || 'An error occured..!')
                 
             }
             const successData = await response.json()
+            Swal.fire({
+                title:  '<span class="inline-title">✔ Product added to cart!</span>',
+               
+                showConfirmButton: false,
+                 width: '300px', // Set the desired width here
+                 background: "black",
+                 timer: 1000,
+                 customClass: {
+                 popup: 'custom-popup', // Optional: Style popup
+                },
+             })
             
         
     } catch (error) {
-        console.error('An error occured while adding product in cart',error)
+        console.error('An error occured while adding product in cart',error);
+        Swal.fire({
+            icon: 'warning',
+            title: 'Notice!',
+            text: error.message,
+            confirmButtonText: 'OK'
+        });
         
     }
-
-    
-							
+					
 	}        
     
     

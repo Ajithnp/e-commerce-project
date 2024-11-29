@@ -6,6 +6,8 @@ const storeController = require('../controllers/user/userStoreController/store-c
 const wishlistController = require('../controllers/user/userWishlistController/wishlistController')
 const cartController = require('../controllers/user/cart-controller/cartController')
 const userProfileController = require('../controllers/user/user-profile-controller/user-profile-controller')
+const userOrderController = require('../controllers/user/user-order-controller/user-order-controller')
+
 
 const auth = require('../middleware/auth')
 
@@ -66,6 +68,11 @@ userRoute.route('/user/logout')
 //User -Store
 userRoute.route('/user/store')
           .get(auth.userAuth,storeController.getStorePage)  
+
+// Product Search..!
+// userRoute.route('/beats/productSearch/:name') 
+//          .get(storeController.productSearch)         
+
           
 
 // Product detail page          
@@ -85,16 +92,20 @@ userRoute.route('/beats/cart')
 userRoute.route('/beats/user/cart/add')
          .post(cartController.addToCart) 
          
-
+// Remove item from cart..!
 userRoute.route('/beats/user/cart/remove/:id')
          .delete(cartController.removeCartItem)         
 
+// Cart Quantity updation..!
+userRoute.route('/beats/user/cart/update/:id')
+         .patch(cartController.cartQuantityUpdate)
 
 
+// User checkout..!
 
-
-
-
+userRoute.route('/beats/user/checkout')
+         .get(cartController.getCheckoutPage)
+         .post(cartController.orderConfirm)
 
 
          
@@ -102,25 +113,23 @@ userRoute.route('/beats/user/cart/remove/:id')
 userRoute.route('/beats/userProfile')
        .get(userProfileController.getUserProfile)
 
-       
-// User Account info edit..!
-userRoute.route('/beats/userProfileUpdate')
-         .post(userProfileController.userProfileEdit)  
+// User account details ..!
+userRoute.route('/beats/user/accountDetails')
+         .get(userProfileController.getUserAccountDetails) 
+         .put(userProfileController.userProfileEdit)      
 
      
 // User Address Add new Adress..!
 userRoute.route('/beats/user/addAddress')
+         .get(userProfileController.getNewAddressForm)
          .post(userProfileController.addNewAddress)
 
 
-// User address acess..!
-userRoute.route('/beats/user/getAddress/:id')
-          .get(userProfileController.getAddress)
+// User address  edit ..!
 
-
-// User address Edit
 userRoute.route('/beats/user/editAddress/:id')
-         .put(userProfileController.editAddress)
+          .get(userProfileController.getAddress)
+          .put(userProfileController.editAddress)
 
 
 
@@ -129,9 +138,15 @@ userRoute.route('/beats/user/deleteAddress/:id')
          .delete(userProfileController.deleteAddress)
 
 
+// User address get page 
+userRoute.route('/beats/user/showAddress')
+         .get(userProfileController.showAddress)
 
 
+// ORDERS-----!
 
+userRoute.route('/beats/user/orders')
+         .get(userOrderController.getOrders)
 
 
 
@@ -154,8 +169,13 @@ userRoute.route('/beats/user/forgotPassword')
 userRoute.route('/beats/user/forgotPassword/resendOtp')
          .post(userController.forgotResendOtp)        
 
-       
+// forgot password OTP page       
 userRoute.route('/beats/user/forgotPassword/otpVerify')
-         .get(userController.forgotVerifyOtpPage)         
+         .get(userController.forgotVerifyOtpPage) 
+         .post(userController.forgotPasswordOtpVerify)
+         
+userRoute.route('/beats/user/forgotPassword/newPassword')
+          .get(userController.newResetPassword) 
+          .post(userController.confirmResetPassword)        
          
 module.exports = userRoute
