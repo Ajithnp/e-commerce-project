@@ -148,6 +148,14 @@ userRoute.route('/beats/user/showAddress')
 userRoute.route('/beats/user/orders')
          .get(userOrderController.getOrders)
 
+// Get order details..!
+userRoute.route('/beats/user/orderDetails/:id') 
+          .get(userOrderController.getOrderDetails) 
+          
+// Order cancel..!
+userRoute.route('/beats/user/cancelOrder/:id')
+         .patch(userOrderController.orderCancel)          
+
 
 
 // About...!

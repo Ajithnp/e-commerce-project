@@ -1,0 +1,254 @@
+<%- include('../partials/admin/header') %>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1a202c;
+        color: #ffffff;
+    }
+    .order-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .page-title {
+        font-size: 24px;
+        margin: 0;
+    }
+    .back-button {
+        display: flex;
+        align-items: center;
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+    }
+    .back-button .material-icons {
+        margin-right: 8px;
+    }
+    .order-info {
+        background-color: #2d3748;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .order-info h2 {
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+    }
+    .order-info h2 .material-icons {
+        margin-right: 10px;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+    }
+    .info-item .material-icons {
+        margin-right: 10px;
+        color: #63b3ed;
+    }
+    .order-status {
+        font-weight: bold;
+        color: #48bb78;
+    }
+    .order-items {
+        background-color: #2d3748;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .order-items h2 {
+        margin-top: 0;
+        display: flex;
+        align-items: center;
+    }
+    .status-cancelled {
+    color: red; /* Change text color to red */
+}
+    .order-items h2 .material-icons {
+        margin-right: 10px;
+    }
+    .item-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .item-table th, .item-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #4a5568;
+        color: white;
+    }
+    .item-table th {
+        background-color: #4a5568;
+    }
+    .total-row {
+        font-weight: bold;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .action-button .material-icons {
+        margin-right: 8px;
+    }
+    .print-button {
+        background-color: #48bb78;
+    }
+    .cancel-button {
+        background-color: #e53e3e;
+    }
+    .product-info {
+        display: flex;
+        align-items: center;
+    }
+    .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+    .product-name {
+        font-weight: bold;
+    }
+</style>
+
+<div class="order-details-container">
+    <div class="page-header">
+        <h1 class="page-title">Order Details</h1>
+        <a  class="back-button" onclick="window.history.back()">
+            <span class="material-icons">arrow_back</span>
+            Back to Orders
+        </a>
+    </div>
+
+    <div class="order-info">
+        <h2><span class="material-icons">info</span> Order Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="material-icons">confirmation_number</span>
+                <span>Order ID:<br><br>
+                    <%= order._id %></span>
+            </div>
+            <div class="info-item">
+                <span class="material-icons">calendar_today</span>
+                <span>Date:<%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %> </span>
+            </div>
+            <div class="info-item">
+                <span class="material-icons">person</span>
+                <span>Customer:<%= order.userId ? order.userId.name : 'N/A' %> </span>
+            </div>
+            <div class="info-item">
+                <span class="material-icons">email</span>
+                <span><%= order.userId ? order.userId.email : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="material-icons">phone</span>
+                <span>Phone: <%=order.phone %></span>
+            </div>
+            <div class="info-item">
+                <span class="material-icons">local_shipping</span>
+                <span>Status: 
+                    <span class="order-status <%= order.orderStatus === 'Cancelled' ? 'status-cancelled' : '' %>">
+                        <%= order.orderStatus %>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="order-items">
+        <h2><span class="material-icons">shopping_cart</span> Order Items</h2>
+        <table class="item-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.orderItems.forEach(item => { %>
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product A" class="product-image">
+                            <span class="product-name"><%= item.product.productName %></span>
+                        </div>
+                    </td>
+                    <td><%= item.quantity %></td>
+                    <td>$<%= item.price.toFixed(2) %></td>
+                    <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                </tr>
+                <% }) %>
+                <tr class="total-row">
+                    <td colspan="3">Total</td>
+                    <td>$<%=order.totalAmount %></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-button print-button">
+            <span class="material-icons">print</span>
+            Print Order
+        </button>
+        <!-- <button class="action-button">
+            <span class="material-icons">edit</span>
+            Edit Order
+        </button>
+        <button class="action-button cancel-button">
+            <span class="material-icons">cancel</span>
+            Cancel Order
+        </button> -->
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const printButton = document.querySelector('.print-button');
+       
+        printButton.addEventListener('click', function() {
+            window.print();
+        });
+
+        editButton.addEventListener('click', function() {
+            alert('Edit functionality to be implemented');
+        });
+
+        
+    });
+</script>
+<%- include('../partials/admin/footer') %>

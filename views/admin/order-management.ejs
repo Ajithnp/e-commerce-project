@@ -1,0 +1,246 @@
+<%- include('../partials/admin/header') %>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1a202c;
+        color: #ffffff;
+    }
+    .order-management-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .page-title {
+        font-size: 24px;
+        margin: 0;
+    }
+    .search-bar {
+        display: flex;
+        background-color: #2d3748;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .search-bar input {
+        background-color: transparent;
+        border: none;
+        color: #ffffff;
+        padding: 8px 12px;
+        width: 200px;
+    }
+    .search-button {
+        background-color: #4a5568;
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+        padding: 8px;
+    }
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    .orders-table th,
+    .orders-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #4a5568;
+        color: white;
+    }
+    .orders-table th {
+        background-color: #2d3748;
+        font-weight: bold;
+    }
+    .status-select {
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 6px;
+        border-radius: 4px;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .pagination-btn {
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-number {
+        font-size: 14px;
+    }
+    .view-details-btn {
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+<div class="order-management-container">
+    <div class="page-header">
+        <h1 class="page-title">Order Management</h1>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search orders...">
+            <button class="search-button" id="search-button">
+                <span class="material-icons">search</span>
+            </button>
+        </div>
+    </div>
+
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="orders-body">
+            <% orders.forEach(order => { %>
+            <tr>
+                <td>#<%= order._id %></td>
+                <td><%= order.userId ? order.userId.name : 'N/A' %></td>
+                <td><%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></td>
+                <td>₹<%= order.totalAmount.toFixed(2) %></td>
+                <td>
+                    <select class="status-select" data-order-id="<%= order._id %>" onchange="updateOrderStatus(this)">
+                        <option value="Processing" <% if (order.orderStatus === 'Processing') { %> selected <% } %>>Processing</option>
+                        <option value="Shipped" <% if (order.orderStatus === 'Shipped') { %> selected <% } %>>Shipped</option>
+                        <option value="Delivered" <% if (order.orderStatus === 'Delivered') { %> selected <% } %>>Delivered</option>
+                        <option value="Cancelled" <% if (order.orderStatus === 'Cancelled') { %> selected <% } %>>Cancelled</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="view-details-btn" onclick="viewOrderdetails('<%= order._id %>')">View Details</button>
+
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="pagination-btn" id="prev-btn" disabled>
+            <span class="material-icons">chevron_left</span>
+        </button>
+        <span class="page-number">Page <span id="current-page">1</span> of <span id="total-pages">2</span></span>
+        <button class="pagination-btn" id="next-btn">
+            <span class="material-icons">chevron_right</span>
+        </button>
+    </div>
+</div>
+
+<script>
+
+function viewOrderdetails(orderId){
+            window.location.href = `/api/v1/admin/orders/viewOrder/${orderId}`;
+        }
+
+
+    async function updateOrderStatus(selectElement) {
+    const orderId = selectElement.getAttribute('data-order-id');
+    const newStatus = selectElement.value;
+
+    console.log('datas', orderId, newStatus)
+
+    // Show confirmation alert
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to change the order status to "${newStatus}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, change it!'
+    });
+
+    // If confirmed, proceed with update
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`/api/v1/admin/orders/${orderId}/status`, { 
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update order status');
+            }
+
+            const result = await response.json();
+            Swal.fire({
+                title: 'Success!',
+                text: result.message,
+                icon: 'success',
+                confirmButtonText: 'Okay'
+            });
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error updating order status. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'Okay'
+            });
+        }
+    }
+}
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const statusSelects = document.querySelectorAll('.status-select');
+    //     const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+    //     const prevBtn = document.getElementById('prev-btn');
+    //     const nextBtn = document.getElementById('next-btn');
+    //     const searchInput = document.getElementById('search-input');
+    //     const searchButton = document.getElementById('search-button');
+
+     
+
+        
+
+       
+
+
+    //     searchButton.addEventListener('click', () => {
+    //         const searchTerm = searchInput.value.toLowerCase();
+    //         // Implement search logic
+    //         console.log('Search for:', searchTerm);
+    //     });
+
+    //     function updateOrderStatus(orderId, newStatus) {
+    //         console.log(`Order ${orderId} status updated to ${newStatus}`);
+    //         // Implement status update logic
+    //     }
+
+       
+
+        
+    // });
+</script>
+<%- include('../partials/admin/footer') %>

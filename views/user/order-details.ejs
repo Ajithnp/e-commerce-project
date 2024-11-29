@@ -1,0 +1,274 @@
+
+<%- include('../partials/user/header2') %> 
+<style>
+    .view-order-content {
+        max-width: 800px;
+        margin: 0 auto;
+        /* padding: 20px; */
+        font-family: Arial, sans-serif;
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .order-status {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+    .status-Processing {
+        background-color: #fef3c7;
+        color: #92400e;
+        border-radius: 4px;
+        padding: 5px;
+       
+    }
+    .status-Cancelled {
+        background-color: #e03939;
+        color: #f2edea;
+        border-radius: 4px;
+        padding: 5px;
+    }
+    .status-Deliverd {
+        background-color: #79e64f;
+        color: #fefefe;
+        border-radius: 4px;
+        padding: 5px;
+    }
+    .status-Shipped {
+        background-color: #63d4ed;
+        color: #e3e1e1;
+        border-radius: 4px;
+        padding: 5px;
+    }
+    .order-details {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .order-details h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .order-items {
+        margin-bottom: 20px;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 15px 0;
+    }
+    .item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+    .item-details {
+        flex-grow: 1;
+    }
+    .item-quantity {
+        font-weight: bold;
+        margin-left: 15px;
+    }
+    .order-summary {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .summary-total {
+        font-weight: bold;
+        font-size: 1.2em;
+        border-top: 2px solid #e5e7eb;
+        padding-top: 10px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #f97316;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #ea580c;
+    }
+    .btn-cancel {
+        background-color: #ef4444;
+    }
+    .btn-cancel:hover {
+        background-color: #dc2626;
+    }
+    .btn-back {
+        background-color: #6b7280;
+        margin-bottom: 20px;
+    }
+    .btn-back:hover {
+        background-color: #4b5563;
+    }
+    @media (max-width: 768px) {
+        .order-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .item-image {
+            margin-bottom: 10px;
+        }
+        .item-quantity {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+    }
+</style>
+
+<main class="main">
+    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        <div class="container">
+            <h1 class="page-title">Order Details</h1>
+        </div><!-- End .container -->
+    </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/user/store">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    
+
+                    <div class="view-order-content">
+                        <button id="backButton" class="btn btn-back" onclick="window.history.back()">← Back to Orders</button>
+                        <div class="order-header">
+                            <h3>Order Id #<%= order._id%></h3>
+                               <span class="status status-<%= order.orderStatus %>"><strong><%= order.orderStatus %></strong></span>
+                            <!-- <span class="order-status status-processing">Processing</span> -->
+                        </div>
+                    
+                        <div class="order-details">
+                            <h4>Order Details</h4>
+                            <div class="detail-row">
+                                <span>Order Date:</span>
+                                <span><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Shipping Address:</span>
+                                <span><%= order.shippingAddress1 %></span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Payment Method:</span>
+                                <span><%= order.paymentMethod %></span>
+                            </div>
+                        </div>
+                    
+                        <div class="order-items">
+                            <h4>Order Items</h4>
+                            <% order.orderItems.forEach(item => { %>
+                            <div class="order-item">
+                                <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product 1" class="item-image">
+                                <div class="item-details">
+                                    <h4><%= item.product.productName %></h4>
+                                    <p>Color: <%= item.color %></p>
+                                </div>
+                                <span class="item-quantity">Qty: <%= item.quantity %></span>
+                                <br>
+                                <span class="item-price">$ <%= item.totalPrice.toFixed(2) %></span>
+                            </div>
+                            <% }) %>
+                        </div>
+                    
+                        <div class="order-summary">
+                            <h4>Order Summary</h4>
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span><%=order.totalAmount %></span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Shipping:</span>
+                                <span>$0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax:</span>
+                                <span>$0</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total:</span>
+                                <span>$<%=order.totalAmount%></span>
+                            </div>
+                        </div>
+                    
+                        <% if (order.orderStatus !== 'Cancelled') { %> 
+                            <div style="margin-top: 20px; text-align: right;">
+                                <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%=order._id %>')">Cancel Order</button>
+                            </div>
+                        <% } %>
+                    </div>
+
+                
+</main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    
+
+async function orderCancel(orderId) {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you really want to cancel this order? This action cannot be undone.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e53e3e', // Red color for cancel confirmation
+    cancelButtonColor: '#48bb78', // Green color for the cancel button
+    confirmButtonText: 'Yes, Cancel it!',
+    cancelButtonText: 'No, Keep it'
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`/beats/user/cancelOrder/${orderId}`, { method: 'PATCH' });
+
+      if (!response.ok) {
+        const errorMessage = await response.json();
+        throw new Error(errorMessage.message || 'An error occurred..!');
+      }
+
+      await Swal.fire(
+        'Cancelled!',
+        'Your order has been cancelled.',
+        'success'
+      );
+
+      window.location.href = '/beats/user/orders';
+    } catch (error) {
+      console.error('Error cancelling order:', error.message);
+      Swal.fire(
+        'Error!',
+        error.message,
+        'error'
+      );
+    }
+  }
+}
+    
+</script>
+<%- include('../partials/user/footer') %>  

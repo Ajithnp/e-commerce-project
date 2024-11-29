@@ -278,7 +278,7 @@ exports.orderConfirm = async (req, res, next)=>{
             zip: addressDetails.zip,
             country: addressDetails.country,
             phone: addressDetails.altPhone,
-            orderStatus : 'Pending',
+            orderStatus : 'Processing',
             paymentMethod,
             totalAmount: createOrderitems.reduce((total, item)=> total+item.totalPrice,0)
 

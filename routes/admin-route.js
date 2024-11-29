@@ -6,6 +6,7 @@ const userController = require('../controllers/admin/userController/user-control
 const categoryController = require('../controllers/admin/categoryController/category-controller')
 const brandController = require('../controllers/admin/brandController/brand-controller')
 const productController = require('../controllers/admin/productController/product-controller')
+const orderController = require('../controllers/admin/orderController/orderController')
 const auth = require('../middleware/auth')
 
 const multer = require('multer')
@@ -125,6 +126,15 @@ adminRoute.route('/products/deleteImage')
            .post(productController.deleteSingleProductImage)
 
 
+       // Order Management..!
+adminRoute.route('/orders')
+          .get(orderController.getOrders)
 
+adminRoute.route('/orders/viewOrder/:id')    
+          .get(orderController.viewOrder) 
+          
+// Order status manipulate..!
+adminRoute.route('/orders/:id/status') 
+          .patch(orderController.updateOrderStatus)         
 
 module.exports = adminRoute;         

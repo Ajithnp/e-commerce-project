@@ -25,7 +25,7 @@
         display: inline-block;
         padding: 8px 16px;
         background-color: #f97316;
-        color: white;
+        color: rgb(255, 255, 255);
         text-decoration: none;
         border: none;
         border-radius: 4px;
@@ -139,22 +139,9 @@
                                     <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
                                     <td><span class="status status-<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span></td>
                                     <td>$<%= order.totalAmount.toFixed(2) %></td>
-                                    <td><a href="#" class="btn">View Order</a></td>
+                                    <td><a href="#" class="btn" onclick="orderDetails('<%= order._id %>')">View Order</a></td>
                                 </tr>
-                                <!-- <tr>
-                                    <td>#1002</td>
-                                    <td>June 10, 2024</td>
-                                    <td><span class="status status-shipped">Shipped</span></td>
-                                    <td>$189.50</td>
-                                    <td><a href="#" class="btn">View Order</a></td>
-                                </tr>
-                                <tr>
-                                    <td>#1003</td>
-                                    <td>June 5, 2024</td>
-                                    <td><span class="status status-delivered">Delivered</span></td>
-                                    <td>$352.75</td>
-                                    <td><a href="#" class="btn">View Order</a></td>
-                                </tr> -->
+                               
                                 <% }) %>
                                 <% } %>
                             </tbody>
@@ -190,8 +177,11 @@
         }
     }
 
-    // Usage: toggleOrdersView(true) to show orders, toggleOrdersView(false) to show no orders message
-    // toggleOrdersView(false);
+   // Get order details function.
+
+   function orderDetails(orderId){
+    window.location.href = `/beats/user/orderDetails/${orderId}`;
+   }
 
 </script>
 

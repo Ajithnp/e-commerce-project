@@ -23,3 +23,87 @@ exports.getOrders = async (req, res, next)=>{
         
     }
 }
+
+// Get order details..!
+
+exports.getOrderDetails = async (req, res, next)=>{
+    const orderId = req.params.id;
+
+    try {
+        const order = await Order.findById(orderId)
+        .populate({
+            path: 'orderItems',
+            populate: {
+                path: 'product', // Populate product details
+                select: 'productName productImage colorStock' // Select fields you need
+            }
+        });
+
+        if(!order){
+            return res.status(400).json({message: "Order not found..!"})
+        }
+
+        res.status(200).render('user/order-details',{
+            order
+        })
+        
+    } catch (error) {
+        console.error('An error occured while loading order detail page..!');
+        next(error)
+        
+    }
+}
+
+// Order cancellation Handler..!
+exports.orderCancel = async (req, res, next) => {
+    const orderId = req.params.id;
+
+    try {
+        // Find the order and populate orderItems 
+        const order = await Order.findById(orderId).populate({
+            path: 'orderItems',
+            populate: {
+                path: 'product',
+                select: 'colorStock' 
+            }
+        });
+
+        if (!order) {
+            return res.status(400).json({ message: 'Order ID not found!' });
+        }
+
+        // Change order status to 'Cancelled'
+        order.orderStatus = 'Cancelled';
+
+        // Restore product quantities
+        for (const item of order.orderItems) {
+            const product = item.product; 
+
+            if (product) {
+                // Find the corresponding color stock
+                const selectedColorStock = product.colorStock.find(color => color.color === item.color);
+
+                if (selectedColorStock) {
+                    selectedColorStock.quantity += item.quantity; // Restore the quantity
+                    selectedColorStock.status = selectedColorStock.quantity > 0 ? 'Available' : 'Out of stock';
+                }
+            }
+        }
+
+        // Save updated product quantities
+        await Promise.all(order.orderItems.map(async item => {
+            const product = item.product; 
+            await product.save(); 
+        }));
+
+        // Save updated order status
+        await order.save();
+
+        res.status(200).json({ message: 'Order cancelled successfully!' });
+
+    } catch (error) {
+        console.error('An error occurred while cancelling the order:', error);
+        next(error);
+    }
+};
+
