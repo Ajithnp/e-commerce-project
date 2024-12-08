@@ -91,7 +91,7 @@ exports.updateOrderStatus = async (req, res, next) => {
 
                     if (selectedColorStock) {
                         selectedColorStock.quantity += item.quantity; // Restore quantity
-                        selectedColorStock.status = selectedColorStock.quantity > 0 ? 'Available' : 'Out of stock';
+                        selectedColorStock.status = selectedColorStock.quantity > 0 ? 'In stock' : 'Out of stock';
                     }
                 }
             }

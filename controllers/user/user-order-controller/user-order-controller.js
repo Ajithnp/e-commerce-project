@@ -10,11 +10,17 @@ const Order = require ('../../../models/order-modal')
 exports.getOrders = async (req, res, next)=>{
       const userId = req.session.user.id;
     try {
-        const orders = await Order.find({userId})
+        // find user.
+        let user = await User.findById(userId)
+
+
+        const orders = await Order.find({userId}).sort({ createdAt: -1 })
             .populate('orderItems')
             .populate('userId')
+            .exec();
         res.status(200).render('user/user-order-details',{
-            orders
+            orders,
+            user
         })
         
     } catch (error) {
@@ -28,8 +34,11 @@ exports.getOrders = async (req, res, next)=>{
 
 exports.getOrderDetails = async (req, res, next)=>{
     const orderId = req.params.id;
+    const userId = req.session.user.id;
 
     try {
+        
+         const user = await User.findById(userId)
         const order = await Order.findById(orderId)
         .populate({
             path: 'orderItems',
@@ -44,7 +53,8 @@ exports.getOrderDetails = async (req, res, next)=>{
         }
 
         res.status(200).render('user/order-details',{
-            order
+            order,
+            user
         })
         
     } catch (error) {
@@ -57,6 +67,7 @@ exports.getOrderDetails = async (req, res, next)=>{
 // Order cancellation Handler..!
 exports.orderCancel = async (req, res, next) => {
     const orderId = req.params.id;
+    const {reason}= req.body;
 
     try {
         // Find the order and populate orderItems 
@@ -74,6 +85,8 @@ exports.orderCancel = async (req, res, next) => {
 
         // Change order status to 'Cancelled'
         order.orderStatus = 'Cancelled';
+        order.cancelReason = reason;
+
 
         // Restore product quantities
         for (const item of order.orderItems) {

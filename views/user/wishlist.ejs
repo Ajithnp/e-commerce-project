@@ -1,4 +1,21 @@
-<%- include('../partials/user/header2') %>    
+<%- include('../partials/user/header2') %>  
+<style>
+.text-green {
+    color: green; /* For "In stock" */
+}
+
+.text-red {
+    color: red; /* For "Out of stock" */
+}
+
+.text-blue {
+    color: blue; /* For "Available" */
+}
+
+.text-gray {
+    color: gray; /* For unavailable or other statuses */
+} 
+</style>
 
 <main class="main">
     <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -18,93 +35,140 @@
 
     <div class="page-content">
         <div class="container">
+            <% if (wishlist && wishlist.length > 0) { %>
             <table class="table table-wishlist table-mobile">
                 <thead>
                     <tr>
                         <th>Product</th>
+                        <th>Color</th>
                         <th>Price</th>
-                        <th>Stock Status</th>
-                        <th></th>
-                        <th></th>
+                        <th>Stock</th>
+
+                        <!-- <th>Stock Status</th> -->
+                        
                     </tr>
                 </thead>
 
                 <tbody>
+                    <% wishlist.forEach(item => { %>
+                       
+
+                   
                     <tr>
                         <td class="product-col">
                             <div class="product">
                                 <figure class="product-media">
                                     <a href="#">
-                                        <img src="assets/images/products/table/product-1.jpg" alt="Product image">
+                                        <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product image">
                                     </a>
                                 </figure>
 
                                 <h3 class="product-title">
-                                    <a href="#">Beige knitted elastic runner shoes</a>
+                                    <a href="#"><%= item.productId.productName %></a>
                                 </h3><!-- End .product-title -->
                             </div><!-- End .product -->
                         </td>
-                        <td class="price-col">$84.00</td>
-                        <td class="stock-col"><span class="in-stock">In stock</span></td>
-                        <td class="action-col">
-                            <div class="dropdown">
-                            <button class="btn btn-block btn-outline-primary-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="icon-list-alt"></i>Select Options
-                            </button>
+                        <td>
+                            <!-- Dropdown for selecting color -->
+                            <select id="color-select-<%= item.productId._id %>" onchange="updateColorDetails('<%= item.productId._id %>', this.value)">
+                                <% item.productId.colorStock.forEach(function(colorItem) { %>
+                                    <option  value="<%= colorItem.color %>"><%= colorItem.color %></option>
+                                <% }); %>
+                            </select>
+                        </td>
+                       
+                       
+                
+                        <td class="price-col">$<%= item.productId.salePrice.toFixed(2) %></td>
 
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">First option</a>
-                                <a class="dropdown-item" href="#">Another option</a>
-                                <a class="dropdown-item" href="#">The best option</a>
-                              </div>
-                            </div>
+                        <td class="stock-col" id="stock-status-<%= item.productId._id %>">
+                            <% const firstColor = item.productId.colorStock[0]; %>
+                            <span class="<%= firstColor.status === 'In stock' ? 'text-green' : (firstColor.status === 'Out of stock' ? 'text-red' : 'text-blue') %>">
+                                <%= firstColor.status %>
+                            </span>
+                            <!-- <span class="<%= firstColor.status === 'In stock' ? 'text-green' : 'text-red' %>"><%= firstColor.status %></span> -->
                         </td>
-                        <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="product-col">
-                            <div class="product">
-                                <figure class="product-media">
-                                    <a href="#">
-                                        <img src="assets/images/products/table/product-2.jpg" alt="Product image">
-                                    </a>
-                                </figure>
+                        
 
-                                <h3 class="product-title">
-                                    <a href="#">Blue utility pinafore denim dress</a>
-                                </h3><!-- End .product-title -->
-                            </div><!-- End .product -->
-                        </td>
-                        <td class="price-col">$76.00</td>
-                        <td class="stock-col"><span class="in-stock">In stock</span></td>
-                        <td class="action-col">
-                            <button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
-                        </td>
-                        <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="product-col">
-                            <div class="product">
-                                <figure class="product-media">
-                                    <a href="#">
-                                        <img src="assets/images/products/table/product-3.jpg" alt="Product image">
-                                    </a>
-                                </figure>
+                        <!-- <td class="stock-col"><span class="out-of-stock" id="stock-status"></span></td> -->
 
-                                <h3 class="product-title">
-                                    <a href="#">Orange saddle lock front chain cross body bag</a>
-                                </h3><!-- End .product-title -->
-                            </div><!-- End .product -->
-                        </td>
-                        <td class="price-col">$52.00</td>
-                        <td class="stock-col"><span class="out-of-stock">Out of stock</span></td>
+
+                       
+
+
                         <td class="action-col">
-                            <button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
+                           
+                                <button class="btn btn-block btn-outline-primary-2"
+                                 id="add-to-cart-<%= item.productId._id %>"
+                                 data-default-color="<%= item.productId.colorStock[0].color %>"
+                                  onclick="addToCart('<%= item.productId._id %>')">
+                                    <i class="icon-cart-plus"></i>Add to Cart
+                                </button>
+                            
+                            
+
                         </td>
-                        <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+                        <td class="remove-col"><button class="btn-remove" onclick="removeFromWishlist('<%=item.productId._id%>')"><i class="icon-close"></i></button></td>
                     </tr>
+                    <script>
+                        function updateColorDetails(itemId, selectedColor) {
+                            // Get stock details of all colors
+
+
+                           
+                            const products = <%- JSON.stringify(wishlist) %>;
+
+                            let currentItem = products.filter(item=> item.productId._id == itemId)
+
+                            const colorStock = currentItem[0].productId.colorStock
+
+
+                            
+        
+                            // Find the stock details for the selected color
+                            const selectedColorStock = colorStock.find(stock => stock.color === selectedColor);
+        
+                            // Update the stock status display
+                            const stockStatusElement = document.getElementById(`stock-status-${itemId}`);
+                            const cartButtonElement = document.getElementById(`add-to-cart-${itemId}`);
+
+                            cartButtonElement.dataset.defaultColor = selectedColor;
+                            
+                            
+
+        
+                            if (selectedColorStock) {
+                                const statusClass = selectedColorStock.status =='In stock' ? 'text-green' : selectedColorStock.status == 'Out of stock' ? 'text-red' : selectedColorStock.status == 'Available' ? 'text-blue' : 'text-grey';
+                                stockStatusElement.innerHTML = `<span class="${statusClass}">${selectedColorStock.status}</span>`;
+
+                                cartButtonElement.disabled = selectedColorStock.status === 'Out of stock';
+
+                                cartButtonElement.dataset.selectedColor = selectedColor;
+
+                             
+
+                            } else {
+                                stockStatusElement.innerHTML = '<span class="text-gray">Unavailable</span>';
+                                
+                                cartButtonElement.disabled = true;
+                                cartButtonElement.dataset.selectedColor = '';
+                            }
+                            
+                        }
+                    </script>
+                
+                    <% }) %>
                 </tbody>
-            </table><!-- End .table table-wishlist -->
+            </table>  
+            <% } else { %>
+                <div class="empty-wishlist-content text-center">
+                    <i class="fas fa-heart fa-3x"></i>
+                    <h2>Your wishlist is empty</h2>
+                    <p>Looks like you haven't added anything to your wishlist yet.</p>
+                    <p>Explore our amazing products and find something you'll love!</p>
+                    <a href="/user/store" class="btn btn-primary">Start Shopping</a>
+                </div>
+            <% } %>
             <div class="wishlist-share">
                 <div class="social-icons social-icons-sm mb-2">
                     <label class="social-label">Share on:</label>
@@ -118,5 +182,7 @@
         </div><!-- End .container -->
     </div><!-- End .page-content -->
 </main><!-- End .main -->
+
+
 
 <%- include('../partials/user/footer') %>  

@@ -263,6 +263,8 @@
 <script src="/user/assets/js/jquery.magnific-popup.min.js"></script>
 <!-- Main JS File -->
 <script src="/user/assets/js/main.js"></script>
+<!-- <script src="/user/assets/add.to.cart.js" defer></script> -->
+<script src="/user/assets/add.wishlist.js" defer></script>
 
 <script>
     
@@ -345,13 +347,39 @@ document.querySelectorAll('.color-option').forEach(option => {
         
         // Update displayed selected color
         document.getElementById('selected-color').textContent = selectedColor;
+
+        const wishlistButton = document.querySelector('.btn-wishlist');
+        wishlistButton.setAttribute('data-selected-color', selectedColor);
     });
 });
 
 
 // Add to Cart functionality
 async function addToCart(productId) {
- 
+
+    // Check if user is authenticated
+
+    const authResponse = await fetch('/api/user/check-auth');
+
+    const authData = await authResponse.json();
+    if (!authData.isAuthenticated) {
+        // Show SweetAlert instead of redirecting immediately
+        Swal.fire({
+            title: 'You need to log in!',
+            text: 'Please log in to add items to your cart.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to login page if user clicks "Login"
+                window.location.href = '/user/login'; 
+            }
+            
+        });
+        return;
+    }
 
     let color = selectedColor
     let quantity =1;
@@ -379,6 +407,7 @@ async function addToCart(productId) {
                 title:  '<span class="inline-title">✔ Product added to cart!</span>',
                
                 showConfirmButton: false,
+                position: "top-end",
                  width: '300px', // Set the desired width here
                  background: "black",
                  timer: 1000,
@@ -399,12 +428,12 @@ async function addToCart(productId) {
         
     }
 					
-	}        
+	}       
     
     
     
-
-
+    
+    
     
 </script>
 </body>

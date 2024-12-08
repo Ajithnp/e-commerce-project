@@ -4,6 +4,8 @@ const Cart = require('../../../models/cart-model')
 const Address = require('../../../models/user-address')
 const OrderItem = require('../../../models/oredr-items-model')
 const Order = require ('../../../models/order-modal')
+const Wishlist = require('../../../models/wishlist-model')
+const Coupon = require('../../../models/coupon-model')
 // const userAddress = require('../../../models/user-address')
 
 exports.getUserCart = async (req, res, next)=>{
@@ -27,12 +29,13 @@ exports.getUserCart = async (req, res, next)=>{
     }
 }
 
-
 // Add to cart handler..!
 
 exports.addToCart = async (req, res, next) => {
     const { productId, color, quantity } = req.body;
+    const flag = req.body?.flag;
     const userId = req.session.user.id;
+
 
     try {
         // Check if the user already has a cart
@@ -78,6 +81,7 @@ exports.addToCart = async (req, res, next) => {
                 productId,
                 quantity,
                 price: product.salePrice,
+                actualPrice:product.regularPrice,
                 totalPrice: product.salePrice * quantity,
                 selectedColor: color
             };
@@ -90,6 +94,19 @@ exports.addToCart = async (req, res, next) => {
 
         // Save updated cart
         await cart.save();
+
+
+        // remove item from wishlist
+
+        if(flag){
+             await Wishlist.findOneAndUpdate(
+                {userId},
+                {$pull : {products: {productId :productId}}},
+                {new:true}
+            )
+        }
+
+      
         
         return res.status(200).json(cart); // Return updated cart as response
 
@@ -197,13 +214,21 @@ exports.getCheckoutPage = async(req, res, next)=>{
     const userId = req.session.user.id;
     try {
        
-        const [userData, address, cart] = await Promise.all([
+        const [userData, address, cart,coupons] = await Promise.all([
             User.findById(userId),
             Address.find({user:userId}),
-            Cart.findOne({userId}).populate('items.productId')
+            Cart.findOne({userId}).populate('items.productId'),
+            Coupon.find({isActive:true})
         ]);
 
+         // Calculate total savings
+        let totalSavings = 0;
 
+        cart.items.forEach(item => {
+            const product = item.productId; 
+            const savingsPerItem = (product.regularPrice - product.salePrice) * item.quantity;
+            totalSavings += Math.max(savingsPerItem, 0); 
+        });
 
        
 
@@ -238,6 +263,8 @@ exports.getCheckoutPage = async(req, res, next)=>{
             user:userData,
             userAddress:address,
             cart,
+            totalSavings,
+            coupons,
             cartItems: JSON.stringify(cart.items)
         })
     } catch (error) {
@@ -320,3 +347,19 @@ exports.orderConfirm = async (req, res, next)=>{
         next(error);
     }
 };
+
+
+// Show Order success page..!
+
+exports.orderSuccessPage = async (req, res, next)=>{
+    const userId = req.session.user.id;
+
+    try {
+        const user = await User.findById(userId);
+        return res.status(200).render('user/order-successfully',{user})
+    } catch (error) {
+        console.error('An error occured while loading the order success page..!',error);
+        next(error)
+        
+    }
+}

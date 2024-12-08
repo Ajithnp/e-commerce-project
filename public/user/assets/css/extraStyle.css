@@ -1,0 +1,107 @@
+.wallet-content {
+    max-width: 1000px;
+    /* margin: 0 auto; */
+    padding: 20px;
+    width: 100%;
+    font-family: Arial, sans-serif;
+}
+.wallet-header {
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.wallet-balance {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #047857;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f97316;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+.btn:hover {
+    background-color: #ea580c;
+}
+.btn-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6b7280;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+.back-button:hover {
+    background-color: #4b5563;
+}
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.transaction-table th,
+.transaction-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+.transaction-table th {
+    background-color: #f3f4f6;
+    font-weight: bold;
+}
+.transaction-table tr:last-child td {
+    border-bottom: none;
+}
+.transaction-id {
+    font-size: 0.9em;
+    color: #6b7280;
+}
+.transaction-date {
+    font-size: 0.9em;
+    color: #6b7280;
+}
+.transaction-amount {
+    font-weight: bold;
+}
+.transaction-amount.credit {
+    color: #047857;
+}
+.transaction-amount.debit {
+    color: #dc2626;
+}
+@media (max-width: 768px) {
+    .wallet-balance {
+        font-size: 2em;
+    }
+    .transaction-table {
+        font-size: 14px;
+    }
+    .transaction-table th,
+    .transaction-table td {
+        padding: 8px 10px;
+    }
+}

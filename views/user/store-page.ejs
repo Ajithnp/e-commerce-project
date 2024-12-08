@@ -1,4 +1,5 @@
 <%- include('../partials/user/header2') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <main class="main">
 	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -52,7 +53,7 @@
 					<div class="toolbox">
 						<div class="toolbox-left">
 							<div class="toolbox-info">
-								Showing <span>9 of 56</span> Products
+								Showing <span>-</span> Products
 							</div><!-- End .toolbox-info -->
 						</div><!-- End .toolbox-left -->
 
@@ -75,7 +76,7 @@
 								</div>
 							</div><!-- End .toolbox-sort -->
 							<div class="toolbox-layout">
-								<a href="#" onclick="showToast()" class="btn-layout">
+								<a href="#" class="btn-layout">
 									<svg width="16" height="10">
 										<rect x="0" y="0" width="4" height="4" />
 										<rect x="6" y="0" width="10" height="4" />
@@ -84,37 +85,7 @@
 									</svg>
 								</a>
 
-								<script>
-									const toastBox = document.getElementById('toastBox')
 
-									
-
-function showToast() {
-    // Create the toast element
-    const toast = document.createElement('div');
-    toast.classList.add('toast');
-    toast.innerHTML = 'New product added in cart!';
-
-    // Append the toast to the container
-    toastBox.appendChild(toast);
-
-    // Show the toast with animation
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10); // Slight delay for the transition to take effect
-
-    // Hide the toast after 3 seconds
-    setTimeout(() => {
-        toast.classList.add('hide');
-        // Remove the toast after the fade-out effect
-        setTimeout(() => {
-            toastBox.removeChild(toast);
-        }, 500); // Match the duration of the hide animation
-    }, 3000);
-}
-
-
-								</script>
 
 								<a href="category-2cols.html" class="btn-layout">
 									<svg width="10" height="10">
@@ -164,7 +135,7 @@ function showToast() {
 										</a>
 
 										<div class="product-action-vertical">
-											<a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+											<a class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist('<%= products[i]._id %>')"><span style="cursor: pointer;">add to wishlist</span></a>
 											<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
 											<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
 										</div><!-- End .product-action-vertical -->
@@ -197,13 +168,6 @@ function showToast() {
 						</div><!-- End .row -->
 					</div><!-- End .products -->
 
-				
-
-
-
-
-
-
 
 					<nav aria-label="Page navigation">
 						<ul class="pagination justify-content-center">
@@ -234,7 +198,7 @@ function showToast() {
 						<div class="widget widget-collapsible">
 							<h3 class="widget-title">
 								<a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1">
-									Category
+									Brands
 								</a>
 							</h3><!-- End .widget-title -->
 
@@ -245,13 +209,10 @@ function showToast() {
 
 
 										<div class="form-group">
-											<label for="brand-select">Select a Brand:</label>
-											<select id="brand-select" class="form-control">
-											  <option value="">-- Choose a Brand --</option>
-											  <% brands.forEach(brand=>{%>
-											  <option value="<%=brand.brandName%>"><%=brand.brandName%></option>
-											  <%})%>
-											</select>
+											<% brands.forEach(brand => { %>
+												<label><input type='checkbox' onchange='filterByBrand("<%=brand.brandName%>")'> 
+												<%= brand.brandName %></label><br/>
+												<% }) %>
 										  </div>
 										  
 										
@@ -425,25 +386,28 @@ function showToast() {
 
 
 <script>
-	document.getElementById("sortOptions").addEventListener("change", function() {
+document.getElementById("sortOptions").addEventListener("change", function() {
     const selectedOption = this.value;
-
-    // Redirect to the same page with the selected sorting option as a query parameter
-    window.location.href = `?sortBy=${selectedOption}`;
+    window.location.href = `?sortBy=${selectedOption}`; // Redirect with sort option
 });
 
-
-// 
-// Get the select element
-const brandSelect = document.getElementById('brand-select');
-
-// Add a change event listener
-brandSelect.addEventListener('change', function () {
-  const selectedBrand = this.value; // Get the selected value
-
-  window.location.href =`?brand=${selectedBrand.toString()}`;
-});
-
+// Function to filter products by brand dynamically
+function filterByBrand(brandName) {
+    const currentUrl = new URL(window.location.href);
+    const existingBrands = currentUrl.searchParams.getAll('brand');
+    
+    if(existingBrands.includes(brandName)) {
+      existingBrands.splice(existingBrands.indexOf(brandName), 1); // Remove if already present
+    } else {
+      existingBrands.push(brandName); // Add if not present
+    }
+    
+    currentUrl.searchParams.delete('brand'); // Clear existing brands from URL
+    
+    existingBrands.forEach(brand => currentUrl.searchParams.append('brand', brand)); // Re-add updated brands
+    
+    window.location.href = currentUrl.toString(); // Redirect with updated filters
+}
  
 </script>
 

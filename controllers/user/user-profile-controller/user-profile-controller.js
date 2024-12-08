@@ -97,9 +97,15 @@ exports.userProfileEdit = async(req, res, next)=>{
 // New Address add form (Get){
 
 exports.getNewAddressForm = async (req, res, next)=>{
+    const userId = req.session.user.id;
 
     try {
-        return res.status(200).render('user/user-address-new-address')
+
+        // find user..!
+        const user = await User.findById(userId)
+        return res.status(200).render('user/user-address-new-address',{
+            user
+        })
         
     } catch (error) {
         console.error('An error occured while loading new address form')

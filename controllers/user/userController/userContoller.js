@@ -59,7 +59,6 @@ exports.getLandingPage = async (req, res, next)=>{
 // User sign-Up handler...!
 exports.userRegistration = async (req,res, next )=>{ 
     const { name, email, phone, password } = req.body
-    console.log('post email',email);
     
     try {
 

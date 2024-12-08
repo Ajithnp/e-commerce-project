@@ -11,6 +11,9 @@ const adminRoute = require ('./routes/admin-route')
 
 const errorHandler = require('./middleware/error-handler')
 const morgan = require('morgan')
+const crypto = require('crypto')
+const Razorpay = require('razorpay')
+const generate = require('./utils/receiptIdGenerator')
 
 const app = express()
 
@@ -76,5 +79,24 @@ mongoose.connect (process.env.MONGODB_URL)
 
  // Error handler
  app.use(errorHandler);
+
+ //RAZOR PAY INTEGRATION---
+
+
+
+
+
+
+
+
+ app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.path}`);
+    next();
+});
+
+
+
+
+
 
  app.listen(PORT, ()=>console.log('server is running http://localhost:3001'))

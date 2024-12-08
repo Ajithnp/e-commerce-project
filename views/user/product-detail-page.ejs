@@ -26,17 +26,7 @@
                         <li class="breadcrumb-item"><a href="#">Products</a></li>
                     </ol>
 
-                    <!-- <nav class="product-pager ml-auto" aria-label="Product">
-                        <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous" tabindex="-1">
-                            <i class="icon-angle-left"></i>
-                            <span>Prev</span>
-                        </a>
-
-                        <a class="product-pager-link product-pager-next" href="#" aria-label="Next" tabindex="-1">
-                            <span>Next</span>
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </nav>End .pager-nav -->
+                
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
 
@@ -62,17 +52,6 @@
                                             </a>
                                             <% }) %>
 
-                                            <!-- <a class="product-gallery-item" href="#" data-image="assets/images/products/single/centered/2.jpg" data-zoom-image="/uploads/re-image/<%=product.productImage[1]%>">
-                                                <img src="/uploads/re-image/<%=product.productImage[1]%>" alt="product cross">
-                                            </a>
-
-                                            <a class="product-gallery-item" href="#" data-image="assets/images/products/single/centered/3.jpg" data-zoom-image="/uploads/re-image/<%=product.productImage[2]%>">
-                                                <img src="/uploads/re-image/<%=product.productImage[2]%>" alt="product with model">
-                                            </a>
-
-                                            <a class="product-gallery-item" href="#" data-image="assets/images/products/single/centered/4.jpg" data-zoom-image="/uploads/re-image/<%=product.productImage[3]%>">
-                                                <img src="/uploads/re-image/<%=product.productImage[3]%>" alt="product back">
-                                            </a> -->
                                         </div><!-- End .product-image-gallery -->
                                     </div><!-- End .row -->
                                 </div><!-- End .product-gallery -->
@@ -113,11 +92,7 @@
                                                             <%= colorStock.quantity > 0 ? 'In Stock' : 'Out of stock' %>
                                                         </span> -->
                                                         </a>
-                                            <!-- <a href="#" class="active" style="background: #d4d4d4;"><span class="sr-only">Color name</span></a>
-                                            <span></span>
-                                            <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                            <span></span>
-                                            <a href="#" style="background: #3e21ff;"><span class="sr-only">Color name</span></a> -->
+                 
                                             <% }) %>
                                         </div><!-- End .product-nav -->
                                     </div><!-- End .details-filter-row -->
@@ -135,7 +110,11 @@
                                         </div><!-- End .details-action-col -->
 
                                         <div class="details-action-wrapper">
-                                            <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
+                                            <a href="#" class="btn-product btn-wishlist"
+                                             title="Wishlist"
+                          
+                                              onclick="addToWishlist('<%=product._id%>')">
+                                              <span>Add to Wishlist</span></a>
                                             <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a> -->
                                         </div><!-- End .details-action-wrapper -->
                                     </div><!-- End .product-details-action -->
@@ -198,20 +177,7 @@
                                         <%=product.additionalInfo%>
                                         
                                     </span>
-                                   
-
-                                    <!-- <h3>Fabric & care</h3>
-                                    <ul>
-                                        <li>Faux suede fabric</li>
-                                        <li>Gold tone metal hoop handles.</li>
-                                        <li>RI branding</li>
-                                        <li>Snake print trim interior </li>
-                                        <li>Adjustable cross body strap</li>
-                                        <li> Height: 31cm; Width: 32cm; Depth: 12cm; Handle Drop: 61cm</li>
-                                    </ul> -->
-
-                                    <!-- <h3>Size</h3>
-                                    <p>one size</p> -->
+                                
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
                             <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
@@ -316,7 +282,7 @@
                                 </a>
 
                                 <div class="product-action-vertical">
-                                    <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                    <a class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
                                     <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
                                     <a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
                                 </div><!-- End .product-action-vertical -->

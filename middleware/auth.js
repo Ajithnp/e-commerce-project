@@ -57,3 +57,10 @@ exports.userAuth = async (req, res, next )=>{
 
 
 
+// Middleware for checking authentication
+exports.isAuthenticated = (req, res, next) => {
+    if (req.session.user) {
+        return res.json({ isAuthenticated: true });
+    }
+    return res.json({ isAuthenticated: false });
+};

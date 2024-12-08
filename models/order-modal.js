@@ -40,12 +40,29 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod:{
         type: String,
-        enum: ['COD','Card payment','Wallet','UPI','Bank Transfer','Paypal'],
+        enum: ['COD','Card payment','Wallet','Razor-Pay','Bank Transfer','Paypal'],
         required: true
     },
+    subTotal:{
+        type:Number
+    },
+    totalDiscount:{
+        type: Number
+    },
+    couponDiscount:{
+        type:Number
+    },
+
+    savings:{
+        type:Number
+    },
+
     totalAmount:{
-        type: Number,
-        
+        type: Number,  
+    },
+    cancelReason:{
+        type: String,
+        required :false
     }
 
 },{timestamps:true});

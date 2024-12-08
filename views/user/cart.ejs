@@ -1,5 +1,6 @@
 
 <%- include('../partials/user/header2') %>  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     .btnclass{
         border: none;
@@ -19,6 +20,7 @@
     font-weight: bold;
 }
 
+
 .custom-popup {
   display: flex;
   align-items: center; /* Align content vertically */
@@ -31,6 +33,69 @@
   font-size: 16px; /* Adjust title font size */
   margin: 0; /* Remove any default margin */
 }
+
+.empty-cart-message {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: #f8f9fa;
+        width: 100%;
+        /* background-color: white; */
+    }
+    .empty-cart-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 500px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .empty-cart-illustration {
+        font-size: 64px;
+        color: #6c757d;
+        margin-bottom: 24px;
+        position: relative;
+    }
+    .empty-cart-illustration .fa-shopping-cart {
+        opacity: 0.3;
+    }
+    .empty-cart-illustration .fa-times {
+        position: absolute;
+        font-size: 32px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #dc3545;
+    }
+    .empty-cart-content h2 {
+        font-size: 28px;
+        color: #343a40;
+        margin-bottom: 16px;
+    }
+    .empty-cart-content p {
+        font-size: 16px;
+        color: #6c757d;
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    .continue-shopping-btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #f07111;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+    .continue-shopping-btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+    .continue-shopping-btn i {
+        margin-right: 8px;
+    }
 </style>
 
 
@@ -53,6 +118,7 @@
     <div class="page-content">
         <div class="cart">
             <div class="container">
+                
                 <div class="row">
                     <div class="col-lg-9">
                         <table class="table table-cart table-mobile">
@@ -61,6 +127,7 @@
                                     <th>Product</th>
                                     <th>Color</th>
                                     <th>Status</th>
+                                    <th></th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
@@ -99,8 +166,8 @@
                                              %>
                                              <span class="<%= statusClass %>"><%= status %></span>
                                     </td>
-
-                                    <td class="price-col">$<%= item.price.toFixed(2)%></td>
+                                    <td class="price-col" style="text-decoration: line-through; color: #888;">₹<%= item.actualPrice %></td>
+                                    <td class="price-col">₹<%= item.price.toFixed(2)%></td>
                                     <td class="quantity-col">
                                         <div class="cart-product-quantity">
                                             
@@ -110,17 +177,12 @@
                                             <button class="btnclass" onclick="updateQuantity('<%=item._id%>',1)"><i class="icon-plus"></i></button>
                                         </div><!-- End .cart-product-quantity -->
                                     </td>
-                                    <td class="total-col" id="total-<%= item._id%>">$<%= item.totalPrice.toFixed(2)%></td>
+                                    <td class="total-col" id="total-<%= item._id%>">₹<%= item.totalPrice.toFixed(2)%></td>
                                     <td class="remove-col"><button class="btn-remove" onclick="removeFromCart('<%= item._id%>')"><i class="icon-close"></i></button></td>
                                 </tr>
                                 <% subTotal += item.totalPrice; %>
                                 <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" style="text-align:center;">Your cart is empty.</td>
-                                    </tr>
-                                <% } %>
-                                
+                
                             </tbody>
                         </table><!-- End .table table-wishlist -->
 
@@ -140,7 +202,7 @@
                                 <tbody>
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
-                                        <td><%= subTotal.toFixed(2) %></td>
+                                        <td>₹<%= subTotal.toFixed(2) %></td>
                                     </tr><!-- End .summary-subtotal -->
                                     <tr class="summary-shipping">
                                         <td>Shipping:</td>
@@ -154,7 +216,7 @@
                                                 <label class="custom-control-label" for="free-shipping">Free Shipping</label>
                                             </div><!-- End .custom-control -->
                                         </td>
-                                        <td>$0.00</td>
+                                        <td>₹0.00</td>
                                     </tr><!-- End .summary-shipping-row -->
 
                                     <tr class="summary-shipping-row">
@@ -184,21 +246,52 @@
 
                                     <tr class="summary-sutotal">
                                         <td>Total:</td>
-                                        <td><span id="total1"><%= subTotal.toFixed(2) %></span></td>
+                                        <td><span id="total1">₹<%= subTotal.toFixed(2) %></span></td>
                                     </tr><!-- End .summary-total -->
                                 </tbody>
                             </table><!-- End .table table-summary -->
+                            <% if (cart && cart.items.length > 0) { %> 
+                                <button id="checkoutButton" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</button> 
+                            <% } %>
 
-                            <button id="checkoutButton" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+                            <!-- <button id="checkoutButton" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a> -->
                         </div><!-- End .summary -->
 
                         <a href="/user/store" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
                     </aside><!-- End .col-lg-3 -->
+                    
                 </div><!-- End .row -->
+                <% } else { %>
+                        
+                    <div colspan="6" class="empty-cart-message">
+                        <div class="empty-cart-content">
+                            <div class="empty-cart-illustration">
+                                <i class="fas fa-shopping-cart"></i>
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <h2>Your cart is empty</h2>
+                            <p>Looks like you haven't added anything to your cart yet.</p>
+                            <p>Discover our amazing products and find something you'll love!</p>
+                            <a href="/user/store" class="continue-shopping-btn">
+                                <i class="fas fa-store"></i> Start Shopping
+                            </a>
+                        </div>
+                    </div>
+                
+                
+                <% } %>
+        
+                
             </div><!-- End .container -->
+         
+
         </div><!-- End .cart -->
+        
     </div><!-- End .page-content -->
+    
+
 </main><!-- End .main -->
+
 
 <script>
     document.getElementById('checkoutButton').addEventListener('click', async function(e){

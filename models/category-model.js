@@ -26,6 +26,6 @@ const categorySchema = new monggose.Schema({
     }
 
 
-})
+},{timestamps: true})
 
 module.exports = monggose.model ('Category', categorySchema)

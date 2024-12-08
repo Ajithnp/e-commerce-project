@@ -1,0 +1,209 @@
+
+<%- include('../partials/admin/header') %>
+
+<div class="coupon-list-container">
+    <div class="page-header">
+        <h1 class="page-title">Coupon Management</h1>
+        <a href="/api/v1/admin/coupons/add" class="add-coupon-btn">
+            <i class="fas fa-plus"></i> Add New Coupon
+        </a>
+    </div>
+
+    <div class="coupon-table-container">
+        <table class="coupon-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Discount</th>
+                    <th>Max:Discount</th>
+                    <th>Expiry Date</th>
+                    <th>Usage</th>
+                    <th>Applicable</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% coupons.forEach(coupon => { %>
+                <tr>
+                    <td><%= coupon.code %></td>
+                    <td><%= coupon.description %></td>
+                    <%if(coupon.discountType === 'percentage') {%>
+                    <td><%= coupon. minDiscountValue %>%</td>
+                    <% }else{ %>
+                        <td><%= coupon. minDiscountValue %></td>
+                        <% } %>
+                    <td><%= coupon. maxDiscountValue%></td>
+                    <td><%= coupon.expiryDate.getFullYear() + '-' + String(coupon.expiryDate.getMonth() + 1).padStart(2, '0') + '-' + String(coupon.expiryDate.getDate()).padStart(2, '0') %></td>
+                    <td><%= coupon.usage %></td>
+                    <td><%= coupon.conditions %>
+                        <% if(coupon.conditions === 'minimum_purchase') {%>
+                         <br> ₹<%=coupon.minPurchaseAmount%>
+                         <% } %>
+                        </td>
+                    <% if(coupon.isActive) {%>
+                    <td><span class="status-badge active">Active</span></td>
+                    <%}else{%>
+                        <td><span class="status-badge inactive">Inactive</span></td>
+                        <%}%>
+                    <td class="action-buttons">
+                       <% if (coupon.isActive) {%>
+                        <button class="action-btn unlist-btn" onclick="confirmUnlist('<%= coupon._id %>')">Unlist</button>
+                        <% } else {%>
+                            <button class="action-btn list-btn" onclick="confirmList('<%= coupon._id %>')">List</button>
+                            <% } %>
+
+                        <button class="action-btn edit-btn" onclick="editCoupon('<%= coupon._id %>')">Edit</button>
+                        <button class="action-btn offer-btn" onclick="deleteCoupon('<%= coupon._id%>')">Delete</button>
+                    </td>
+                </tr>
+                <% }) %>
+                <!-- More rows as needed -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .coupon-list-container {
+        padding: 20px;
+        background-color: #1f2937;
+        color: white;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        color: white;
+    }
+
+    .add-coupon-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background-color: #374151;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .add-coupon-btn:hover {
+        background-color: #4B5563;
+    }
+
+    .add-coupon-btn i {
+        margin-right: 8px;
+    }
+
+    .coupon-table-container {
+        background-color: #111827;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .coupon-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .coupon-table th {
+        background-color: #374151;
+        color: white;
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .coupon-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #374151;
+        color: #E5E7EB;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-badge.active {
+        background-color: #059669;
+        color: white;
+    }
+
+    .status-badge.inactive {
+        background-color: #e12121;
+        color: white;
+    }
+
+    .status-badge.inactive {
+        background-color: #DC2626;
+        color: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: opacity 0.2s;
+    }
+
+    .action-btn:hover {
+        opacity: 0.9;
+    }
+
+    .list-btn {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .unlist-btn{
+        background-color: #d82d2d;
+        color: white;
+
+    }
+
+    .edit-btn {
+        background-color: #3B82F6;
+        color: white;
+    }
+
+    .offer-btn {
+        background-color: #f91616;
+        color: white;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const listButtons = document.querySelectorAll('.list-btn');
+  
+
+    
+
+    
+
+    
+});
+</script>
+
+<%- include('../partials/admin/footer') %>

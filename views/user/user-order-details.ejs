@@ -41,17 +41,21 @@
         border-radius: 4px;
         font-size: 14px;
     }
-    .status-processing {
+    .status-Processing {
         background-color: #fef3c7;
         color: #92400e;
     }
-    .status-shipped {
+    .status-Shipped {
         background-color: #e0f2fe;
         color: #075985;
     }
-    .status-delivered {
+    .status-Delivered {
         background-color: #dcfce7;
         color: #166534;
+    }
+    .status-Cancelled {
+        background-color: #ea3737;
+        color: #ffffff;
     }
     .no-orders {
         text-align: center;
@@ -93,10 +97,10 @@
                     <aside class="col-md-4 col-lg-3">
                         <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="tab-dashboard-link" >Dashboard</a>
+                                <a class="nav-link" id="tab-dashboard-link" >Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-orders-link">Orders</a>
+                                <a class="nav-link" id="tab-orders-link"  href="/beats/user/orders">Orders</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="tab-downloads-link" href="/beats/user/accountDetails" >Account Details</a>
@@ -105,7 +109,7 @@
                                 <a class="nav-link" id="tab-address-link" href="/beats/user/showAddress" >Adresses</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-account-link">Sign Out</a>
+                                <a class="nav-link" id="logout-button">Sign Out</a>
                             </li>
                             
                             
@@ -136,8 +140,8 @@
                                     <% orders.forEach(order => { %>
                                 <tr>
                                     <td>#<%= order._id %></td>
-                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
-                                    <td><span class="status status-<%= order.orderStatus.toLowerCase() %>"><%= order.orderStatus %></span></td>
+                                    <td><%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></td>
+                                    <td><span class="status status-<%= order.orderStatus%>"><%= order.orderStatus %></span></td>
                                     <td>$<%= order.totalAmount.toFixed(2) %></td>
                                     <td><a href="#" class="btn" onclick="orderDetails('<%= order._id %>')">View Order</a></td>
                                 </tr>

@@ -1,6 +1,10 @@
 
 <%- include('../partials/user/header2') %> 
 <style>
+
+    #price-id{
+        margin-right: 1rem;
+    }
     .view-order-content {
         max-width: 800px;
         margin: 0 auto;
@@ -31,7 +35,7 @@
         border-radius: 4px;
         padding: 5px;
     }
-    .status-Deliverd {
+    .status-Delivered {
         background-color: #79e64f;
         color: #fefefe;
         border-radius: 4px;
@@ -39,7 +43,7 @@
     }
     .status-Shipped {
         background-color: #63d4ed;
-        color: #e3e1e1;
+        color: #2a2727;
         border-radius: 4px;
         padding: 5px;
     }
@@ -170,7 +174,7 @@
                             <h4>Order Details</h4>
                             <div class="detail-row">
                                 <span>Order Date:</span>
-                                <span><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                                <span>Date:<%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></span>
                             </div>
                             <div class="detail-row">
                                 <span>Shipping Address:</span>
@@ -188,12 +192,15 @@
                             <div class="order-item">
                                 <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product 1" class="item-image">
                                 <div class="item-details">
-                                    <h4><%= item.product.productName %></h4>
+                                    <h6><%= item.product.productName %></h6>
                                     <p>Color: <%= item.color %></p>
                                 </div>
                                 <span class="item-quantity">Qty: <%= item.quantity %></span>
                                 <br>
-                                <span class="item-price">$ <%= item.totalPrice.toFixed(2) %></span>
+                                <span class="item-price" id="price-id">$ <%= item.totalPrice.toFixed(2) %></span>
+                                <% if (order.orderStatus === 'Delivered') { %>
+                                    <button class="btn btn-warning ml-5px" onclick="returnProduct('<%= item.product._id %>', '<%= order._id %>')">Return</button>
+                                <% } %>
                             </div>
                             <% }) %>
                         </div>
@@ -215,13 +222,16 @@
                             <div class="summary-row summary-total">
                                 <span>Total:</span>
                                 <span>$<%=order.totalAmount%></span>
+
                             </div>
                         </div>
                     
-                        <% if (order.orderStatus !== 'Cancelled') { %> 
-                            <div style="margin-top: 20px; text-align: right;">
-                                <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%=order._id %>')">Cancel Order</button>
-                            </div>
+                        <% if (order.orderStatus === 'Delivered') { %>
+                            <!-- Return Button -->
+                            <button id="returnOrderBtn" class="btn btn-block btn-warning" onclick="returnOrder('<%= order._id %>')">Return</button>
+                        <% } else if (order.orderStatus !== 'Cancelled') { %> 
+                            <!-- Cancel Order Button -->
+                            <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%= order._id %>')">Cancel Order</button>
                         <% } %>
                     </div>
 
@@ -244,19 +254,40 @@ async function orderCancel(orderId) {
   });
 
   if (result.isConfirmed) {
-    try {
-      const response = await fetch(`/beats/user/cancelOrder/${orderId}`, { method: 'PATCH' });
+    // Show modal for cancellation reason
+    const { value: reason } = await Swal.fire({
+            title: 'Cancellation Reason',
+            input: 'text',
+            inputPlaceholder: 'Enter your reason for cancellation...',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to write something!';
+                }
+            }
+        });
 
-      if (!response.ok) {
-        const errorMessage = await response.json();
-        throw new Error(errorMessage.message || 'An error occurred..!');
-      }
+        if(reason){
+          try {
+             const response = await fetch(`/beats/user/cancelOrder/${orderId}`, { method: 'PATCH' ,
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({reason})
+             });
 
-      await Swal.fire(
-        'Cancelled!',
-        'Your order has been cancelled.',
-        'success'
-      );
+              if (!response.ok) {
+                const errorMessage = await response.json();
+                 throw new Error(errorMessage.message || 'An error occurred..!');
+           }
+
+         await Swal.fire(
+            'Cancelled!',
+             'Your order has been cancelled.',
+              'success'
+           );
 
       window.location.href = '/beats/user/orders';
     } catch (error) {
@@ -267,6 +298,7 @@ async function orderCancel(orderId) {
         'error'
       );
     }
+   }
   }
 }
     

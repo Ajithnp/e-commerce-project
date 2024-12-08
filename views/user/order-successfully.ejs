@@ -1,0 +1,153 @@
+
+<%- include('../partials/user/header2') %>  
+<style>
+    .order-success-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 100px); /* Adjust based on your header/footer height */
+        padding: 20px;
+        background-color: #f0f2f5;
+    }
+    .success-content {
+        max-width: 500px;
+        width: 100%;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .success-icon {
+        font-size: 80px;
+        color: #4CAF50;
+        margin-bottom: 20px;
+        animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    @keyframes popIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        70% {
+            transform: scale(1.2);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #333333;
+        animation: fadeIn 0.8s ease-out forwards;
+        opacity: 0;
+        animation-delay: 0.3s;
+    }
+    p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        color: #666666;
+        line-height: 1.5;
+        animation: fadeIn 0.8s ease-out forwards;
+        opacity: 0;
+        animation-delay: 0.5s;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        animation: fadeIn 0.8s ease-out forwards;
+        opacity: 0;
+        animation-delay: 0.7s;
+    }
+    .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .button:hover {
+        transform: translateY(-2px);
+    }
+    .button .material-icons {
+        margin-right: 8px;
+    }
+    .continue-shopping {
+        background-color: #2196F3;
+        color: #ffffff;
+    }
+    .continue-shopping:hover {
+        background-color: #1976D2;
+    }
+    .view-orders {
+        background-color: #4CAF50;
+        color: #ffffff;
+    }
+    .view-orders:hover {
+        background-color: #45a049;
+    }
+</style>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<div class="order-success-container">
+    <div class="success-content">
+        <span class="material-icons success-icon">check_circle</span>
+        <h1>Order Placed Successfully!</h1>
+        <p>Thank you for your purchase. Your order has been received and is being processed.</p>
+        
+        <div class="button-container">
+            <a href="/beats/products" class="button continue-shopping">
+                <span class="material-icons">shopping_cart</span>
+                Continue Shopping
+            </a>
+            <a href="/beats/user/orders" class="button view-orders">
+                <span class="material-icons">list_alt</span>
+                View Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const continueShoppingBtn = document.querySelector('.continue-shopping');
+        const viewOrdersBtn = document.querySelector('.view-orders');
+
+        continueShoppingBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+           
+            window.location.href = '/user/store';
+        });
+
+        viewOrdersBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            window.location.href = '/beats/user/orders';
+        });
+    });
+</script>
+
+
+<%- include('../partials/user/footer') %>  

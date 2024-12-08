@@ -7,10 +7,12 @@ const categoryController = require('../controllers/admin/categoryController/cate
 const brandController = require('../controllers/admin/brandController/brand-controller')
 const productController = require('../controllers/admin/productController/product-controller')
 const orderController = require('../controllers/admin/orderController/orderController')
+const couponController = require('../controllers/admin/couponController/couponController')
 const auth = require('../middleware/auth')
 
 const multer = require('multer')
 const storage = require('../helpers/multer')
+const userRoute = require('./user-route')
 const uploads = multer({storage: storage});
 
 // Log-in
@@ -128,13 +130,40 @@ adminRoute.route('/products/deleteImage')
 
        // Order Management..!
 adminRoute.route('/orders')
-          .get(orderController.getOrders)
+          .get(auth.adminAuth,orderController.getOrders)
 
 adminRoute.route('/orders/viewOrder/:id')    
-          .get(orderController.viewOrder) 
+          .get(auth.adminAuth,orderController.viewOrder) 
           
 // Order status manipulate..!
 adminRoute.route('/orders/:id/status') 
-          .patch(orderController.updateOrderStatus)         
+          .patch(auth.adminAuth,orderController.updateOrderStatus)   
+          
+          //Coupon Management..!
+adminRoute.route('/coupons')
+         .get(auth.adminAuth, couponController.showCoupons) 
+         
+//Add
+adminRoute.route('/coupons/add')
+       .get(couponController.getAddCoupon)
+       .post(couponController.addCoupon)
+
+// Edit
+adminRoute.route('/coupons/edit/:id')
+       .get(couponController.getEditForm)    
+       .put(couponController.updateCoupon)   
+
+// List
+adminRoute.route('/coupons/list/:id')
+          .patch(couponController.listCoupon)
+
+// Unlist
+adminRoute.route('/coupons/unlist/:id')
+          .patch(couponController.unlistCoupon)
+
+//Delete
+adminRoute.route('/coupons/delete/:id')
+          .delete(couponController.deleteCoupon)       
+
 
 module.exports = adminRoute;         

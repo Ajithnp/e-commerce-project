@@ -23,15 +23,14 @@ const cartSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
+        actualPrice:{
+            type:Number
+        },
         totalPrice:{
             type:Number,
             required: true
         },
-        // status:{
-        //     type: String,
-        //     enum:['In stock', 'Out of stock'],
-        //     default: 'In stock'
-        // },
+      
         selectedColor :{
             type: String,
             enum: ['white', 'black', 'blue'],
