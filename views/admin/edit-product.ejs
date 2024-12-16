@@ -73,7 +73,7 @@
                         
                         <div class="form-group">
                             <label for="salePrice">Sale Price</label>
-                            <input type="number" id="salePrice" name="salePrice" value="<%= product.salePrice %>" >
+                            <input type="number" id="salePrice" name="salePrice" style="color: dimgray;" value="<%= product.salePrice %>" disabled>
                             <p id="salePrice-error" class="error-message"></p>
                         </div>
                     </div>
@@ -462,7 +462,7 @@
                 const description = document.getElementById('description').value.trim();
                 const additionalInfo = document.getElementById('additionalInfo').value.trim();
                 const regularPrice = document.getElementById('regularPrice').value;
-                const salePrice = document.getElementById('salePrice').value;
+                // const salePrice = document.getElementById('salePrice').value;
                 const productOffer = document.getElementById('productOffer').value;
                 const images = document.querySelector('input[type="file"]');
                 const  imageDatas = document.getElementById("imageDatas")?.value;
@@ -475,10 +475,14 @@
                 if (name == ""){
                     displayErrorMessage('productName-error', 'Please enter a product name..!');
                     isValid = false;
-                }   else if(!/^[A-Za-z\s]+$/.test(name.trim())){
-                    displayErrorMessage('productName-error', "Product name should contain alphabetic characters..!")
-                    isValid = false;
-                }
+                }else if (!/^[^\s][A-Za-z0-9\s]*$/.test(name.trim())) {
+                     displayErrorMessage('productName-error', "Product name should not start with a space and can contain alphanumeric characters and spaces.");
+                      isValid = false;
+                    }
+                // }   else if(!/^[A-Za-z\s]+$/.test(name.trim())){
+                //     displayErrorMessage('productName-error', "Product name should contain alphabetic characters..!")
+                //     isValid = false;
+                // }
     
                 // Des:
                 if (description.trim()==""){
@@ -489,27 +493,31 @@
                  displayErrorMessage('description-error', 'The description must start with a capital letter.');
                 isValid = false;
                 }
-                else if (description.trim().length < 10 || description.trim().length > 300) {
-                displayErrorMessage('description-error', 'The description must be between 10 and 300 characters.');
+                else if (description.trim().length < 10 || description.trim().length > 500) {
+                displayErrorMessage('description-error', 'The description must be between 10 and 500 characters.');
                 isValid = false;
                 }
                 else if (!/^[A-Za-z0-9]/.test(description.trim())) {
                 displayErrorMessage('description-error', 'The description cannot start with a special character.');
                 isValid = false;
                 }  
-                else if (!/^[a-zA-Z0-9\s.,]*$/.test(description)) {
-                displayErrorMessage('description-error', 'The description can only contain letters, numbers, spaces, periods, and commas.');
-                isValid = false;
-                }
+                if (!/^[^\s][a-zA-Z0-9\s.,'’()\-]+$/.test(description.trim())) {
+                   displayErrorMessage('description-error', 'The description should not start with a space and can only contain letters, numbers, spaces, periods, commas, apostrophes, parentheses, and hyphens.');
+                   isValid = false;
+                  }
+                // else if (!/^[a-zA-Z0-9\s.,]*$/.test(description)) {
+                // displayErrorMessage('description-error', 'The description can only contain letters, numbers, spaces, periods, and commas.');
+                // isValid = false;
+                // }
                 
                 //Additional:
                 if (additionalInfo.trim() == ""){
                     displayErrorMessage('additionalInfo-error', 'Plese enter product additional information..!')
                     isValid = false
                 }
-                else if (!/^[A-Za-z]/.test(additionalInfo.trim())) {
-                displayErrorMessage('additionalInfo-error', 'Additional information must start with an alphabet letter.');
-                isValid = false;
+                else if (!/^(\u2022|[-*]|[A-Za-z])/.test(additionalInfo.trim())) {
+                         displayErrorMessage('additionalInfo-error', 'Additional information must start with a bullet point, a dash, or an alphabetic character.');
+                        isValid = false;
                 } 
                 
                 // Regular Price:

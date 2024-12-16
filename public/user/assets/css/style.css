@@ -13428,7 +13428,7 @@ button:focus {
   margin-right: -0.7rem;
 }
 .product-col .product {
-  /* display: flex; */
+  display: flex;
   align-items: center;
   margin: 0;
   /* padding-right: 2rem; */

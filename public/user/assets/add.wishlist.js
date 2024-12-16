@@ -1,5 +1,27 @@
 async function addToWishlist(productId) {
 
+    const authResponse = await fetch('/api/user/check-auth');
+
+    const authData = await authResponse.json();
+    if (!authData.isAuthenticated) {
+        // Show SweetAlert instead of redirecting immediately
+        Swal.fire({
+            title: 'You need to log in!',
+            text: 'Please log in to add items to your cart.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to login page if user clicks "Login"
+                window.location.href = '/user/login'; 
+            }
+            
+        });
+        return;
+    }
+
     try{
    
     const response = await fetch('/beats/user/wishlist/add',{

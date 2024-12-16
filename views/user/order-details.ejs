@@ -2,6 +2,30 @@
 <%- include('../partials/user/header2') %> 
 <style>
 
+.return-status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.return-status.status-no-return-requested {
+    color: gray;
+}
+
+.return-status.status-return-request {
+    color: orange;
+}
+
+.return-status.status-approved {
+    color: green;
+}
+
+.return-status.status-rejected {
+    color: red;
+}
+
+
     #price-id{
         margin-right: 1rem;
     }
@@ -25,6 +49,13 @@
     .status-Processing {
         background-color: #fef3c7;
         color: #92400e;
+        border-radius: 4px;
+        padding: 5px;
+       
+    }
+    .status-Failed {
+        background-color: #f61616;
+        color: #ffffff;
         border-radius: 4px;
         padding: 5px;
        
@@ -82,7 +113,7 @@
         flex-grow: 1;
     }
     .item-quantity {
-        font-weight: bold;
+        /* font-weight: bold; */
         margin-left: 15px;
     }
     .order-summary {
@@ -115,6 +146,9 @@
     }
     .btn:hover {
         background-color: #ea580c;
+    }
+    .btn-info{
+        background-color: #63d4ed;
     }
     .btn-cancel {
         background-color: #ef4444;
@@ -165,7 +199,7 @@
                     <div class="view-order-content">
                         <button id="backButton" class="btn btn-back" onclick="window.history.back()">← Back to Orders</button>
                         <div class="order-header">
-                            <h3>Order Id #<%= order._id%></h3>
+                            <h4>Order Id <%= order.orderId%></h4>
                                <span class="status status-<%= order.orderStatus %>"><strong><%= order.orderStatus %></strong></span>
                             <!-- <span class="order-status status-processing">Processing</span> -->
                         </div>
@@ -189,50 +223,79 @@
                         <div class="order-items">
                             <h4>Order Items</h4>
                             <% order.orderItems.forEach(item => { %>
-                            <div class="order-item">
-                                <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product 1" class="item-image">
-                                <div class="item-details">
-                                    <h6><%= item.product.productName %></h6>
-                                    <p>Color: <%= item.color %></p>
+                                <div class="order-item">
+                                    <!-- Product Image -->
+                                    <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" class="item-image">
+                                    
+                                    <!-- Product Details -->
+                                    <div class="item-details">
+                                        <h6><%= item.product.productName %></h6>
+                                        <p>Color: <%= item.color %></p>
+                                        <span class="item-quantity">Qty: <%= item.quantity %></span>
+                                    </div>
+                        
+                                    <!-- Price -->
+                                    <span class="item-price" style="font-weight: bold;">₹ <%= item.totalPrice.toFixed(2) %></span>
+                                    
+                                    <!-- Return Status and Button -->
+                                    <% if (item.returnStatus === 'No Return Requested') { %>
+                                        <% if (order.orderStatus === 'Delivered') { %>
+                                            <button class="btn btn-warning ml-5px" onclick="returnProduct('<%= item.product._id %>', '<%= order._id %>','<%= item.color%>','<%= item.quantity%>')">
+                                                Request Return
+                                            </button>
+                                        <% } %>
+                                    <% } else { %>
+                                        <span class="return-status status-<%= item.returnStatus.toLowerCase().replace(' ', '-') %>">
+                                            <%= item.returnStatus %>
+                                        </span>
+                                    <% } %>
                                 </div>
-                                <span class="item-quantity">Qty: <%= item.quantity %></span>
-                                <br>
-                                <span class="item-price" id="price-id">$ <%= item.totalPrice.toFixed(2) %></span>
-                                <% if (order.orderStatus === 'Delivered') { %>
-                                    <button class="btn btn-warning ml-5px" onclick="returnProduct('<%= item.product._id %>', '<%= order._id %>')">Return</button>
-                                <% } %>
-                            </div>
                             <% }) %>
                         </div>
+                        
+                        
                     
                         <div class="order-summary">
                             <h4>Order Summary</h4>
                             <div class="summary-row">
                                 <span>Subtotal:</span>
-                                <span><%=order.totalAmount %></span>
+                                <span style="font-weight: bold;"><%=order.subTotal %></span>
                             </div>
                             <div class="summary-row">
                                 <span>Shipping:</span>
-                                <span>$0</span>
+                                <span style="font-weight: bold;">₹0</span>
                             </div>
                             <div class="summary-row">
-                                <span>Tax:</span>
-                                <span>$0</span>
+                                <span>savings:</span>
+                                <span style="font-weight: bold;">₹<%= order.savings %></span>
                             </div>
+                            <% if(order.couponDiscount) {%>
+                                <div class="summary-row">
+                                    <span>Coupon Discount:</span>
+                                    <span style="font-weight: bold;">₹ <%= order.couponDiscount %></span>
+                                </div>
+                                <% } %>
+
                             <div class="summary-row summary-total">
-                                <span>Total:</span>
-                                <span>$<%=order.totalAmount%></span>
+                                <span>Grand Total:</span>
+                                <span>₹<%=order.totalAmount%></span>
 
                             </div>
                         </div>
                     
                         <% if (order.orderStatus === 'Delivered') { %>
                             <!-- Return Button -->
-                            <button id="returnOrderBtn" class="btn btn-block btn-warning" onclick="returnOrder('<%= order._id %>')">Return</button>
-                        <% } else if (order.orderStatus !== 'Cancelled') { %> 
+                             <div style="display: flex; justify-content: space-between;">
+
+                            <button id="returnOrderBtn" class="btn btn btn-warning" onclick="returnOrder('<%= order._id %>')">Return</button>
+                            <button id="downloadInvoice" class="btn btn-info" onclick="downloadInvoice('<%= order._id %>')">Download invoice</button>
+                        </div>
+                        <% } else if (order.orderStatus === 'Failed') { %> 
                             <!-- Cancel Order Button -->
+                            <button id="paymentRetryBtn" class="btn btn-info" onclick="PaymentRetry('<%= order._id%>')">Continue Payment</button>
+                        <% } else { %>
                             <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%= order._id %>')">Cancel Order</button>
-                        <% } %>
+                            <% } %>
                     </div>
 
                 
@@ -301,6 +364,138 @@ async function orderCancel(orderId) {
    }
   }
 }
+
+
+// payment retry function.!
+
+async function PaymentRetry(pendingOrderId) {
+    console.log('Pending order ID:', pendingOrderId);
+    
+    const grandTotal = '<%= order.totalAmount %>';
+    console.log('Grand Total:', grandTotal);
+
+    Swal.fire({
+        title: 'Continue payment!',
+        text: 'Your previous payment attempt was unsuccessful. Do you want to try again?',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Retry Payment',
+        cancelButtonText: 'Cancel',
+        allowOutsideClick: false
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                // Step 1: Send a request to initiate payment retry
+                const response = await fetch('/retry/payment', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pendingOrderId })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    // Step 2: Initialize Razorpay with new payment details
+                    const options = {
+                        key: data.key, 
+                        amount: data.amount, 
+                        currency: data.currency, 
+                        name: 'Beats Studio', 
+                        description: 'Payment Retry',
+                        order_id: data.razorpayOrderId, 
+                        handler: function (response) {
+                            // Step 3: Handle payment success
+                            fetch('/paymentCapture', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    razorpayPaymentId: response.razorpay_payment_id,
+                                    razorpayOrderId: response.razorpay_order_id,
+                                    razorpaySignature: response.razorpay_signature,
+                                    pendingOrderId : pendingOrderId
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(captureResponse => {
+                                if (captureResponse.status === 'ok') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Payment Successful!',
+                                        text: 'Your payment has been processed successfully.'
+                                    }).then(() => {
+                                        window.location.href = '/beats/orderSuccess'; // Redirect to success page
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Payment Capture Failed!',
+                                        text: 'Please contact support for assistance.'
+                                    });
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error capturing payment:', err);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An error occurred while capturing the payment. Please try again.'
+                                });
+                            });
+                        },
+                        prefill: {
+                            name: '<%= user.name %>',
+                            email: '<%= user.email %>', 
+                            contact: '<%= user.phone %>' 
+                        },
+                        theme: {
+                            color: '#3399cc' // Razorpay button color
+                        }
+                    };
+
+                    // Step 4: Open Razorpay payment modal
+                    const razorpay = new Razorpay(options);
+                    razorpay.on('payment.failed', function (response) {
+                        console.error('Payment failed!', response.error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Payment Failed',
+                            text: `Reason: ${response.error.description}`,
+                            footer: 'Please try again or use a different payment method.'
+                        });
+                    });
+
+                    razorpay.open();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Retry Failed!',
+                        text: data.error || 'Could not initiate payment retry. Please try again.'
+                    });
+                }
+            } catch (error) {
+                console.error('An error occurred while retrying payment:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message
+                });
+            }
+        } else if (result.isDismissed) {
+            console.log('Payment attempt canceled.');
+        }
+    });
+}
+
+// Dowload invoice fn.
+function downloadInvoice(orderId){
+        console.log('OrderId', orderId)
+        window.location.href = `/order/invoice/download/${orderId}`
+    }
+
     
 </script>
 <%- include('../partials/user/footer') %>  

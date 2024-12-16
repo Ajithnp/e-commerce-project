@@ -6,8 +6,11 @@ const userController = require('../controllers/admin/userController/user-control
 const categoryController = require('../controllers/admin/categoryController/category-controller')
 const brandController = require('../controllers/admin/brandController/brand-controller')
 const productController = require('../controllers/admin/productController/product-controller')
+const productOfferController = require('../controllers/admin/productController/product-offer-controller')
 const orderController = require('../controllers/admin/orderController/orderController')
 const couponController = require('../controllers/admin/couponController/couponController')
+const productReturnController = require('../controllers/admin/orderReturnController/order-returnController')
+const salesReportController = require('../controllers/admin/salesReportController/sales-report-controller')
 const auth = require('../middleware/auth')
 
 const multer = require('multer')
@@ -66,10 +69,6 @@ adminRoute.route('/category/listCategory')
 // Unlist category
 adminRoute.route('/category/unlistCategory')
        .post(auth.adminAuth,categoryController.unlistCategory)
- 
-// Offer category
-adminRoute.route('/category/addOffer')
-       .post(auth.adminAuth,categoryController.addOffer)       
 
 
 // Brand management
@@ -127,6 +126,19 @@ adminRoute.route('/products/unlistProduct')
 adminRoute.route('/products/deleteImage')
            .post(productController.deleteSingleProductImage)
 
+   //-------Offer-------------------//        
+//Add offer!
+adminRoute.route('/products/addOffer')
+          .post(productOfferController.addOffer)  
+// Offer category
+adminRoute.route('/category/addOffer')
+       .post(auth.adminAuth,productOfferController.addCategoryOffer)   
+
+//Offer brand!
+
+adminRoute.route('/brand/addOffer')
+          .post(auth.adminAuth,productOfferController.addBrandOffer)
+
 
        // Order Management..!
 adminRoute.route('/orders')
@@ -163,7 +175,33 @@ adminRoute.route('/coupons/unlist/:id')
 
 //Delete
 adminRoute.route('/coupons/delete/:id')
-          .delete(couponController.deleteCoupon)       
+          .delete(couponController.deleteCoupon)    
+//------------------Coupon management end-----------------------------//
 
+//------------------Order Producr Return management-------------------//
+adminRoute.route('/order/item/return')
+          .get(productReturnController.getReturnRequest)
+// Accept!
+adminRoute.route('/order/item/return/accept/:id') 
+           .post(productReturnController.orderRequestAccept) 
+// Reject!
+adminRoute.route('/order/item/return/reject/:id')
+          .post(productReturnController.orderRequestReject)           
+// View
+adminRoute.route('/order/item/return/view/:id')
+       .get(productReturnController.viewOrderReturnRequest)
+          
+// Sale report------------------------------!
+adminRoute.route('/sales/report')
+          .get(salesReportController.renderSalesReportPage)
+// Fetch sales report.
+adminRoute.route('/sales/report/fetch')
+          .get(salesReportController.fetchSalesReport)   
+          
+// Download sales report!
+adminRoute.route('/sales/report/pdf')
+           .get(salesReportController.downloadSalesReportPdf)
+adminRoute.route('/sales/report/excel')   
+            .get(salesReportController.downloadSalesReportExel)                  
 
 module.exports = adminRoute;         

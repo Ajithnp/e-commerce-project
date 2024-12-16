@@ -12,6 +12,9 @@ const userProfileController = require('../controllers/user/user-profile-controll
 const userOrderController = require('../controllers/user/user-order-controller/user-order-controller')
 const walletController = require('../controllers/user/user-wallet-controller/wallet-controller')
 const couponController = require('../controllers/user/coupon-contoller/coupon-controller')
+const productReturnController = require('../controllers/user/product-return-controller/orderItemReturnController')
+const invoiceDownloadController = require('../controllers/user/invoice-download/invoiceDownloadController')
+const Order = require('../models/order-modal')
 
 const generate = require('../utils/receiptIdGenerator')
 
@@ -110,6 +113,10 @@ userRoute.route('/beats/user/checkout')
          .get(auth.userAuth,cartController.getCheckoutPage)
          .post(cartController.orderConfirm)
 
+// Checkout user address edit- fetch!
+userRoute.route('/beats/user/getAddress/:id')
+          .get(userProfileController.checkOutEditAddress)         
+
 // Order success page..!
 userRoute.route('/beats/orderSuccess')
          .get(cartController.orderSuccessPage)
@@ -130,7 +137,7 @@ userRoute.route('/beats/user/addAddress')
          .get(auth.userAuth,userProfileController.getNewAddressForm)
          .post(userProfileController.addNewAddress)
 
-
+         
 // User address  edit ..!
 
 userRoute.route('/beats/user/editAddress/:id')
@@ -160,7 +167,11 @@ userRoute.route('/beats/user/orderDetails/:id')
           
 // Order cancel..!
 userRoute.route('/beats/user/cancelOrder/:id')
-         .patch(userOrderController.orderCancel)    
+         .patch(userOrderController.orderCancel) 
+         
+//-------------Product Return routes--------//
+userRoute.route('/order/product/return')
+         .post(productReturnController.itemReturnRequest)            
          
          
          // Wishlist
@@ -178,13 +189,17 @@ userRoute.route('/beats/user/wishlist/remove/:id')
 userRoute.route('/beats/user/wallet')
          .get(walletController.getWallet)  
          
-         
-
          //Coupon..!
 //Apply
 userRoute.route('/coupons/apply')
-          .post(couponController.couponApply)         
+          .post(couponController.couponApply) 
+          
+//Remove
+userRoute.route('/coupons/remove')
+         .post(couponController.removeCoupon)        
 
+//------------------------------------------//
+      
 
 // About...!
 userRoute.route('/beats/about')
@@ -218,8 +233,6 @@ userRoute.route('/beats/user/forgotPassword/newPassword')
 
 
 // Razor pay ..!
-
-
 
  
 userRoute.post('/order', async (req, res) => {
@@ -258,37 +271,77 @@ userRoute.post('/order', async (req, res) => {
           res.status(400).send('Not able to create order. Please try again!');
        }
    });
-   
-   userRoute.post('/paymentCapture', (req, res) => {
-       const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
 
-       if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
-              return res.status(400).json({ error: 'Missing required fields for signature validation.' });
-          }
-          const secretKey = process.env.RAZOR_PAY_SECRET_KEY;
+// razor pay failed payment!
+userRoute.post('/retry/payment',async (req, res)=>{
+       console.log('helooo1');
+       
+       const {pendingOrderId} = req.body;
+       console.log('hello2',pendingOrderId, req.body);
+       
 
-       // do a validation
-    
-       const generatedSignature = crypto
-       .createHmac('sha256', secretKey)
-       .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-       .digest('hex');
+       try {
+              
+              
+              const pendingOrder = await Order.findById(pendingOrderId).populate('orderItems');
+              console.log('order fetched', pendingOrder);
+              
 
-    
-       if (generatedSignature === razorpaySignature) {
-              console.log('Payment is verified.');
-              return res.json({ status: 'ok' });
+              if (!pendingOrder || pendingOrder.orderStatus !== 'Failed') {
+                     return res.status(400).json({ error: 'Order not found or not eligible for retry.' });
+                 }
+                 console.log('log3');
+                 
+
+                  // Recreate Razorpay order
+                  const razorpay = new Razorpay({
+                     key_id: process.env.RAZOR_PAY_ID,
+                     key_secret: process.env.RAZOR_PAY_SECRET_KEY,
+                 });
+
+          console.log('log4');
           
-    
-    } else {
-    
-           res.status(400).send('Invalid signature');
-    
-       }
-    
-    })
-   
 
+          const options = {
+              amount: pendingOrder.totalAmount * 100, // Amount in paise
+              currency: 'INR',
+              receipt: pendingOrder._id.toString()
+          };
+          console.log('log5');
+          
+
+          const razorpayOrder = await razorpay.orders.create(options);
+         console.log('log6');
+         
+          // Update the order with new Razorpay order ID
+          pendingOrder.razorpayOrderId = razorpayOrder.id;
+          await pendingOrder.save();
+          console.log('log7');
+          
+
+          return res.status(200).json({
+              status: 'ok',
+              razorpayOrderId: razorpayOrder.id,
+              key: process.env.RAZORPAY_KEY_ID,
+              amount: options.amount,
+              currency: options.currency,
+              orderId: pendingOrder._id
+          });
+
+       } catch (error) {
+              res.status(400).send('Not able to create order. Please try again!');
+              
+       }
+})   
+   
+userRoute.post('/paymentCapture',cartController.razorPayOrderSave)
+
+// failed order..!
+userRoute.post('/save/failedOrder', cartController.razorPayfailedOrderSave)
+   
+// Invoice download.
+userRoute.route('/order/invoice/download/:orderId')
+         .get(invoiceDownloadController.downloadInvoice)
 
 
 // Authetication check route.

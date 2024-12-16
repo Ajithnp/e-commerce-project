@@ -1,0 +1,308 @@
+
+<%- include('../partials/admin/header') %>
+<div class="product-returns-container">
+    <h1 class="page-title">Product Returns</h1>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="status-filter">Status:</label>
+            <select id="status-filter" class="filter-select">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+        <button id="apply-filters" class="filter-button">Apply Filter</button>
+    </div>
+
+    <div class="returns-table-container">
+        <table class="returns-table">
+            <thead>
+                <tr>
+                    <th>Return ID</th>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productReturns.forEach(returnRequest => { %>
+
+                <tr>
+                    <td data-label="Return ID"><span class="truncate"><%= returnRequest._id %></span></td>
+                    <td data-label="Order ID"><span class="truncate"><%= returnRequest.order._id %></span></td>
+                    <td data-label="Customer"><%= returnRequest.order.userId.name %></td>
+                    <td data-label="Product"><%= returnRequest.product.productName %></td>
+                    <td data-label="Reason"><%= returnRequest.productReturnReason %></td>
+                    <td data-label="Date"><%= returnRequest.productReturnDate.toLocaleDateString() %></td>
+                    <td data-label="Status"><span class="status-badge return-request"><%= returnRequest.returnProductStatus %></span></td>
+                    <td data-label="Actions">
+                        <button class="action-btn view-btn" onclick="showReturnDetails('<%= returnRequest._id %>')">View</button>
+                        <button class="action-btn approve-btn" onclick="acceptReturn('<%= returnRequest._id %>')">Approve</button>
+                        <button class="action-btn reject-btn" onclick="rejectReturn('<%= returnRequest._id %>')">Reject</button>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
+            <%= currentPage === 1 ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_left</span>
+        </a>
+        <span class="page-number">Page <span id="current-page"><%= currentPage %></span> of <span id="total-pages"><%= totalPages %></span></span>
+        <a href="?page=<%= currentPage + 1 %>" class="pagination-btn" id="next-btn" 
+            <%= currentPage === totalPages ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_right</span>
+        </a>
+    </div>
+    
+</div>
+
+<style>
+    .product-returns-container {
+        padding: 20px;
+        background-color: #1f2937;
+        color: #E5E7EB;
+        min-height: 100vh;
+    }
+
+    .page-title {
+        font-size: 24px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .filters-container {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        margin-bottom: 20px;
+        background-color: #111827;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .filter-group {
+        flex: 1;
+    }
+
+    .filter-select,
+    .filter-input {
+        padding: 8px 12px;
+        background-color: #374151;
+        border: 1px solid #4B5563;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .filter-button {
+        padding: 8px 16px;
+        background-color: #3B82F6;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        align-self: flex-end;
+    }
+
+    .filter-button:hover {
+        background-color: #2563EB;
+    }
+
+    .returns-table-container {
+        background-color: #111827;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    .returns-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .returns-table th,
+    .returns-table td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #374151;
+        color: white;
+    }
+
+    .returns-table th {
+        background-color: #374151;
+        color: white;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .returns-table td {
+        font-size: 14px;
+    }
+
+    .truncate {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-badge.return-request {
+        background-color: #FBBF24;
+        color: #92400E;
+    }
+
+    .action-btn {
+        padding: 4px 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: opacity 0.2s;
+        margin-right: 4px;
+        margin-bottom: 4px;
+    }
+
+    .view-btn {
+        background-color: #6B7280;
+        color: white;
+    }
+
+    .approve-btn {
+        background-color: #34D399;
+        color: white;
+    }
+
+    .reject-btn {
+        background-color: #F87171;
+        color: white;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .pagination-btn {
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-number {
+        font-size: 14px;
+    }
+
+    @media (max-width: 1024px) {
+        .returns-table th,
+        .returns-table td {
+            padding: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 6px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .filters-container {
+            flex-direction: column;
+        }
+
+        .filter-button {
+            align-self: stretch;
+        }
+
+        .returns-table, .returns-table tbody, .returns-table tr, .returns-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .returns-table thead {
+            display: none;
+        }
+
+        .returns-table tr {
+            margin-bottom: 15px;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .returns-table td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+            border-bottom: 1px solid #374151;
+        }
+
+        .returns-table td:last-child {
+            border-bottom: none;
+        }
+
+        .returns-table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .truncate {
+            max-width: none;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const statusFilter = document.getElementById('status-filter');
+
+    applyFiltersBtn.addEventListener('click', function() {
+        const status = statusFilter.value;
+        console.log('Applying filter:', { status });
+        // Here you would typically make an API call to fetch filtered data
+        // and update the table contents
+    });
+
+    
+
+});
+</script>
+
+<%- include('../partials/admin/footer') %>

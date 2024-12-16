@@ -69,6 +69,22 @@ const productSchema = new mongoose.Schema({
         default :[]
 
     },
+    productOffer:{
+        type: Number,
+        default :0
+    },
+    categoryOffer:{
+        type: Number,
+        default:0
+    },
+    brandOffer:{
+        type:Number,
+        default:0
+    },
+    finalOffer:{
+        type:Number,
+        default:0
+    },
 
     isBlocked: {
         type: Boolean,

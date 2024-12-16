@@ -1,3 +1,7 @@
+const dotenv = require('dotenv').config()
+const Razorpay = require('razorpay')
+const crypto = require('crypto')
+
 const User = require('../../../models/user-model')
 const Product = require('../../../models/product-model')
 const Cart = require('../../../models/cart-model')
@@ -6,6 +10,10 @@ const OrderItem = require('../../../models/oredr-items-model')
 const Order = require ('../../../models/order-modal')
 const Wishlist = require('../../../models/wishlist-model')
 const Coupon = require('../../../models/coupon-model')
+const AppliedCoupon = require('../../../models/couponApplied-model')
+const generateOrderId = require('../../../utils/gererateOrderId')
+const isProductValid = require('../../../helpers/productIsValid')
+
 // const userAddress = require('../../../models/user-address')
 
 exports.getUserCart = async (req, res, next)=>{
@@ -17,6 +25,17 @@ exports.getUserCart = async (req, res, next)=>{
         const userData = await User.findById(userId);
         // check if the user has cart..?
         const cart = await Cart.findOne({userId}).populate('items.productId')
+
+        if(cart){
+            const validItems = [];
+            for (const item of cart.items) {
+                const isValid = await isProductValid(item.productId._id); 
+                if (isValid) {
+                    validItems.push(item); 
+                }
+            }
+            cart.items = validItems;
+        }
 
         // count cart documents..!
         const cartCount = await Cart.countDocuments()
@@ -221,7 +240,20 @@ exports.getCheckoutPage = async(req, res, next)=>{
             Coupon.find({isActive:true})
         ]);
 
-         // Calculate total savings
+        // const validItems = [];
+        // let subTotal = 0;
+        // for (const item of cart.items) {
+        //     const isValid = await isProductValid(item.productId._id); // Validate product
+        //     if (isValid) {
+        //         validItems.push(item);
+
+        //         subTotal += item.totalPrice;
+        //     }
+        // }
+        // cart.items = validItems;
+        // cart.subTotal = subTotal;
+
+        //  Calculate total savings
         let totalSavings = 0;
 
         cart.items.forEach(item => {
@@ -230,7 +262,22 @@ exports.getCheckoutPage = async(req, res, next)=>{
             totalSavings += Math.max(savingsPerItem, 0); 
         });
 
+        const usedCoupons = await AppliedCoupon.find({ userId }).select('couponId');
+        const usedCouponIds = usedCoupons.map(uc => uc.couponId.toString());
        
+
+        const availableCoupons = coupons.filter(coupon => {
+            const isExpired = new Date(coupon.expiryDate) < new Date();
+            const isUsageLimitReached = coupon.usedCount >= coupon.usageLimit;
+            const isAlreadyUsed = usedCouponIds.includes(coupon._id.toString());
+
+            // Exclude the coupon if any condition is satisfied
+            return !isExpired && !isUsageLimitReached && !isAlreadyUsed;
+        });
+
+
+
+        
 
         let errorMessage = null;
         // Check product color stock quantities
@@ -264,7 +311,7 @@ exports.getCheckoutPage = async(req, res, next)=>{
             userAddress:address,
             cart,
             totalSavings,
-            coupons,
+            coupons:availableCoupons,
             cartItems: JSON.stringify(cart.items)
         })
     } catch (error) {
@@ -275,7 +322,9 @@ exports.getCheckoutPage = async(req, res, next)=>{
 
 // Checkout post handler (order confirm)
 exports.orderConfirm = async (req, res, next)=>{
-    const {userId, orderItems, address, paymentMethod} = req.body;
+    console.log('coupon data from session:', req.session.couponData);
+    
+    const {userId, orderItems, address, paymentMethod,subTotal,savings,grandTotalValue,couponDiscount,couponId,couponCode} = req.body;
     
     
 
@@ -299,6 +348,7 @@ exports.orderConfirm = async (req, res, next)=>{
         // Create Order with the created Order Items' IDs
         const createOrder = new Order ({
             userId,
+            orderId:generateOrderId(),
             orderItems : createOrderitems.map(item=> item._id),
             shippingAddress1: addressDetails.streetAddress,
             city:addressDetails.city,
@@ -307,9 +357,15 @@ exports.orderConfirm = async (req, res, next)=>{
             phone: addressDetails.altPhone,
             orderStatus : 'Processing',
             paymentMethod,
-            totalAmount: createOrderitems.reduce((total, item)=> total+item.totalPrice,0)
+            subTotal,
+            savings,
+            couponDiscount:Number(couponDiscount),
+            totalDiscount:Number(couponDiscount+savings),
+            totalAmount:grandTotalValue,
+            appliedCouponCode:couponCode
+            
 
-
+            // totalAmount: createOrderitems.reduce((total, item)=> total+item.totalPrice,0)
         })
 
         await createOrder.save();
@@ -337,10 +393,31 @@ exports.orderConfirm = async (req, res, next)=>{
         // delete user cart..!
         await Cart.findOneAndDelete({userId})
 
+        // increment coupon Usedcount..!
+
+        if(couponId){
+            await Coupon.findByIdAndUpdate(couponId,
+                {$inc: {usedCount:1}},
+                {new: true}
+            )
+        }
+
+        // save applliedcouponSchema..!
+
+        if (couponId) {
+            const usedCoupon = new AppliedCoupon({
+                couponId: couponId,
+                userId: userId,
+                orderId: createOrder._id // Use the orderId from the saved order
+            });
+        
+            await usedCoupon.save(); // Save the applied coupon
+        }
+
 
         res.status(201).json({
             message: 'Order placed successfully!',
-            orderId: createOrder._id // Return the ID of the created order if needed
+            orderId: createOrder._id 
         });
     
     } catch (error) {
@@ -349,14 +426,260 @@ exports.orderConfirm = async (req, res, next)=>{
 };
 
 
+
+exports.razorPayOrderSave = async (req, res, next)=>{
+
+    const { pendingOrderId } = req.body;
+
+    console.log('Pending orderId',pendingOrderId)
+
+    const { razorpayOrderId, razorpayPaymentId, razorpaySignature, userId, orderItems, address, paymentMethod,subTotal, savings, grandTotalValue,couponDiscount,couponCode,couponId } = req.body;
+
+    if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+           return res.status(400).json({ error: 'Missing required fields for signature validation.' });
+       }
+       const secretKey = process.env.RAZOR_PAY_SECRET_KEY;
+
+    // do a validation
+    
+    const generatedSignature = crypto
+    .createHmac('sha256', secretKey)
+    .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+    .digest('hex');
+
+ 
+    if (generatedSignature !== razorpaySignature) {
+           return res.status(400).send('Invalid signature');
+       }
+
+       console.log('Payment is verified.');
+
+       try {
+
+        // for retry order!
+        if(pendingOrderId){
+            
+            const existingOrder = await Order.findOneAndUpdate(
+                {_id: pendingOrderId},
+                {$set: {orderStatus:'Processing', paymentStatus:'Completed'}},
+                {new: true}
+            );
+
+            console.log('heloo order updating',existingOrder);
+            
+
+            if (!existingOrder) {
+                return res.status(404).json({ message: 'Order not found!' });
+            }
+
+                // Clear the user's cart
+                 await Cart.findOneAndDelete({ userId });
+
+                 console.log('Order updated successfully for retry:', existingOrder);
+                 return res.json({ status: 'ok', message: 'Retry payment successful!', order: existingOrder });
+        }else {
+
+           const addressDetails = await Address.findById(address)
+
+        if(!addressDetails){
+         return res.status(400).json({message :'Invalid address provided..!'});
+        }
+
+
+        const createOrderitems = await OrderItem.insertMany(orderItems.map(item=>({
+           quantity: item.quantity,
+           color : item.color,
+           product : item.product,
+           price : item.price,
+           totalPrice : item.totalPrice
+       })));
+           
+           const createOrder = new Order({
+               userId, 
+               orderId: generateOrderId(),
+               orderItems : createOrderitems.map(item=> item._id),
+               shippingAddress1: addressDetails.streetAddress,
+               city:addressDetails.city,
+               zip: addressDetails.zip,
+               country: addressDetails.country,
+               phone: addressDetails.altPhone,
+               orderStatus : 'Processing',
+                paymentMethod,
+                paymentStatus:'Completed',
+                subTotal,
+                savings,
+                 couponDiscount:Number(couponDiscount),
+                totalDiscount:Number(couponDiscount+savings),
+               totalAmount:grandTotalValue,
+                appliedCouponCode:couponCode
+           });
+   
+           await createOrder.save();
+
+           // Update product quantity..!
+     for(item of orderItems){
+           const product = await Product.findById(item.product);
+
+           const selectedColorStock = product.colorStock.find(color=> color.color == item.color);
+
+
+           if(selectedColorStock){
+              let newQuantity = selectedColorStock.quantity - item.quantity;
+
+             selectedColorStock.quantity = newQuantity
+               if(selectedColorStock.quantity <= 0){
+                   selectedColorStock.quantity = 0;
+                   selectedColorStock.status = 'Out of stock';
+               }
+               await product.save();
+           }
+
+       }
+
+        // delete user cart..!
+     await Cart.findOneAndDelete({userId})
+
+
+     if(couponId){
+           await Coupon.findByIdAndUpdate(couponId,
+               {$inc: {usedCount:1}},
+               {new: true}
+           )
+       }
+
+       if (couponId) {
+           const usedCoupon = new AppliedCoupon({
+               couponId: couponId,
+               userId: userId,
+               orderId: createOrder._id // Use the orderId from the saved order
+           });
+       
+           await usedCoupon.save(); // Save the applied coupon
+       }
+
+
+         return res.json({ status: 'ok', message: 'Order saved successfully!' });
+        }
+       } catch (err) {
+           console.error('Error saving order:', err);
+           next(err)
+           
+       }
+ 
+}
+
+
 // Show Order success page..!
 
+exports.razorPayfailedOrderSave = async (req, res, next) =>{
+    const { razorpayOrderId, razorpayPaymentId, razorpaySignature, userId, orderItems, address, paymentMethod,subTotal, savings, grandTotalValue,couponDiscount,couponCode,couponId } = req.body;
+
+    if (!razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+           return res.status(400).json({ error: 'Missing required fields for signature validation.' });
+       }
+       const secretKey = process.env.RAZOR_PAY_SECRET_KEY;
+
+       const generatedSignature = crypto
+       .createHmac('sha256', secretKey)
+       .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+       .digest('hex');
+
+       try {
+
+        
+        const addressDetails = await Address.findById(address)
+
+        if(!addressDetails){
+         return res.status(400).json({message :'Invalid address provided..!'});
+        }
+
+        const createOrderitems = await OrderItem.insertMany(orderItems.map(item=>({
+            quantity: item.quantity,
+            color : item.color,
+            product : item.product,
+            price : item.price,
+            totalPrice : item.totalPrice
+        })));
+
+
+        const failedOrder = new Order({
+            userId, 
+            orderId: generateOrderId(),
+            orderItems : createOrderitems.map(item=> item._id),
+            shippingAddress1: addressDetails.streetAddress,
+            city:addressDetails.city,
+            zip: addressDetails.zip,
+            country: addressDetails.country,
+            phone: addressDetails.altPhone,
+            orderStatus : 'Failed',
+             paymentMethod,
+             paymentStatus:'Failed',
+             subTotal,
+             savings,
+              couponDiscount:Number(couponDiscount),
+             totalDiscount:Number(couponDiscount+savings),
+            totalAmount:grandTotalValue,
+             appliedCouponCode:couponCode
+        });
+
+        await failedOrder.save();
+
+
+                // Update product quantity..!
+     for(item of orderItems){
+        const product = await Product.findById(item.product);
+
+        const selectedColorStock = product.colorStock.find(color=> color.color == item.color);
+
+
+        if(selectedColorStock){
+           let newQuantity = selectedColorStock.quantity - item.quantity;
+
+          selectedColorStock.quantity = newQuantity
+            if(selectedColorStock.quantity <= 0){
+                selectedColorStock.quantity = 0;
+                selectedColorStock.status = 'Out of stock';
+            }
+            await product.save();
+        }
+
+    }
+
+    if(couponId){
+        await Coupon.findByIdAndUpdate(couponId,
+            {$inc: {usedCount:1}},
+            {new: true}
+        )
+    }
+
+    if (couponId) {
+        const usedCoupon = new AppliedCoupon({
+            couponId: couponId,
+            userId: userId,
+            orderId: createOrder._id // Use the orderId from the saved order
+        });
+    
+        await usedCoupon.save(); // Save the applied coupon
+    }
+
+
+    return res.json({status: 'ok', message: 'Order saved successfull' });
+
+       } catch (error) {
+        console.error('An error occured while saving failed order!')
+        next(error)
+       }
+}
+
 exports.orderSuccessPage = async (req, res, next)=>{
+    const {orderId} = req.query;
+    console.log('helloo order successpage ', orderId);
+    
     const userId = req.session.user.id;
 
     try {
         const user = await User.findById(userId);
-        return res.status(200).render('user/order-successfully',{user})
+        return res.status(200).render('user/order-successfully',{user,orderId})
     } catch (error) {
         console.error('An error occured while loading the order success page..!',error);
         next(error)

@@ -162,16 +162,17 @@ exports.addNewAddress = async(req, res, next)=>{
 
 exports.getAddress = async (req, res, next)=>{
     const addressId = req.params.id;
+    console.log('address id', addressId);
+    
     try {
         // Fetching Address..!
         const address = await Address.findById(addressId)
 
-        console.log('address fetched new', address)
          if(!address){
             return res.status(400).json({message: 'Addeess not found..!'});
              
          }
-        return res.status(200).render('user/user-edit-address',{
+            res.status(200).render('user/user-edit-address',{
             address
          })
     } catch (error) {
@@ -257,5 +258,25 @@ exports.showAddress = async (req, res, next)=>{
     } catch (error) {
         console.error('An error occured while loading user profile page', error)
         next(error)
+    }
+}
+
+// Checkout page user address edit -fetch handler!
+exports.checkOutEditAddress = async (req, res, next)=>{
+    const addressId = req.params.id;
+    console.log('helloooo');
+    
+    try {
+        const address = await Address.findById(addressId);
+
+        if(!address){
+            return res.status(404).json({message: 'Address not found!'})
+        }
+
+        res.status(200).json(address)
+    } catch (error) {
+        console.error('An error occured while fetching address!',error)
+        next(error);
+        
     }
 }

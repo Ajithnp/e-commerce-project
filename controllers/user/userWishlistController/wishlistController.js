@@ -6,27 +6,42 @@ const Cart = require('../../../models/cart-model')
 
 exports.getWishlist = async (req, res, next)=>{
    
-        const user = req.session.user.id;
+        const userId = req.session.user.id;
         
 
     try {
-        let userData = user ? await User.findById(user.id) : null;
+        let userData = userId ? await User.findById(userId) : null;
 
         // Check the user have wishlist..!
 
-        const wishlist = await Wishlist.findOne({userId: user}).populate('products.productId');
+        const wishlistData = await Wishlist.findOne({ userId }).populate({
+            path: 'products.productId',
+            populate: [
+                { path: 'brand', select: 'isBlocked' },
+                { path: 'category', select: 'isListed' }
+            ]
+        });
 
-        if(!wishlist){
-            return res.status(404).json({message: "Wishlist not found"});
-        }
+        const filteredWishlist = wishlistData
+        ? wishlistData.products.filter(item => {
+            const product = item.productId;
+            return (
+                product &&
+                !product.isBlocked && // Product is listed
+                product.brand && !product.brand.isBlocked && // Brand is unblocked
+                product.category && !product.category.isListed // Category is listed
+            );
+        })
+        : [];
 
-        const sortedProduct = wishlist.products.sort((a,b) => b.createdOn - a.createdOn)
+        
 
+        const sortedWishlist = filteredWishlist.sort((a, b) => b.createdOn - a.createdOn);
         // Render the wishlist page with wishlist data's..!
         
         return res.render('user/wishlist',{
             user: userData,
-            wishlist: sortedProduct,
+            wishlist:sortedWishlist
             
         })
     } catch (error) {

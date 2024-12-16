@@ -63,16 +63,32 @@ exports.couponApply = async (req, res,next)=>{
         res.status(200).json({
             message: 'Coupon applied successfully!',
             discountAmount,
+            couponId:coupon._id,
+            codeOfCoupon:coupon.code
         });
 
         // save the coupon discount amount in session.
-        req.session.couponData ={
-            couponData:coupon
-        } 
+        
 
         
     } catch (error) {
         console.error('An errror occured while applying coupon',error)
+        next(error)
+        
+    }
+}
+
+
+// Coupon remove Handler
+
+exports.removeCoupon = async (req, res, next)=>{
+    try { 
+
+        
+        res.status(200).json({ message: 'Coupon removed successfully!' });
+        
+    } catch (error) {
+        console.error('Error removing coupon:', error);
         next(error)
         
     }

@@ -8,11 +8,21 @@ const mongoose = require('mongoose')
 exports.showCoupons = async (req, res, next)=>{
     try {
 
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 8; 
+        const skip = (page - 1) * limit;
+
         // Get all coupons..!
-        const coupons = await Coupon.find({}).sort({createdAt:-1})
+        const coupons = await Coupon.find({}).sort({createdAt:-1}).skip(skip).limit(limit)
+
+        const totalOrders = await Coupon.countDocuments();
+
+        const totalPages = Math.ceil(totalOrders / limit);
         
         res.status(200).render('admin/coupn-management',{
             coupons,
+            currentPage:page,
+            totalPages:totalPages
         });
     } catch (error) {
         console.error('An error occured while loading the coupon page..!')

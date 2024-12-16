@@ -5,7 +5,16 @@ const Order = require('../../../models/order-modal')
 
 
 exports.getOrders = async (req, res, next)=>{
+
+   
+
     try {
+
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 10; 
+        const skip = (page - 1) * limit;
+
+
         const orders = await Order.find()
             .populate({
                 path: 'orderItems',
@@ -14,10 +23,20 @@ exports.getOrders = async (req, res, next)=>{
                     select: 'productName' 
                 }
             })
-            .populate('userId', 'name');
+            .populate('userId', 'name')
+            .sort({ createdAt: -1 }) 
+            .skip(skip)
+            .limit(limit);
+
+
+            const totalOrders = await Order.countDocuments();
+
+            const totalPages = Math.ceil(totalOrders / limit);
 
             res.status(200).render('admin/order-management', {
-                orders
+                orders,
+                currentPage: page,
+                totalPages:totalPages
             });
         
     } catch (error) {
@@ -44,7 +63,8 @@ exports.viewOrder = async (req, res, next)=>{
                     select: 'productName productImage regularPrice' 
                 }
             })
-            .populate('userId', 'name email');
+            .populate('userId', 'name email')
+            
 
         if(!order){
             return res.status(400).json({message : 'Order not found..!'})
@@ -95,6 +115,10 @@ exports.updateOrderStatus = async (req, res, next) => {
                     }
                 }
             }
+        }
+
+        if(status == 'Delivered'){
+            order.paymentStatus = 'Completed';
         }
 
         // Update order status

@@ -295,7 +295,7 @@
                                 </div><!-- End .product-action-vertical -->
 
                                 <div class="product-action">
-                                    <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                     <span><%=products[i].tags[0]%></span>
                                 </div><!-- End .product-action -->
                             </figure><!-- End .product-media -->
 
@@ -431,7 +431,7 @@
                            <% for (let i = 4; i < 7 && i < products.length; i++) { %>
                             <div class="product product-7">
                                 <figure class="product-media">
-                                    <span class="product-label label-sale">30% off</span>
+                                    <!-- <span class="product-label label-sale">30% off</span> -->
                                     <a href="/beats/product/productDetails/<%=products[i]._id%>">
                                         <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="Product image" class="product-image">
                                         <img src="/uploads/re-image/<%= products[i].productImage[1]%>" alt="Product image" class="product-image-hover">
@@ -443,7 +443,7 @@
                                     </div><!-- End .product-action-vertical -->
 
                                     <div class="product-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                        <span><%=products[i].tags[0]%></span>
                                     </div><!-- End .product-action -->
                                 </figure><!-- End .product-media -->
 
@@ -591,7 +591,7 @@
                                     </div><!-- End .product-action-vertical -->
 
                                     <div class="product-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                      <span><%=products[i].tags[0]%></span>
                                     </div><!-- End .product-action -->
                                 </figure><!-- End .product-media -->
 

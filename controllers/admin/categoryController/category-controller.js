@@ -124,37 +124,7 @@ exports.unlistCategory = async (req, res, next)=>{
     }
 }
 
-//  Add offer category
-exports.addOffer = async (req, res, next)=>{
-    const { id}= req.query
-    const {percentage} = req.body
-    // const percentage = parseInt(req.body.percentage)
 
-    // validate the percentage
-    if (! percentage || isNaN(percentage) || percentage <0 || percentage >=100){
-        return res.status(400).json({ message: 'Please enter a valid percentage between 1 and 100'});
-    }
-    try {
-        const category = await Category.findById(id);
-
-        if (!category) {
-            return res.status(404).json({message: 'Category not found..!'})
-        }
-        //Check existing product offer
-        const products = await Product.find({category : id})
-        const hasHigherOffer = products.some(product => product.productOffer > percentage);
-        if(hasHigherOffer) {
-            return res.status(400).json({message: 'The category offer canot be grater than existing product offers.'});
-        }
-        category.categoryOffer = percentage
-        await category.save()
-        res.status(200).json({message: 'Offer added successfully..!' })
-
-    } catch (error) {
-        next(error)
-        
-    }
-}
 
 
 

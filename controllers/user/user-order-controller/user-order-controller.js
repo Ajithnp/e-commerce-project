@@ -4,6 +4,8 @@ const Cart = require('../../../models/cart-model')
 const Address = require('../../../models/user-address')
 const OrderItem = require('../../../models/oredr-items-model')
 const Order = require ('../../../models/order-modal')
+const ProductReturn = require('../../../models/orderProductReturn-model')
+const Wallet = require('../../../models/wallet-model')
 
 
 // Orders getpage..!
@@ -51,9 +53,24 @@ exports.getOrderDetails = async (req, res, next)=>{
         if(!order){
             return res.status(400).json({message: "Order not found..!"})
         }
+        
+        const returnRequests = await ProductReturn.find({ order: orderId });
+        
+
+        const orderWithReturnStatus = {
+            ...order._doc,
+            orderItems: order.orderItems.map(item => {
+                const returnRequest = returnRequests.find(req => req.orderItemId.toString() === item._id.toString());
+                return {
+                    ...item._doc,
+                    returnStatus: returnRequest ? returnRequest.returnProductStatus : 'No Return Requested',
+                };
+            }),
+        };
+        
 
         res.status(200).render('user/order-details',{
-            order,
+            order: orderWithReturnStatus,
             user
         })
         
@@ -81,6 +98,32 @@ exports.orderCancel = async (req, res, next) => {
 
         if (!order) {
             return res.status(400).json({ message: 'Order ID not found!' });
+        }
+
+        // check the Order payment method.
+        if(order.paymentMethod === 'razorpay'){
+            const userId = order.userId;
+
+            // Find the order Amount!
+
+            const refundAmount = order.totalAmount;
+
+            const wallet = await Wallet.findByIdAndUpdate(
+                {userId},
+                {$inc: {walletBalance: refundAmount}},
+                {new:true, upsert:true}
+            )
+
+            wallet.transactions = wallet.transactions || [];
+            wallet.transactions.push({
+            transactionType: 'credit',
+            transactionAmount: refundAmount,
+            transactionDescription: 'Order cancel amount refunded',
+            transactionId: `TXN-${Date.now()}`, 
+        });
+
+        await wallet.save();
+
         }
 
         // Change order status to 'Cancelled'

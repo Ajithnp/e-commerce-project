@@ -25,13 +25,13 @@
 
                     <div class="wallet-content">
                         <div class="wallet-header">
-                            <h3><strong>My Wallet</strong></h3>
-                            <div class="wallet-balance">$1,250.00</div>
+                            <h5><strong>My Wallet</strong></h5>
+                            <div class="wallet-balance">₹<%= walletBalance %></div>
                         </div>
                     
-                        <div class="btn-group">
+                        <!-- <div class="btn-group">
                             <button class="btn">Add Funds</button>
-                        </div>
+                        </div> -->
                     
                         <h4>Transaction History</h4>
                         <table class="transaction-table">
@@ -45,34 +45,25 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% if (transactions.length === 0) { %>
+                                    <li>No transactions available.</li>
+                                    <% } else { %>
+                                        <% transactions.forEach(transaction => { %>
                                 <tr>
-                                    <td class="transaction-id">TRX123456789</td>
-                                    <td class="transaction-date">June 15, 2024 10:30 AM</td>
-                                    <td>Deposit from bank account</td>
-                                    <td>Credit</td>
-                                    <td class="transaction-amount credit">+$100.00</td>
+                                    <% 
+                                    // Create a new Date object and format it
+                                    var date = new Date(transaction.transactionDate);
+                                    var formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+                                %>
+                                    <td class="transaction-id"><%= transaction.transactionId %></td>
+                                    <td class="transaction-date"><%= formattedDate %></td>
+                                    <td><%= transaction.transactionDescription %></td>
+                                    <td><%= transaction.transactionType %></td>
+                                    <td class="transaction-amount credit">+<%= transaction.transactionAmount %></td>
                                 </tr>
-                                <tr>
-                                    <td class="transaction-id">TRX987654321</td>
-                                    <td class="transaction-date">June 14, 2024 2:45 PM</td>
-                                    <td>Deposit from bank account</td>
-                                    <td>Debit</td>
-                                    <td class="transaction-amount debit">-$50.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="transaction-id">TRX456789123</td>
-                                    <td class="transaction-date">June 13, 2024 9:15 AM</td>
-                                    <td>Deposit from bank account</td>
-                                    <td>Credit</td>
-                                    <td class="transaction-amount credit">+$200.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="transaction-id">TRX789123456</td>
-                                    <td class="transaction-date">June 12, 2024 11:00 AM</td>
-                                    <td>Deposit from bank account</td>
-                                    <td>Debit</td>
-                                    <td class="transaction-amount debit">-$75.00</td>
-                                </tr>
+                                <% }) %>
+                                <% } %>
+                               
                             </tbody>
                         </table>
                     </div>

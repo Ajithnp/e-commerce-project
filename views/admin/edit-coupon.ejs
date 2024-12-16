@@ -12,7 +12,8 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="code">Coupon Code*</label>
-                    <input type="text" id="code" name="code" value="<%= coupon.code %>" required>
+                    <input type="text" id="code-e" name="code" value="<%= coupon.code %>" >
+                    <span id="code-error-e" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
@@ -29,39 +30,36 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="minDiscountValue"> Discount Value*</label>
-                    <input type="number" id="minDiscountValue" name="minDiscountValue" value="<%= coupon.minDiscountValue %>" min="0" step="0.01" required>
+                    <input type="number" id="minDiscountValue-e" name="minDiscountValue" value="<%= coupon.minDiscountValue %>" min="0" step="0.01" required>
+                    <span id="minDiscount-error-e" class="error-message"></span>
                 </div>
                 <div class="form-group">
                     <label for="maxDiscountValue">Maximum Discount Value*</label>
-                    <input type="number" id="maxDiscountValue" name="maxDiscountValue" value="<%= coupon.maxDiscountValue %>" min="0" step="0.01" required>
+                    <input type="number" id="maxDiscountValue-e" name="maxDiscountValue" value="<%= coupon.maxDiscountValue %>" min="0" step="0.01" required>
+                    <span id="maxDiscount-error-e" class="error-message"></span>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="expiryDate">Expiry Date*</label>
-                    <input type="date" id="expiryDate" name="expiryDate" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" required>
+                    <input type="date" id="expiryDate-e" name="expiryDate" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" required>
+                    <span id="date-error-e" class="error-message"></span>
 
                 </div>
                 <div class="form-group">
                     <label for="usageLimit">Usage Limit</label>
-                    <input type="number" id="usageLimit" name="usageLimit" value="<%= coupon.usageLimit %>"  min="1" value="1">
+                    <input type="number" id="usageLimit-e" name="usageLimit" value="<%= coupon.usageLimit %>"  min="1" value="1">
+                    <span id="limit-error-e" class="error-message"></span>
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="isActive">Status</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="isActive" name="isActive" checked>
-                        <label for="isActive"></label>
-                    </div>
-                </div>
-            </div>
+         
 
             <div class="form-group">
                 <label for="description">Description*</label>
-                <textarea id="description" name="description" required><%= coupon.description %></textarea>
+                <textarea id="description-e" name="description" required><%= coupon.description %></textarea>
+                <span id="description-error-e" class="error-message"></span>
             </div>
 
             <div class="form-row">
@@ -76,7 +74,8 @@
                 </div>
                 <div class="form-group" id="minimumPurchaseGroup" style="display: <%= coupon.conditions === 'minimum_purchase' ? 'block' : 'none' %>;">
                     <label for="minimumPurchaseAmount">Minimum Purchase Amount*</label>
-                    <input type="number" id="minimumPurchaseAmount" name="minimumPurchaseAmount" value="<%= coupon.minPurchaseAmount || '' %>" min="0" step="0.01" <%= coupon.conditions === 'minimum_purchase' ? 'required' : '' %>>
+                    <input type="number" id="minimumPurchaseAmount-e" name="minimumPurchaseAmount" value="<%= coupon.minPurchaseAmount || '' %>" min="0" step="0.01" <%= coupon.conditions === 'minimum_purchase' ? 'required' : '' %>>
+                    <span id="minPurchase-error-e" class="error-message"></span>
                 </div>
             </div>
             
@@ -144,6 +143,10 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
+    }
+    .error-message {
+        color: red;
+    
     }
 
     .form-group {
@@ -271,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const conditionsSelect = document.getElementById('conditions');
     const minimumPurchaseGroup = document.getElementById('minimumPurchaseGroup');
-    const minimumPurchaseInput = document.getElementById('minimumPurchaseAmount');
+    const minimumPurchaseInput = document.getElementById('minimumPurchaseAmount-e');
 
 
     function toggleMinimumPurchase() {
@@ -293,13 +296,81 @@ document.addEventListener('DOMContentLoaded', function() {
      
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        isValid = true;
+
+        const couponCode = document.getElementById('code-e').value.trim();
+        const minDiscountValue = parseFloat(document.getElementById('minDiscountValue-e').value);
+        const maxDiscountValue = parseFloat(document.getElementById('maxDiscountValue-e').value);
+        const expiryDate = document.getElementById('expiryDate-e').value;
+        const usageLimit = parseInt(document.getElementById('usageLimit-e').value, 10);
+        const description = document.getElementById('description-e').value.trim();
+        const minimumPurchaseAmount = document.getElementById('minimumPurchaseAmount-e').value;
+
+          // Coupon Code Validation
+        if (!couponCode) {
+            displayErrorMessage('code-error-e', 'Coupon code is required.');
+            isValid = false;
+        } else if (!/^[A-Za-z0-9\-]+$/.test(couponCode)) {
+            displayErrorMessage('code-error-e', 'Coupon code can only contain letters, numbers, and hyphens.');
+            isValid = false;
+        } else if (couponCode.length < 5 || couponCode.length > 10) {
+            displayErrorMessage('code-error-e', 'Coupon code must be between 5 and 10 characters.');
+            isValid = false;
+        }
+
+        // Discount Value Validation
+        if (isNaN(minDiscountValue) || minDiscountValue <= 0) {
+            displayErrorMessage('minDiscount-error-e', 'Minimum discount value must be a valid positive number.');
+            isValid = false;
+        }
+        if (isNaN(maxDiscountValue) || maxDiscountValue <= 0) {
+            displayErrorMessage('maxDiscount-error-e', 'Maximum discount value must be a valid positive number.');
+            isValid = false;
+        }
+        if (maxDiscountValue < minDiscountValue) {
+            displayErrorMessage('maxDiscount-error-e', 'Maximum discount value cannot be less than minimum discount value.');
+            isValid = false;
+        }
+
+        // Expiry Date Validation
+        if (!expiryDate) {
+            displayErrorMessage('date-error-e', 'Expiration date is required.');
+            isValid = false;
+        } else if (new Date(expiryDate) <= new Date()) {
+            displayErrorMessage('date-error-e', 'Expiration date must be in the future.');
+            isValid = false;
+        }
+
+        // Usage Limit Validation
+        if (isNaN(usageLimit) || usageLimit < 1) {
+            displayErrorMessage('limit-error-e', 'Usage limit must be a positive integer.');
+            isValid = false;
+        }
+
+        // Description Validation
+        if (description && !/^[^\s][A-Za-z0-9\s.,'()\-]+$/.test(description)) {
+            displayErrorMessage('description-error-e', 'Description should not start with a space and can only contain letters, numbers, spaces, periods, commas, apostrophes, parentheses, and hyphens.');
+            isValid = false;
+        }
+
+        // Minimum Purchase Amount Validation (If applicable)
+        if (conditionsSelect.value === 'minimum_purchase' && !minimumPurchaseAmount) {
+            displayErrorMessage('minimumPurchaseAmount-error', 'Minimum purchase amount is required.');
+            isValid = false;
+        } else if (minimumPurchaseAmount && isNaN(minimumPurchaseAmount)) {
+            displayErrorMessage('minimumPurchaseAmount-error', 'Minimum purchase amount must be a valid number.');
+            isValid = false;
+        }
+
+        // If validation fails, stop form submission
+        if (!isValid) return;
+
         const formData = new FormData(form);
         const couponData = Object.fromEntries(formData.entries());
-        couponData.isActive = form.isActive.checked;
-        couponData.minDiscountValue = parseFloat(couponData.minDiscountValue);
-        couponData.maxDiscountValue = parseFloat(couponData.maxDiscountValue);
-
-        // Do validations............
+        // couponData.isActive = form.isActive.checked;
+       
+      
         if (couponData.conditions !== 'minimum_purchase') {
             delete couponData.minimumPurchaseAmount;
         }
@@ -359,6 +430,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
     });
 });
+
+function displayErrorMessage(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
 </script>
 
 <%- include('../partials/admin/footer') %>

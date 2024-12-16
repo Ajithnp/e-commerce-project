@@ -1,5 +1,26 @@
 <%- include('../partials/user/header2') %>  
+<style>
+.copy-btn[disabled] {
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+    border: none;
+}
 
+.copy-btn[disabled]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1000;
+}
+</style>
 
 
 <main class="main">
@@ -182,17 +203,17 @@
                                    
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
-                                        <td>$<%=cart.subTotal%></td>
+                                        <td id="subTotalAmount">₹<%= cart.subTotal %></td>
                                     </tr><!-- End .summary-subtotal -->
                                     <tr>
                                         <td>Savings:</td>
-                                        <td>₹<%= totalSavings %></td>
+                                        <td style="color: green;">₹<%= totalSavings %></td>
                                     </tr>
                                     <input type="hidden" id="sub-value" value="<%= cart.subTotal %>">
 
                                     <tr>
                                         <td>Coupon discount:</td>
-                                        <td>000</td>
+                                        <td id="couponDiscountAmount" style="color: red;">0.00</td>
                                     </tr>
                                     <tr>
                                         <td>Shipping:</td>
@@ -200,7 +221,7 @@
                                     </tr>
                                     <tr class="summary-total">
                                         <td>Total:</td>
-                                        <td>$<%=cart.subTotal%></td>
+                                        <td id="grandTotalAmount">₹<%= cart.subTotal %> </td>
                                     </tr><!-- End .summary-total -->
                                     
                                     <% } %>
@@ -208,11 +229,6 @@
                             </table><!-- End .table table-summary -->
 
 
-                            <script>
-                                const grandTotal = '<%=cart.subTotal%>'
-                               
-                               
-                            </script>
 
                             <div class="accordion-summary" id="accordion-payment">
                                 ------------------------------------
@@ -220,26 +236,26 @@
                                     <h6>Select a Payment Method</h6>
                                     <form id="payment-form">
                                         <!-- Payment Options with Radio Buttons -->
+                                      
                                         <div class="payment-option">
-                                            <input type="radio" id="bank-transfer" name="paymentMethod" value="Bank Transfer" disabled>
-                                            <label for="bank-transfer">Direct Bank Transfer</label>
-                                        </div>
-                                        <div class="payment-option">
-                                            <input type="radio" id="wallet" name="paymentMethod" value="Wallet" disabled>
+                                            <input class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-3"  type="radio" id="wallet" name="paymentMethod" value="Wallet" disabled>
                                             <label for="wallet">Wallet</label>
+                                            
                                         </div>
                                         <div class="payment-option">
-                                            <input type="radio" id="cod" name="paymentMethod" value="COD">
+                                            <!-- <input type="radio" id="cod" name="paymentMethod" value="COD"> -->
+                                            <input class="collapsed" data-toggle="collapse" data-target="#collapse-cod" aria-expanded="false" aria-controls="collapse-cod" type="radio" id="cod" name="paymentMethod" value="COD">
                                             <label for="cod">Cash on Delivery</label>
+                                            <div id="collapse-cod" class="collapse" aria-labelledby="heading-cod" data-parent="#accordion-payment">
+                                                <div class="card-body">
+                                                    Cash on Delivery is only available for order amount above 1000.
+                                                </div>
                                         </div>
                                         <div class="payment-option">
                                             <input type="radio" id="Razor-Pay" name="paymentMethod" value="razorpay">
                                             <label for="paypal">Razor Pay</label>
                                         </div>
-                                        <div class="payment-option">
-                                            <input type="radio" id="credit-card" name="paymentMethod" value="Card payment" disabled>
-                                            <label for="credit-card">Credit Card (Stripe)</label>
-                                        </div>
+                                        
                                     </form>
    
                             </div><!-- End .accordion -->
@@ -282,29 +298,31 @@
             <tbody id="couponTableBody">
                 <% if (coupons && coupons.length > 0) { %>
                     <% coupons.forEach(coupon => { %>
-                    <tr>
-                        <td><%= coupon.code %></td>
-                        <td><%= coupon.description %></td>
-                        <td><%= coupon.maxDiscountValue %></td>
-                        <td class=" getExpiryClass"><%= new Date(coupon.expiryDate).toLocaleDateString() %></td>
-                        <td><%= coupon.conditions || 'No conditions' %>
-                            <% if(coupon.conditions === 'minimum_purchase') {%>
-                             <br>₹<%=coupon.minPurchaseAmount%>
-                             <% } %>
+                        <tr>
+                            <td><%= coupon.code %></td>
+                            <td><%= coupon.description %></td>
+                            <% if (coupon.discountType === 'percentage') { %>
+                                <td><%= coupon.minDiscountValue %>%</td>
+                            <% } else { %>
+                                <td><%= coupon.minDiscountValue %></td>
+                            <% } %>
+                            <td class="getExpiryClass"><%= new Date(coupon.expiryDate).toLocaleDateString() %></td>
+                            <td><%= coupon.conditions || 'No conditions' %></td>
+                            <td>
+                                <button class="copy-btn" data-coupon="<%=coupon.code%>">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
                             </td>
-                        <td>
-                            <button class="copy-btn" data-coupon="<%=coupon.code%>">
-                                <i class="fas fa-copy"></i> Copy
-                            </button>
-                        </td>
-                    </tr>
+                        </tr>
                     <% }) %>
                 <% } else { %>
                     <tr>
                         <td colspan="6">No coupons available at the moment.</td>
                     </tr>
                 <% } %>
+                
             </tbody>
+            
         </table>
     </div>
 </div>
@@ -506,6 +524,9 @@
         </div>
     </div>
 
+    <input type="hidden" id="couponId">
+    <input type="hidden" id="discouValue">
+
    
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
@@ -516,13 +537,16 @@
     document.getElementById("address-form-modal").style.display = "block";
 
     try {
-        const response = await fetch(`/beats/user/getAddress/${addressId}`);
+        console.log('address, data', addressId)
+        const response = await fetch(`/beats/user/getAddress/${addressId}`,{method:'GET'});
 
         if(!response.ok){
         throw new Error('Failed to fetch address data..!')
-    }
+         }
 
     const addressData = await response.json();
+    console.log('address data', addressData);
+    
     document.getElementById('name-e').value = addressData.name;
     document.getElementById('last-name-e').value = addressData.lastName;
     document.getElementById('companyName-e').value =addressData.companyName;
@@ -779,6 +803,36 @@ toggleButton.addEventListener('click', () => {
     e.preventDefault();
 
     console.log('userid', userId);
+
+    const grandTotalElement = document.getElementById("grandTotalAmount");
+
+    const grandTotalText = grandTotalElement.innerText.trim();
+    const grandTotalValue = parseFloat(grandTotalText.replace(/₹/, ''));
+    
+
+    const couponData = JSON.parse(sessionStorage.getItem('appliedCoupon'));
+    let couponId = null;
+    let couponDiscount = null;
+    let couponCode = null;
+  if(couponData){
+     couponId = couponData.couponId;
+     couponCode = couponData.couponCode;
+     couponDiscount = couponData.couponDiscountAmount;
+
+  }
+    
+
+  const subTotal = parseFloat('<%= cart.subTotal %>');
+  const savings = parseFloat('<%= totalSavings %>');
+
+
+
+    console.log('grandTotal amount', grandTotalValue);
+    console.log('subTotal amount', subTotal);
+    console.log('savings amount', savings);
+    console.log('Retrieved coupon data:', couponData);
+    
+    
     
 
     const selectedAddress = document.querySelector('input[name="address"]:checked');
@@ -818,7 +872,13 @@ toggleButton.addEventListener('click', () => {
         userId, // Ensure userId is defined earlier
         orderItems,
         address,
-        paymentMethod
+        paymentMethod,
+        subTotal,
+        savings,
+        grandTotalValue,
+        couponDiscount,
+        couponId,
+        couponCode
     };
 
     Swal.fire({
@@ -847,7 +907,7 @@ toggleButton.addEventListener('click', () => {
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ amount: grandTotal, currency: 'INR' })
+                        body: JSON.stringify({ amount: grandTotalValue, currency: 'INR' })
                     });
 
                     console.log('Raw Response:', response);
@@ -860,7 +920,7 @@ toggleButton.addEventListener('click', () => {
                             key: data.key_id,
                             amount: data.amount,
                             currency: data.currency,
-                            name: "",
+                            name: "Beats Studio",
                             description: "",
                             order_id: data.order_id,
                             handler: function (response) {
@@ -876,11 +936,21 @@ toggleButton.addEventListener('click', () => {
                                         address: address,
                                         userId, 
                                         paymentMethod,
-                                        totalAmount: grandTotal
+                                        subTotal,
+                                        grandTotalValue,
+                                        orderItems,
+                                        savings,
+                                        couponDiscount,
+                                        couponId,
+                                        couponCode
+
+
                                     })
                                 })
                                     .then(response => response.json())
                                     .then(paymentData => {
+                                        console.log('razorpay response',paymentData);
+                                        
                                         if (paymentData.status === 'ok') {
                                             window.location.href = '/beats/orderSuccess';
                                         } else {
@@ -906,6 +976,72 @@ toggleButton.addEventListener('click', () => {
                         };
                         const rzp = new Razorpay(razorpayOptions);
                         rzp.open();
+
+                        //for failing
+                        rzp.on('payment.failed',function (response){
+                            console.error('Payment faild..!', response.error)
+                            Swal.fire({
+                                icon: 'error',
+                                 title: 'Payment Failed',
+                                text: `Reason: ${response.error.description}`,
+                                 footer: 'Please try again or choose a different payment method.'
+                            })
+
+                            const paymentId = response.error?.metadata?.payment_id || "Missing Payment ID";
+                            const orderId = response.error?.metadata?.order_id || "Missing Order ID";
+                            const signature = response.error?.metadata?.signature || "Missing razor pay signature";
+
+                            // save Failed order details..!
+                             fetch('/save/failedOrder',{
+                                method: 'POST',
+                                headers:{
+                                    'Content-Type':'application/json'
+                                },
+                                body:JSON.stringify({
+                                       razorpayPaymentId: paymentId,
+                                        razorpayOrderId: orderId,
+                                        razorpaySignature: response.razorpay_signature || "Missing ",
+                                        address: address,
+                                        userId, 
+                                        paymentMethod,
+                                        subTotal,
+                                        grandTotalValue,
+                                        orderItems,
+                                        savings,
+                                        couponDiscount,
+                                        couponId,
+                                        couponCode
+                                })
+                             })
+                             .then(res => res.json())
+                                .then(saveResponse => {
+                                    console.log("Save Response:", saveResponse);
+                                    if (saveResponse.status === 'ok') {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Payment Failed',
+                                            text: 'Order saved with failed payment status. Please try again.'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Order Save Failed',
+                                            text: saveResponse.error
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error saving failed order:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Could not save order details. Please contact support.'
+                                    });
+                                });
+                        
+                        })
+
+                        //for failing
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -922,6 +1058,27 @@ toggleButton.addEventListener('click', () => {
                     });
                 }
             } else {
+                
+                if (grandTotalValue >= 1000) {
+   
+                Toastify({
+                         text: "Your order is eligible for Cash on Delivery!",
+                        backgroundColor: "#4caf50",
+                       duration: 3000,
+                  }).showToast();
+              } else {
+   
+                Toastify({
+                    text: "Cash on Delivery is only available for orders above 1000.",
+                     backgroundColor: "#f44336",
+                     duration: 3000,
+                 }).showToast();
+               return; // Stop execution if the condition is not met
+            }
+
+            
+
+
                 fetch("/beats/user/checkout", {
                     method: "POST",
                     headers: {
@@ -937,7 +1094,12 @@ toggleButton.addEventListener('click', () => {
                         }
                     })
                     .then((data) => {
-                        window.location.href = '/beats/orderSuccess';
+                        const orderId = data.orderId;
+                        console.log('orderId', orderId);
+                        
+                        window.location.href = `/beats/orderSuccess?orderId=${orderId}`;
+                        sessionStorage.removeItem('appliedCoupon');
+                        sessionStorage.removeItem('appliedCouponCode');
                     })
                     .catch((error) => {
                         console.error(error);

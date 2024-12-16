@@ -129,6 +129,10 @@
         /* display: inline-flex; */
         align-items: center;
     }
+    .offer-btn {
+        background-color: #ed8936;
+        color: #ffffff;
+    }
 
     .list-btn {
         /* background-color: #48bb78; */
@@ -223,6 +227,7 @@
                 <th>BRANDS</th>
                 <th>BRAND LOGO</th>
                 <th>DESCRIPTION</th>
+                <th>OFFER</th>
                 <th>STATUS</th>
                 <th>ACTIONS</th>
             </tr>
@@ -236,6 +241,7 @@
                     alt="<%= model.brandName%>"
                     class="brand-logo"></td>
                     <td><%= model.description%></td>
+                    <td><%= model.brandOffer%></td>
                 <td>
                     <% if(model.isBlocked) {%>
                     <span class="status-badge inactive">
@@ -253,6 +259,12 @@
                     <% } %>
                     <button class="action-btn edit-btn" onclick="editBrand('<%= model._id%>')">
                         <span class="material-icons">edit</span>
+                    </button>
+                    <button class="action-btn offer-btn" onclick="addOffer('<%= model._id %>', this)"
+                        style="<% if (model.brandOffer >0) { %> background-color: #ed8936; <% } else { %> background-color: #48bb78; <% } %>">
+                        <span class="material-icons">local_offer</span>
+                        <% if (model.modelOffer >0) { %>Edit Offer <% }
+                        else { %> Add Offer <% } %>
                     </button>
                 </td>
             </tr>
@@ -317,6 +329,42 @@ function confirmList(id, button) {
                 });
             }
         });
+    }
+
+    function addOffer(brandId, button) {
+        Swal.fire ({
+            title: 'Add Offer Percentage',
+            input: 'text',
+            inputLabel: 'Offer Percentage',
+            inputPlaceholder: 'Enter offer percentage',
+            showCancelButton: true,
+            confirmButtonText: 'Add Offer',
+            preConfirm : (value) => {
+                if (!value || isNaN(value) || value <0 || value > 100) {
+                    Swal.showValidationMessage ('Please enter a valid percentage between 1 and 100.');
+                }else {
+                    return fetch('/api/v1/admin/brand/addOffer', {
+                        method: 'POST',
+                        headers: { 'Content-Type' : 'application/json'},
+                        body: JSON.stringify({ brandId, percentage: value})
+                    }).then(response => {
+                        if(!response.ok) throw new Error('Failed to add offer');
+                        return response.json();
+                    });
+                }
+            }
+        }).then((result)=> {
+            if (result.isConfirmed) {
+                Swal.fire(`Offer added successfully!`, '', 'success');
+                
+            }
+            setTimeout(()=>{
+                location.reload()
+            },2000)
+        }).catch(error => {
+            Swal.fire ('Error !', error.message, 'error');
+        });
+
     }
 
   

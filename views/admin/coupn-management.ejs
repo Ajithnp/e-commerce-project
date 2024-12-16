@@ -18,7 +18,8 @@
                     <th>Discount</th>
                     <th>Max:Discount</th>
                     <th>Expiry Date</th>
-                    <th>Usage</th>
+                    <th>UsedCount</th>
+                    <th>UseLimit</th>
                     <th>Applicable</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -36,7 +37,8 @@
                         <% } %>
                     <td><%= coupon. maxDiscountValue%></td>
                     <td><%= coupon.expiryDate.getFullYear() + '-' + String(coupon.expiryDate.getMonth() + 1).padStart(2, '0') + '-' + String(coupon.expiryDate.getDate()).padStart(2, '0') %></td>
-                    <td><%= coupon.usage %></td>
+                    <td><%= coupon.usedCount %></td>
+                    <td><%= coupon.usageLimit %></td>
                     <td><%= coupon.conditions %>
                         <% if(coupon.conditions === 'minimum_purchase') {%>
                          <br> ₹<%=coupon.minPurchaseAmount%>
@@ -63,6 +65,19 @@
             </tbody>
         </table>
     </div>
+
+    <div class="pagination">
+        <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
+            <%= currentPage === 1 ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_left</span>
+        </a>
+        <span class="page-number">Page <span id="current-page"><%= currentPage %></span> of <span id="total-pages"><%= totalPages %></span></span>
+        <a href="?page=<%= currentPage + 1 %>" class="pagination-btn" id="next-btn" 
+            <%= currentPage === totalPages ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_right</span>
+        </a>
+    </div>
+
 </div>
 
 <style>
@@ -189,6 +204,27 @@
     .offer-btn {
         background-color: #f91616;
         color: white;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .pagination-btn {
+        background-color: #4a5568;
+        color: #ffffff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-number {
+        font-size: 14px;
     }
 </style>
 

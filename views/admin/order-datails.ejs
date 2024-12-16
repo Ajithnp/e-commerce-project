@@ -157,8 +157,8 @@
         <div class="info-grid">
             <div class="info-item">
                 <span class="material-icons">confirmation_number</span>
-                <span>Order ID:<br><br>
-                    <%= order._id %></span>
+                <span>Order ID:<br>
+                    #<%= order._id %></span>
             </div>
             <div class="info-item">
                 <span class="material-icons">calendar_today</span>
@@ -188,7 +188,15 @@
     </div>
 
     <div class="order-items">
+        <div style="display: flex; justify-content: space-between;">
         <h2><span class="material-icons">shopping_cart</span> Order Items</h2>
+        <% if(order.couponDiscount) {%>
+        <span>
+            <span class="material-icons">local_offer</span><br>
+         Coupon code:<%= order.appliedCouponCode%></span>
+         <% } %>
+            
+        </div>
         <table class="item-table">
             <thead>
                 <tr>
@@ -196,6 +204,7 @@
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>Total</th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -213,27 +222,31 @@
                 </tr>
                 <% }) %>
                 <tr class="total-row">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">Sub Total</td>
+                    <td>$<%=order.subTotal %></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3">Savings</td>
+                    <td>$<%=order.savings %></td>
+                </tr>
+                <% if(order.couponDiscount){%>
+                <tr class="total-row">
+                    <td colspan="3">Coupon Discount</td>
+                    <td>$<%=order.couponDiscount %></td>
+                    
+                </tr>  
+
+                <% } %>
+                <tr class="total-row">
+                    <td colspan="3">Grand Total</td>
                     <td>$<%=order.totalAmount %></td>
                 </tr>
+
             </tbody>
         </table>
     </div>
 
-    <div class="action-buttons">
-        <button class="action-button print-button">
-            <span class="material-icons">print</span>
-            Print Order
-        </button>
-        <!-- <button class="action-button">
-            <span class="material-icons">edit</span>
-            Edit Order
-        </button>
-        <button class="action-button cancel-button">
-            <span class="material-icons">cancel</span>
-            Cancel Order
-        </button> -->
-    </div>
+    
 </div>
 
 <script>

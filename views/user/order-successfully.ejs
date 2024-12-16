@@ -124,6 +124,13 @@
                 <span class="material-icons">list_alt</span>
                 View Orders
             </a>
+            <script>
+                const orderId = '<%= orderId %>'
+            </script>
+            <button onclick="downloadInvoice('<%= orderId %>')" class="button view-orders">
+                <span class="material-icons">list_alt</span>
+                Download Invoice
+            </a>
         </div>
     </div>
 </div>
@@ -147,6 +154,11 @@
             window.location.href = '/beats/user/orders';
         });
     });
+
+    function downloadInvoice(orderId){
+        console.log('OrderId', orderId)
+        window.location.href = `/order/invoice/download/${orderId}`
+    }
 </script>
 
 

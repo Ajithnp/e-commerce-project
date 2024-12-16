@@ -77,7 +77,6 @@ exports.addProductPage = async (req, res, next)=>{
 exports.addProduct = async (req, res, next)=>{
     
     
-    
     try {
         const products = req.body;
        
@@ -111,6 +110,19 @@ exports.addProduct = async (req, res, next)=>{
             return res.status(400).json('Invalid brand name');
         }
 
+        // check category and brand offer!
+        const categoryOffer = categoryId.categoryOffer || 0; 
+        const brandOffer = brandId.brandOffer || 0;
+
+        const finalOffer = Math.max(categoryOffer, brandOffer, products.productOffer || 0);
+
+        // Calculate sale price based on the highest offer
+        const regularPrice = parseFloat(products.regularPrice);
+        const salePrice = finalOffer > 0
+         ? Math.round(regularPrice - (regularPrice * finalOffer) / 100)
+          : regularPrice;
+
+
         // prepare color stock data
 
         const colorStock = [];
@@ -138,8 +150,11 @@ exports.addProduct = async (req, res, next)=>{
             brand: brandId._id,
             category: categoryId._id,
             regularPrice: products.regularPrice,
-            salePrice: products.salePrice,
+            salePrice: salePrice,
             productOffer: products.productOffer || 0, // Default to 0 if not provided
+            brandOffer:brandOffer,
+            categoryOffer:categoryOffer,
+            finalOffer:finalOffer,
             colorStock: colorStock,
             productImage: images,
             isBlocked: products.isBlocked === 'true', // Convert string to boolean
@@ -233,6 +248,18 @@ exports.editProduct = async (req, res, next)=>{
             return res.status(400).json({ message : 'Invalid category name'})
         }
 
+        // check category and brand offer!
+        const categoryOffer = categoryId.categoryOffer || 0; 
+        const brandOffer = brandId.brandOffer || 0;
+
+        const finalOffer = Math.max(categoryOffer, brandOffer, data.productOffer || 0);
+
+         // Calculate sale price based on the highest offer
+         const regularPrice = parseFloat(data.regularPrice);
+         const salePrice = finalOffer > 0
+          ? Math.round(regularPrice - (regularPrice * finalOffer) / 100)
+           : regularPrice;
+
         // const images =[];
 
         // if(req.files && req.files.length > 0){
@@ -276,8 +303,10 @@ exports.editProduct = async (req, res, next)=>{
         brand: brandId._id,
         category: categoryId._id,
         regularPrice: data.regularPrice,
-        salePrice: data.salePrice,
+        salePrice:salePrice,
         productOffer: data.productOffer || 0, // Default to 0 if not provided
+        brandOffer:brandOffer,
+        categoryOffer:categoryOffer,
         colorStock: colorStock,
         // productImage: images,
         isBlocked: data.isBlocked === 'true', // Convert string to boolean

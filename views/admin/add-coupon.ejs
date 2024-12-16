@@ -14,6 +14,7 @@
                 <div class="form-group">
                     <label for="code">Coupon Code*</label>
                     <input type="text" id="code" name="code" required>
+                    <span id="code-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
@@ -30,10 +31,12 @@
                 <div class="form-group">
                     <label for="minDiscountValue">Discount Value*</label>
                     <input type="number" id="minDiscountValue" name="minDiscountValue" min="0" step="0.01" required>
+                    <span id="minDiscount-error" class="error-message"></span>
                 </div>
                 <div class="form-group">
                     <label for="maxDiscountValue">Maximum Discount Value*</label>
                     <input type="number" id="maxDiscountValue" name="maxDiscountValue" min="0" step="0.01" required>
+                    <span id="maxDiscount-error" class="error-message"></span>
                 </div>
             </div>
 
@@ -41,26 +44,20 @@
                 <div class="form-group">
                     <label for="expiryDate">Expiry Date*</label>
                     <input type="date" id="expiryDate" name="expiryDate" required>
+                    <span id="date-error" class="error-message"></span>
                 </div>
                 <div class="form-group">
                     <label for="usageLimit">Usage Limit</label>
                     <input type="number" id="usageLimit" name="usageLimit" min="1" value="1">
+                    <span id="limit-error" class="error-message"></span>
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="isActive">Status</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="isActive" name="isActive" checked>
-                        <label for="isActive"></label>
-                    </div>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label for="description">Description*</label>
                 <textarea id="description" name="description" required></textarea>
+                <span id="description-error" class="error-message"></span>
             </div>
 
             <div class="form-row">
@@ -76,6 +73,7 @@
                 <div class="form-group" id="minimumPurchaseGroup" style="display: none;">
                     <label for="minimumPurchaseAmount">Minimum Purchase Amount*</label>
                     <input type="number" id="minimumPurchaseAmount" name="minimumPurchaseAmount" min="0" step="0.01">
+                    <span id="minPurchase-error" class="error-message"></span>
                 </div>
             </div>
 
@@ -146,7 +144,10 @@
         grid-template-columns: 1fr 1fr;
         gap: 24px;
     }
-
+    .error-message {
+        color: red;
+    
+    }
     .form-group {
         display: flex;
         flex-direction: column;
@@ -270,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('coupon-form');
     const conditionsSelect = document.getElementById('conditions');
     const minimumPurchaseGroup = document.getElementById('minimumPurchaseGroup');
+    let isValid = true; // Track form validity
 
     conditionsSelect.addEventListener('change', function() {
         if (this.value === 'minimum_purchase') {
@@ -281,56 +283,126 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
-    form.addEventListener('submit',async function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
+        isValid = true; // Reset validation state
+
+        // Get form values
+        const couponCode = document.getElementById('code').value.trim();
+        const minDiscountValue = parseFloat(document.getElementById('minDiscountValue').value);
+        const maxDiscountValue = parseFloat(document.getElementById('maxDiscountValue').value);
+        const expiryDate = document.getElementById('expiryDate').value;
+        const usageLimit = parseInt(document.getElementById('usageLimit').value, 10);
+        const description = document.getElementById('description').value.trim();
+        const minimumPurchaseAmount = document.getElementById('minimumPurchaseAmount').value;
+
+        // Coupon Code Validation
+        if (!couponCode) {
+            displayErrorMessage('code-error', 'Coupon code is required.');
+            isValid = false;
+        } else if (!/^[A-Za-z0-9\-]+$/.test(couponCode)) {
+            displayErrorMessage('code-error', 'Coupon code can only contain letters, numbers, and hyphens.');
+            isValid = false;
+        } else if (couponCode.length < 5 || couponCode.length > 10) {
+            displayErrorMessage('code-error', 'Coupon code must be between 5 and 10 characters.');
+            isValid = false;
+        }
+
+        // Discount Value Validation
+        if (isNaN(minDiscountValue) || minDiscountValue <= 0) {
+            displayErrorMessage('minDiscount-error', 'Minimum discount value must be a valid positive number.');
+            isValid = false;
+        }
+        if (isNaN(maxDiscountValue) || maxDiscountValue <= 0) {
+            displayErrorMessage('maxDiscount-error', 'Maximum discount value must be a valid positive number.');
+            isValid = false;
+        }
+        if (maxDiscountValue < minDiscountValue) {
+            displayErrorMessage('maxDiscount-error', 'Maximum discount value cannot be less than minimum discount value.');
+            isValid = false;
+        }
+
+        // Expiry Date Validation
+        if (!expiryDate) {
+            displayErrorMessage('date-error', 'Expiration date is required.');
+            isValid = false;
+        } else if (new Date(expiryDate) <= new Date()) {
+            displayErrorMessage('date-error', 'Expiration date must be in the future.');
+            isValid = false;
+        }
+
+        // Usage Limit Validation
+        if (isNaN(usageLimit) || usageLimit < 1) {
+            displayErrorMessage('limit-error', 'Usage limit must be a positive integer.');
+            isValid = false;
+        }
+
+        // Description Validation
+        if (description && !/^[^\s][A-Za-z0-9\s.,'()\-]+$/.test(description)) {
+            displayErrorMessage('description-error', 'Description should not start with a space and can only contain letters, numbers, spaces, periods, commas, apostrophes, parentheses, and hyphens.');
+            isValid = false;
+        }
+
+        // Minimum Purchase Amount Validation (If applicable)
+        if (conditionsSelect.value === 'minimum_purchase' && !minimumPurchaseAmount) {
+            displayErrorMessage('minimumPurchaseAmount-error', 'Minimum purchase amount is required.');
+            isValid = false;
+        } else if (minimumPurchaseAmount && isNaN(minimumPurchaseAmount)) {
+            displayErrorMessage('minimumPurchaseAmount-error', 'Minimum purchase amount must be a valid number.');
+            isValid = false;
+        }
+
+        // If validation fails, stop form submission
+        if (!isValid) return;
+
+        // Collect form data
         const formData = new FormData(form);
         const couponData = Object.fromEntries(formData.entries());
-        couponData.isActive = form.isActive.checked;
-        couponData.minDiscountValue = parseFloat(couponData.minDiscountValue);
-        couponData.maxDiscountValue = parseFloat(couponData.maxDiscountValue);
-  console.log('new form data:', formData);
-  
-       // Do validations here...........!
-       if (couponData.conditions !== 'minimum_purchase') {
+        // couponData.isActive = form.isActive.checked;
+
+        // Remove minimumPurchaseAmount if not selected
+        if (couponData.conditions !== 'minimum_purchase') {
             delete couponData.minimumPurchaseAmount;
         }
 
+        try {
+            const response = await fetch('/api/v1/admin/couponS/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ couponData })
+            });
 
-       try {
-        const response = await fetch('/api/v1/admin/couponS/add',{
-            method: 'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({couponData})
-        })
-        if(!response.ok){
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'An error occured adding coupon..!')
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An error occurred adding coupon!');
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Coupon added successfully.',
+                confirmButtonColor: '#48bb78',
+            }).then(() => {
+                window.location.reload();
+            });
+
+        } catch (error) {
+            console.error('An error occurred while adding new coupon', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: error.message,
+                confirmButtonColor: '#e53e3e',
+            });
         }
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'coupon added successfully.',
-            confirmButtonColor: '#48bb78',
-        }).then(()=>{
-            window.location.reload();
-        })
-        
-       } catch (error) {
-        console.error('An error occured while adding new coupon', error)
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops!',
-            text: error.message,
-            confirmButtonColor: '#e53e3e',
-        })
-        
-       }
-
-        
     });
 });
+
+function displayErrorMessage(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
 </script>
 <%- include('../partials/admin/footer') %>

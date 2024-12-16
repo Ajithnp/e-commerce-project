@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+    orderId:{
+        type: String,
+    },
     userId :{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -33,14 +36,14 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus:{
         type: String,
-        enum:['Processing','Delivered','Cancelled','Shipped','Dispatch'],
+        enum:['Processing','Delivered','Cancelled','Shipped','Failed'],
         default:'Processing',
         required: true
 
     },
     paymentMethod:{
         type: String,
-        enum: ['COD','Card payment','Wallet','Razor-Pay','Bank Transfer','Paypal'],
+        enum: ['COD','Card payment','Wallet','razorpay','Bank Transfer','Paypal'],
         required: true
     },
     subTotal:{
@@ -59,6 +62,16 @@ const orderSchema = new mongoose.Schema({
 
     totalAmount:{
         type: Number,  
+    },
+    paymentStatus: 
+    { type: String,
+     enum: ['Pending', 'Completed', 'Failed'],
+     default: 'Pending'
+     },
+
+    appliedCouponCode:{
+        type: String, 
+        required: false,
     },
     cancelReason:{
         type: String,

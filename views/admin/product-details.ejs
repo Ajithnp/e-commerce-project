@@ -182,6 +182,17 @@
             align-items: center;
             gap: 8px;
         }
+        .offer-button {
+            background-color: #f0a01e;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .product-images {
             margin-top: 24px;
@@ -292,13 +303,19 @@
 
         <div class="action-buttons">
             <%if (product.isBlocked) {%>
-            <button id="unlist" class="btn btn-danger action-btn unlist-button" onclick="confirmUnlist('<%= product._id %>',this)">List</button>
+            <button id="unlist" class="btn btn-danger action-btn unlist-button" onclick="confirmUnlistProduct('<%= product._id %>',this)">List</button>
             <%} else {%>
-                <button id="list" class="btn btn-success action-btn unlist-button" onclick="confirmList('<%= product._id %>',this)">Unlist</button>
+                <button id="list" class="btn btn-success action-btn unlist-button" onclick="confirmListProduct('<%= product._id %>',this)">Unlist</button>
                 <% } %>
             <button class="edit-button">
                 <span>✎</span>
                 Edit
+            </button>
+            <button class="offer-button" onclick="addProductOffer('<%= product._id %>', this)"
+                style="<% if (product.productOffer >0) { %> background-color: #ed8936; <% } else { %> background-color: #48bb78; <% } %>">
+                <span class="material-icons">local_offer</span>
+                <% if (product.productOffer >0) { %>Edit Offer <% }
+                else { %> Add Offer <% } %>
             </button>
         </div>
 
@@ -361,7 +378,7 @@ document.addEventListener('DOMContentLoaded', updateColorDetails)
       
 
         
-function confirmList(id, button) {
+function confirmListProduct(id, button) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You want to unlist this Product?',
@@ -385,7 +402,7 @@ function confirmList(id, button) {
     }
 
 
-    function confirmUnlist(id) {
+    function confirmUnlistProduct(id) {
         Swal.fire({
             title: 'Are you sure',
             text: 'You want to unlist this Product?',
@@ -412,5 +429,74 @@ function confirmList(id, button) {
         document.querySelector('.edit-button').addEventListener('click', function() {
             window.location.href = '/api/v1/admin/products/editProduct/<%= product._id %>';
         });
+
+
+async function addProductOffer(productId){
+    Swal.fire({
+        title: "Add Offer Percentage",
+        input: "number",
+        inputLabel: "Enter a percentage (1-100)",
+        inputPlaceholder: "Enter offer percentage",
+        confirmButtonText: "Submit",
+        showCancelButton: true,
+        inputAttributes: {
+            min: 1,
+            max: 100,
+            step: 1,
+        },
+        preConfirm: (value) => {
+            if (!value || value < 1 || value >= 100) {
+                Swal.showValidationMessage("Please enter a valid percentage (1-100)");
+            }
+            return value;
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const offerPercentage = result.value;
+
+            
+            fetch("/api/v1/admin/products/addOffer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    productId,
+                    offerPercentage,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        Swal.fire(
+                            "Success!",
+                            `Offer of ${offerPercentage}% has been added.`,
+                            "success"
+                        );
+                        setTimeout(()=>{
+                            window.location.reload();
+                        },2000)
+                    } else {
+                        Swal.fire(
+                            "Error!",
+                            `Failed to add offer: ${data.message}`,
+                            "error"
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    Swal.fire(
+                        "Error!",
+                        "Something went wrong while adding the offer.",
+                        "error"
+                    );
+                });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire("Cancelled", "No offer was added.", "info");
+        }
+    });
+
+}
     </script>
 <%- include('../partials/admin/footer') %>

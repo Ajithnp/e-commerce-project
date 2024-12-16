@@ -162,12 +162,12 @@
             <tr>
                 <td><%=cat.name%></td>
                 <td><%=cat.description%></td>
-                <td><%=cat.categoryOffer || '0%' %></td>
+                <td><%=cat.categoryOffer || '0' %>%</td>
                 <td class="action-cell">
-                    <% if (cat.isListed) { %>
-                    <button class="btn btn-danger action-btn list-btn " onclick="confirmUnlist('<%= cat._id %>',this)">UNLIST</button>
+                    <% if (!cat.isListed) { %>
+                    <button class="btn btn-danger action-btn list-btn " onclick="confirmUnlistCategory('<%= cat._id %>',this)">UNLIST</button>
                     <% } else { %>
-                    <button class="btn btn-success action-btn list-btn " onclick="confirmList('<%= cat._id %>',this)">LIST</button>
+                    <button class="btn btn-success action-btn list-btn " onclick="confirmListCategory('<%= cat._id %>',this)">LIST</button>
                     <% } %>
                     <button class="action-btn edit-btn" onclick="editCategory('<%= cat._id %>')">
                         <span class="material-icons">edit</span>
@@ -199,7 +199,7 @@
 
 <script>
     // Js functions 
-    function confirmList(id, button) {
+    function confirmListCategory(id, button) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You want to list this category?',
@@ -213,7 +213,10 @@
                     method: 'POST'
                 }).then(response => response.json()).then(data => {
                     Swal.fire(data.message, "",'success');
-                    location.reload() 
+                    setTimeout(()=>{
+                        location.reload() 
+                    },2000)
+                    
                 }).catch(error => {
                     Swal.fire('Error!', error.message, 'error');
                 });
@@ -221,7 +224,7 @@
         });
     }
 
-    function confirmUnlist(id) {
+    function confirmUnlistCategory(id) {
         Swal.fire({
             title: 'Are you sure',
             text: 'You want to unlist this category',
@@ -234,7 +237,10 @@
                     method: 'POST'
                 }).then(response => response.json()).then(data => {
                     Swal.fire(data.message, '', 'success');
-                    location.reload()
+                    setTimeout(()=>{
+                        location.reload()
+                    },2000)
+                    
                 }).catch(error =>{
                     Swal.fire('Error!'. error.message, 'error');
                 });
@@ -242,7 +248,7 @@
         });
     }
 
-    function addOffer(id, button) {
+    function addOffer(categoryId, button) {
         Swal.fire ({
             title: 'Add Offer Percentage',
             input: 'text',
@@ -254,10 +260,10 @@
                 if (!value || isNaN(value) || value <0 || value > 100) {
                     Swal.showValidationMessage ('Please enter a valid percentage between 1 and 100.');
                 }else {
-                    return fetch(`/api/v1/admin/category/addOffer?id=${id}`, {
+                    return fetch('/api/v1/admin/category/addOffer', {
                         method: 'POST',
                         headers: { 'Content-Type' : 'application/json'},
-                        body: JSON.stringify({ id, percentage: value})
+                        body: JSON.stringify({ categoryId, percentage: value})
                     }).then(response => {
                         if(!response.ok) throw new Error('Failed to add offer');
                         return response.json();
@@ -267,8 +273,11 @@
         }).then((result)=> {
             if (result.isConfirmed) {
                 Swal.fire(`Offer added successfully!`, '', 'success');
-                location.reload()
+                
             }
+            setTimeout(()=>{
+                location.reload()
+            },2000)
         }).catch(error => {
             Swal.fire ('Error !', error.message, 'error');
         });

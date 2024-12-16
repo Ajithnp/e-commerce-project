@@ -1,0 +1,310 @@
+
+<%- include('../partials/admin/header') %>
+<style>
+    .sales-report-container {
+        padding: 20px;
+        background-color: #1f2937;
+        color: #E5E7EB;
+        min-height: 100vh;
+    }
+
+    .page-title {
+        font-size: 24px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .report-filters {
+        background-color: #111827;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #E5E7EB;
+    }
+
+    .form-group select,
+    .form-group input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #4B5563;
+        background-color: #374151;
+        color: white;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary {
+        background-color: #3B82F6;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6B7280;
+        color: white;
+    }
+
+    .report-summary {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .summary-item {
+        background-color: #111827;
+        border-radius: 8px;
+        padding: 15px;
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .summary-item:last-child {
+        margin-right: 0;
+    }
+
+    .summary-item h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .summary-item p {
+        font-size: 24px;
+        font-weight: bold;
+        color: #3B82F6;
+    }
+
+    .report-table-container {
+        background-color: #111827;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #374151;
+    }
+
+    .report-table th {
+        background-color: #374151;
+        color: white;
+        font-weight: 600;
+    }
+
+    .report-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .report-summary {
+            flex-direction: column;
+        }
+
+        .summary-item {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        .report-table {
+            font-size: 14px;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 8px;
+        }
+
+        .report-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="sales-report-container">
+    <h1 class="page-title">Sales Report</h1>
+
+    <div class="report-filters">
+        <form id="report-filter-form">
+            <div class="form-group">
+                <label for="date-range">Date Range:</label>
+                <select id="date-range" name="dateRange">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom Date Range</option>
+                </select>
+            </div>
+            <div id="custom-date-range" style="display: none;">
+                <div class="form-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date" name="startDate">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date" name="endDate">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Report</button>
+        </form>
+    </div>
+
+    <div class="report-summary">
+        <div class="summary-item">
+            <h3>Overall Sales Count</h3>
+            <p id="sales-count">0</p>
+        </div>
+        <div class="summary-item">
+            <h3>Overall Order Amount</h3>
+            <p id="order-amount">$0.00</p>
+        </div>
+        <div class="summary-item">
+            <h3>Overall Discount</h3>
+            <p id="total-discount">$0.00</p>
+        </div>
+    </div>
+
+    <div class="report-table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Total order</th>
+                    <th>Discount total</th>
+                    <th>Coupon discount</th>
+                    <th>Total discount</th>
+                    <th>Total revanue</th>
+                </tr>
+            </thead>
+            <tbody id="report-data">
+                <!-- Report data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="report-actions">
+        <button id="download-pdf" class="btn btn-secondary">Download PDF</button>
+        <button id="download-excel" class="btn btn-secondary">Download Excel</button>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+
+        let type = '';
+        let startDate = '';
+        let endDate = '';
+
+        function applyFilter(){
+             type = document.getElementById('date-range').value;
+             startDate = document.getElementById('start-date').value;
+             endDate = document.getElementById('end-date').value;
+
+            console.log('Applying filter with:', { type, startDate, endDate });
+
+            fetchReport(type, startDate, endDate)
+
+        }
+
+        async function fetchReport(type, startDate, endDate){
+            try{
+            const response = await fetch(`/api/v1/admin/sales/report/fetch?type=${type}&startDate=${startDate}&endDate=${endDate}`);
+
+            
+            const data = await response.json();
+            console.log('Report data received:', data);
+            console.log('aall ethiii');
+            
+
+            // populate table!
+            const tbody = document.getElementById('report-data');
+
+            tbody.innerHTML = data.report
+
+            .map(row =>`
+             <tr>
+                 <td>${row._id}</td>
+                  <td>${row.totalOrders}</td>
+                 <td>${row.totalDiscount}</td>
+                 <td>${row.totalCouponDiscount}</td>
+                 <td>${row.totalDiscount + row.totalCouponDiscount}</td>
+                 <td>${row.totalRevanue}</td>
+             </tr>`
+
+            )
+            .join('');
+
+            // update summary!
+            document.getElementById('sales-count').textContent = data.summary.salesCount;
+            document.getElementById('order-amount').textContent = `$${data.summary.orderAmount}`;
+            document.getElementById('total-discount').textContent = `$${data.summary.totalDiscount}`;
+        }catch(error){
+            console.error('Error fetching report:', error);
+
+         }
+
+        }
+
+        document.getElementById('report-filter-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        applyFilter();
+    });
+
+     // Event listener for PDF download
+     document.getElementById('download-pdf').addEventListener('click', () => {
+            if (type || startDate || endDate) {
+                window.open(`/api/v1/admin/sales/report/pdf?type=${type}&startDate=${startDate}&endDate=${endDate}`, '_blank');
+            } else {
+                alert('Please apply filters before downloading the report.');
+            }
+        });
+
+
+         // Event listener for Excel download
+         document.getElementById('download-excel').addEventListener('click', () => {
+            if (type || startDate || endDate) {
+                window.open(`/api/v1/admin/sales/report/excel?type=${type}&startDate=${startDate}&endDate=${endDate}`, '_blank');
+            } else {
+                alert('Please apply filters before downloading the report.');
+            }
+        });
+
+   
+});
+
+
+</script>
+
+<%- include('../partials/admin/footer') %>
