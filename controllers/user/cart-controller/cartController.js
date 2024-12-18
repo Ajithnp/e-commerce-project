@@ -228,97 +228,74 @@ exports.cartQuantityUpdate = async(req, res, next)=>{
 }
 
 // CheckoutPage...!
-exports.getCheckoutPage = async(req, res, next)=>{
-
+exports.getCheckoutPage = async (req, res, next) => {
     const userId = req.session.user.id;
     try {
-       
-        const [userData, address, cart,coupons] = await Promise.all([
+        const [userData, address, cart, coupons] = await Promise.all([
             User.findById(userId),
-            Address.find({user:userId}),
-            Cart.findOne({userId}).populate('items.productId'),
-            Coupon.find({isActive:true})
+            Address.find({ user: userId }),
+            Cart.findOne({ userId }).populate('items.productId'),
+            Coupon.find({ isActive: true })
         ]);
 
-        // const validItems = [];
-        // let subTotal = 0;
-        // for (const item of cart.items) {
-        //     const isValid = await isProductValid(item.productId._id); // Validate product
-        //     if (isValid) {
-        //         validItems.push(item);
-
-        //         subTotal += item.totalPrice;
-        //     }
-        // }
-        // cart.items = validItems;
-        // cart.subTotal = subTotal;
-
-        //  Calculate total savings
         let totalSavings = 0;
+        let totalAmount = 0; // Initialize total amount
+        const validCartItems = []; // Array to hold valid cart items
 
-        cart.items.forEach(item => {
-            const product = item.productId; 
-            const savingsPerItem = (product.regularPrice - product.salePrice) * item.quantity;
-            totalSavings += Math.max(savingsPerItem, 0); 
-        });
+        // Validate products in the cart
+        for (const item of cart.items) {
+            const product = await Product.findById(item.productId).populate('brand category');
 
+            // Check if product is blocked or if its brand or category is blocked
+            if (!product.isBlocked && !product.brand.isBlocked && !product.category.isListed) {
+                validCartItems.push(item); // Add valid item to the list
+
+                // Calculate savings for valid products
+                const savingsPerItem = (product.regularPrice - product.salePrice) * item.quantity;
+                totalSavings += Math.max(savingsPerItem, 0);
+
+                // Calculate total amount for valid products
+                totalAmount += product.salePrice * item.quantity; // Use sale price for total calculation
+
+                // Check color stock quantities
+                const selectedColorStock = product.colorStock.find(color => color.color === item.selectedColor);
+                if (selectedColorStock && selectedColorStock.quantity <= 0) {
+                    // If stock is not available, skip this item
+                    continue; 
+                }
+            }
+        }
+
+        // Update the cart with only valid items
+        cart.items = validCartItems;
+
+        // Filter available coupons
         const usedCoupons = await AppliedCoupon.find({ userId }).select('couponId');
         const usedCouponIds = usedCoupons.map(uc => uc.couponId.toString());
-       
 
         const availableCoupons = coupons.filter(coupon => {
             const isExpired = new Date(coupon.expiryDate) < new Date();
             const isUsageLimitReached = coupon.usedCount >= coupon.usageLimit;
             const isAlreadyUsed = usedCouponIds.includes(coupon._id.toString());
-
-            // Exclude the coupon if any condition is satisfied
             return !isExpired && !isUsageLimitReached && !isAlreadyUsed;
         });
 
-
-
-        
-
-        let errorMessage = null;
-        // Check product color stock quantities
-
-        for(item of cart.items){
-            const product = await Product.findById(item.productId).select('productName colorStock');
-            
-            
-
-           const selectedColorStock = product.colorStock.find(color=>color.color == item.selectedColor);
-
-           if(selectedColorStock && selectedColorStock.quantity <=0){
-              errorMessage = {
-                error: true,
-                
-             message:`The selected color (${item.selectedColor}) for ${product.productName} is out of stock.!`
-              }
-
-              break;
-           }
-        }
-
-
-        if (errorMessage) {
-            return res.status(400).json(errorMessage)
-             
-        }
-
-        res.status(200).render('user/checkout',{
-            user:userData,
-            userAddress:address,
+        // Render the checkout page with updated totals
+        res.status(200).render('user/checkout', {
+            user: userData,
+            userAddress: address,
             cart,
             totalSavings,
-            coupons:availableCoupons,
+            totalAmount, // Include total amount in response
+            coupons: availableCoupons,
             cartItems: JSON.stringify(cart.items)
-        })
+        });
     } catch (error) {
-        next(error)
-        
+        next(error);
     }
-}
+};
+
+
 
 // Checkout post handler (order confirm)
 exports.orderConfirm = async (req, res, next)=>{

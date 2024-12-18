@@ -128,59 +128,70 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label for="name">Name *</label>
-                                    <input type="text" id="name-e" name="name1" value="<%=address.name%>" class="form-control" required>
-                                    <p id="name-err" class="error-message"></p>
+                                    <input type="text" id="name-e" name="name1" value="<%=address.name%>" class="form-control" >
+                                    <p id="name-err-e" class="error-message"></p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="last-name">Last Name *</label>
-                                    <input type="text" id="last-name-e" name="lastName" value="<%=address.lastName%>" class="form-control" required>
+                                    <input type="text" id="last-name-e" name="lastName" value="<%=address.lastName%>" class="form-control">
+                                    <p id="lastName-err-e" class="error-message"></p>
                                 </div>
                             </div>
                     
                             <label for="companyName">Company Name (Optional)</label>
                             <input type="text" id="companyName-e" name="companyName" value="<%=address.companyName%>" class="form-control">
+                            <p id="company-err-e" class="error-message"></p>
                     
                             <label for="streetAddress">Street address *</label>
-                            <input type="text" id="streetAddress-e" name="streetAddress" value="<%=address.streetAddress%>" class="form-control" placeholder="House number and Street name" required>
+                            <input type="text" id="streetAddress-e" name="streetAddress" value="<%=address.streetAddress%>" class="form-control" placeholder="House number and Street name" >
+                            <p id="street-err-e" class="error-message"></p>
                     
                             <label for="landmark">Landmark *</label>
-                            <input type="text" id="landmark-e" name="landmark" value="<%=address.landmark%>" class="form-control" placeholder="Apartments, suite, unit, etc." required>
+                            <input type="text" id="landmark-e" name="landmark" value="<%=address.landmark%>" class="form-control" placeholder="Apartments, suite, unit, etc.">
+                            <p id="landmark-err-e" class="error-message"></p>
                     
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label for="country">Country *</label>
-                                    <input type="text" id="country-e" name="country" value="<%=address.country%>" class="form-control" required>
+                                    <input type="text" id="country-e" name="country" value="<%=address.country%>" class="form-control">
+                                    <p id="country-err-e" class="error-message"></p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="state">State *</label>
-                                    <input type="text" id="state-e" name="state" value="<%=address.state%>" class="form-control" required>
+                                    <input type="text" id="state-e" name="state" value="<%=address.state%>" class="form-control">
+                                    <p id="state-err-e" class="error-message"></p>
                                 </div>
                             </div>
                     
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label for="dist">District *</label>
-                                    <input type="text" id="dist-e" name="dist" value="<%=address.district%>" class="form-control" required>
+                                    <input type="text" id="dist-e" name="dist" value="<%=address.district%>" class="form-control" >
+                                    <p id="dist-err-e" class="error-message"></p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="city">Town/City *</label>
-                                    <input type="text" id="city-e" name="city" value="<%=address.city%>" class="form-control" required>
+                                    <input type="text" id="city-e" name="city" value="<%=address.city%>" class="form-control" >
+                                    <p id="city-err-e" class="error-message"></p>
                                 </div>
                             </div>
                     
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label for="zip">Postalcode/Zip *</label>
-                                    <input type="text" id="zip-e" name="zip" value="<%=address.zip%>" class="form-control" required>
+                                    <input type="text" id="zip-e" name="zip" value="<%=address.zip%>" class="form-control" >
+                                    <p id="zip-err-e" class="error-message"></p>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="altPhone">Phone *</label>
-                                    <input type="tel" id="altPhone-e" name="phone" value="<%=address.altPhone%>" class="form-control" required>
+                                    <input type="tel" id="altPhone-e" name="phone" value="<%=address.altPhone%>" class="form-control" >
+                                    <p id="phone-err-e" class="error-message"></p>
                                 </div>
                             </div>
                     
                             <label for="email1">Email *</label>
-                            <input type="email" id="email-e" name="email1" value="<%=address.email%>" class="form-control" required>
+                            <input type="email" id="email-e" name="email1" value="<%=address.email%>" class="form-control" >
+                            <p id="email-err-e" class="error-message"></p>
                     
                             <div class="custom-control">
                                 <label>Address Type *</label>
@@ -208,103 +219,189 @@
 </main>
 
 <script>
-    // Edit address ---- Post function
-    document.getElementById('userAddress-edit').addEventListener('submit', async function (e){
-        e.preventDefault();
 
-        let addressId = document.getElementById('addressId').value.trim();
+function getInputValues() {
+    return {
+      name: document.getElementById('name-e').value.trim(),
+      lastName: document.getElementById('last-name-e').value.trim(),
+      companyName: document.getElementById('companyName-e').value.trim(),
+      streetAddress: document.getElementById('streetAddress-e').value.trim(),
+      landmark: document.getElementById('landmark-e').value.trim(),
+      country: document.getElementById('country-e').value.trim(),
+      state: document.getElementById('state-e').value.trim(),
+      dist: document.getElementById('dist-e').value.trim(),
+      city: document.getElementById('city-e').value.trim(),
+      zip: document.getElementById('zip-e').value.trim(),
+      altPhone: document.getElementById('altPhone-e').value.trim(),
+      email: document.getElementById('email-e').value.trim(),
+    };
+  }
 
-       
+  // Address Validation Function
+  function validateUserAddress() {
+    const values = getInputValues();
+    let isValid = true;
+    const errors = {};
 
-   const name =  document.getElementById('name-e').value.trim();
-   const lastName = document.getElementById('last-name-e').value.trim();
-   const companyName = document.getElementById('companyName-e').value.trim();
-   const streetAddress =  document.getElementById('streetAddress-e').value.trim();
-   const landmark = document.getElementById('landmark-e').value.trim();
-   const country = document.getElementById('country-e').value.trim();
-   const state = document.getElementById('state-e').value.trim();
-   const dist =  document.getElementById('dist-e').value.trim();
-   const city =  document.getElementById('city-e').value.trim();
-   const zip = document.getElementById('zip-e').value.trim();
-   const altPhone = document.getElementById('altPhone-e').value.trim();
-   const email = document.getElementById('email-e').value.trim();
-
-   const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
-
-   if (!addressType) {
-        return Swal.fire({
-            title: 'Error!',
-            text: 'Please select an address type.',
-            icon: 'error'
-        });
+    // Name validation
+    if (!values.name) {
+      isValid = false;
+      errors.name = 'First name is required.';
+    } else if (values.name.length < 3 || !/^[a-zA-Z\s]+$/.test(values.name)) {
+      isValid = false;
+      errors.name = 'First name must be at least 3 characters and contain only alphabets.';
     }
 
-    let data ={
-        name,
-        lastName,
-        companyName,
-        streetAddress,
-        landmark,
-        country,
-        state,
-        dist,
-        city,
-        city,
-        zip,
-        altPhone,
-        email,
-        addressType
+    // Last name validation
+    if (values.lastName) {
+      if (values.lastName.length < 2) {
+        isValid = false;
+        errors.lastName = 'Last name must be at least 2 characters.';
+      } else if (!/^[A-Za-z][A-Za-z0-9\s]*$/.test(values.lastName)) {
+        isValid = false;
+        errors.lastName = 'Last name must start with an alphabet and contain only letters, numbers, or spaces.';
+      }
     }
 
+    // Zip code validation
+    if (values.zip && !/^\d{5,6}$/.test(values.zip)) {
+      isValid = false;
+      errors.zip = 'Zip code must be 5-6 digits.';
+    }
+
+    // Alternate phone validation
+    if (values.altPhone && !/^\d{10}$/.test(values.altPhone)) {
+      isValid = false;
+      errors.phone = 'Alternate phone must be a valid 10-digit number.';
+    }
+
+    // Email validation
+    if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      isValid = false;
+      errors.email = 'Please enter a valid email address.';
+    }
+
+    // Optional field validations
+    if (values.companyName && !/^[a-zA-Z0-9\s]+$/.test(values.companyName)) {
+      isValid = false;
+      errors.company = 'Company name can only contain letters, numbers, and spaces.';
+    }
+
+    // Required fields (country, state, district, city, street)
+    if (!values.country) {
+      isValid = false;
+      errors.country = 'Country is required.';
+    } else if (!/^[A-Za-z]+$/.test(values.country)) {
+      isValid = false;
+      errors.country = 'Only alphabetic characters are allowed!';
+    }
+
+    if (!values.state) {
+      isValid = false;
+      errors.state = 'State is required.';
+    } else if (!/^[A-Za-z]+$/.test(values.state)) {
+      isValid = false;
+      errors.state = 'Only alphabetic characters are allowed!';
+    }
+
+    if (!values.dist) {
+      isValid = false;
+      errors.dist = 'District is required.';
+    } else if (!/^[A-Za-z]+$/.test(values.dist)) {
+      isValid = false;
+      errors.dist = 'Only alphabetic characters are allowed!';
+    }
+
+    if (!values.city) {
+      isValid = false;
+      errors.city = 'City is required.';
+    } else if (!/^[A-Za-z]+$/.test(values.city)) {
+      isValid = false;
+      errors.city = 'Only alphabetic characters are allowed!';
+    }
+
+    if (!values.streetAddress) {
+      isValid = false;
+      errors.streetAddress = 'Street address is required.';
+    }
+
+    // Display errors
+    for (const [key, message] of Object.entries(errors)) {
+      const errorElement = document.getElementById(`${key}-err-e`);
+      if (errorElement) {
+        errorElement.textContent = message;
+      }
+    }
+
+    return isValid;
+  }
+
+  // Edit Address Submit Handler
+  document.getElementById('userAddress-edit').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    if (!validateUserAddress()) {
+      return;
+    }
+
+    const addressId = document.getElementById('addressId').value.trim();
+    const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+    if (!addressType) {
+      return Swal.fire({
+        title: 'Error!',
+        text: 'Please select an address type.',
+        icon: 'error',
+      });
+    }
+
+    const values = getInputValues();
+    const data = {
+      ...values,
+      addressType,
+    };
+
+    // Confirmation Dialog
     Swal.fire({
-    title: 'Do you want to make changes?',
-    icon:'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, update!',
-    cancelButtonText: 'No, cancel'
-   }).then(async (result)=>{
-    if(result.isConfirmed){
+      title: 'Do you want to make changes?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update!',
+      cancelButtonText: 'No, cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`/beats/user/editAddress/${addressId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
 
-        try{
-            const response = await fetch(`/beats/user/editAddress/${addressId}`,{
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            if(!response.ok){
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'An unexpected error occured..!')
-            }
-            const successData = await response.json();
-            Swal.fire({
-                title: successData.message,
-                icon: 'success',
-    
-            }).then(()=>{
-                location.reload();
-            });
-        }catch(error){
-            console.error('An error occured edit address',error)
-            Swal.fire({
-                title: 'Error!',
-                text:error.message,
-                icon:'error'
-            });
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'An unexpected error occurred.');
+          }
+
+          const successData = await response.json();
+          Swal.fire({
+            title: successData.message,
+            icon: 'success',
+          }).then(() => {
+            location.reload();
+          });
+        } catch (error) {
+          console.error('An error occurred while editing address:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error',
+          });
         }
-    }
-   });
-
-
-
-    
-
-        
-
-    })
-    
-    
+      }
+    });
+  });
 
 </script>
 

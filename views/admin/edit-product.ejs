@@ -243,6 +243,7 @@
             crossorigin="anonymous"></script>
       
         <script>
+            let productId = '<%= product._id%>';
             let colorStockCount = 1;
     
             document.getElementById('add-color-stock').addEventListener('click', function() {
@@ -411,7 +412,7 @@
                         icon: "success"
                       })
                      .then(()=>{
-                        window.location.reload()
+                        window.location.href = `/api/v1/admin/products/details/${productId}`
                      })
                      
                         

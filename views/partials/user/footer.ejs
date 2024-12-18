@@ -481,9 +481,28 @@ async function updateQuantity(itemId, change) {
 
     // Ensure quantity limits (eg 1 to 5)
 
-    if(newQuantity < 1) newQuantity = 1;
-    if(newQuantity > 5) newQuantity = 5;
-
+    if (newQuantity < 1) {
+    Toastify({
+        text: "You must maintain at least one quantity",
+        duration: 3000,
+        gravity: "top", // Position: top or bottom
+        position: "right", // Position: left, center, or right
+        backgroundColor: "#FF6347", // Custom background color (Tomato red)
+        stopOnFocus: true, // Prevents dismissing when hovered
+    }).showToast();
+    newQuantity = 1;
+}
+if (newQuantity > 5) {
+    Toastify({
+        text: "Maximum pickup quantity reached!",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#FFA500", // Custom background color (Orange)
+        stopOnFocus: true,
+    }).showToast();
+    newQuantity = 5;
+}
     // Update the displayed quantity
     quantityDisplay.innerText = newQuantity;
 

@@ -1,57 +1,323 @@
 <%- include('../partials/admin/header') %>
-<div style="padding: 20px; color: #ffffff; background-color: #1a202c;">
-    <h1 style="font-size: 24px; margin-bottom: 20px;">Dashboard</h1>
+<style>
+    .admin-dashboard {
+        padding: 20px;
+        color: #ffffff;
+        background-color: #1a202c;
+    }
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Sales</div>
-            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">$ 28,222.00</div>
-            <div style="font-size: 0.875rem; color: #48bb78;">+35%</div>
+    .dashboard-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background-color: #2d3748;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+    
+    .stat-title {
+        color: #a0aec0;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-change {
+        font-size: 0.875rem;
+    }
+    
+    .stat-change.positive {
+        color: #48bb78;
+    }
+    
+    .stat-change.negative {
+        color: #f56565;
+    }
+    
+    .chart-container {
+        background-color: #2d3748;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .chart-placeholder {
+        height: 300px;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    
+    .top-sellers-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+    
+    .top-sellers-section {
+        background-color: #2d3748;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        color: #ffffff;
+    }
+    
+    .top-sellers-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .top-sellers-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #4a5568;
+    }
+    
+    .top-sellers-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .top-sellers-list .item-name {
+        color: #e2e8f0;
+    }
+    
+    .top-sellers-list .item-value {
+        color: #63b3ed;
+        font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+        .top-sellers-container {
+            grid-template-columns: 1fr;
+        }
+
+        
+    }
+    .time-range-buttons {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+
+    .time-button {
+        background-color: #4a5568;
+        color: #e2e8f0;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .time-button:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    .time-button:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .time-button.active {
+        background-color: #63b3ed;
+        color: #1a202c;
+    }
+
+    .time-button:hover:not(.active) {
+        background-color: #718096;
+    }
+    </style>
+
+<div class="admin-dashboard">
+    <h1 class="dashboard-title">Dashboard</h1>
+
+    <!-- Summary Section -->
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-title">Total Delivered Orders</div>
+            <div class="stat-value" id="totalDeliveredOrders">0</div>
         </div>
-        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Expenses</div>
-            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">$ 1,295.00</div>
-            <div style="font-size: 0.875rem; color: #f56565;">-12%</div>
+        <div class="stat-card">
+            <div class="stat-title">Total Cancelled Orders</div>
+            <div class="stat-value" id="totalCancelledOrders">0</div>
         </div>
-        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Visitors</div>
-            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">6,269</div>
-            <div style="font-size: 0.875rem; color: #48bb78;">+25%</div>
+        <div class="stat-card">
+            <div class="stat-title">Total Discounts</div>
+            <div class="stat-value" id="totalDiscounts">₹0.00</div>
         </div>
-        <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <div style="color: #a0aec0; margin-bottom: 0.5rem;">Total Orders</div>
-            <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">625</div>
-            <div style="font-size: 0.875rem; color: #48bb78;">+42%</div>
+        <div class="stat-card">
+            <div class="stat-title">Total Revenue</div>
+            <div class="stat-value" id="totalRevanue">₹0.00</div>
         </div>
     </div>
 
-    <div style="background-color: #2d3748; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
-        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Sales Overview</h2>
-        <div style="height: 300px; background-color: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; border-radius: 4px;">
-            Chart placeholder
+    <!-- Chart Section -->
+    <div class="chart-container">
+        <div class="time-range-buttons">
+            <button class="time-button active" data-filter="week">Week</button>
+            <button class="time-button" data-filter="month">Month</button>
+            <button class="time-button" data-filter="year">Year</button>
+        </div>
+        <h2 class="chart-title">Sales Overview</h2>
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <!-- Top Sellers Section -->
+    <div class="top-sellers-container">
+        <div class="top-sellers-section">
+            <h2 class="section-title">Top 10 Selling Categories</h2>
+            <ul id="topCategories" class="top-sellers-list"></ul>
+        </div>
+        <div class="top-sellers-section">
+            <h2 class="section-title">Top 10 Selling Brands</h2>
+            <ul id="topBrands" class="top-sellers-list"></ul>
+        </div>
+        <div class="top-sellers-section">
+            <h2 class="section-title">Top 10 Selling Products</h2>
+            <ul id="topProducts" class="top-sellers-list"></ul>
         </div>
     </div>
 
-    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-        <div style="flex: 1; background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Filter</h3>
-            <div style="display: flex; gap: 1rem;">
-                <input type="date" style="padding: 0.5rem; background-color: #1a202c; border: 1px solid #4a5568; color: #ffffff; border-radius: 4px;">
-                <input type="date" style="padding: 0.5rem; background-color: #1a202c; border: 1px solid #4a5568; color: #ffffff; border-radius: 4px;">
-                <button style="background-color: #4a5568; color: #ffffff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Apply Filter</button>
-            </div>
-        </div>
-        <div style="flex: 1; background-color: #2d3748; padding: 1rem; border-radius: 4px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Visited Customers</h3>
-            <div style="height: 150px; background-color: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; border-radius: 4px;">
-                Customer chart placeholder
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let salesChart; // Store the chart instance globally
 
-    <a href="#" style="display: inline-flex; align-items: center; background-color: #2d3748; color: #ffffff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px;">
-        <span class="material-icons" style="margin-right: 0.5rem;">download</span>
-        Download Report
-    </a>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDashboard();
+
+            document.querySelectorAll('.time-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    document.querySelector('.time-button.active').classList.remove('active');
+                    this.classList.add('active');
+                    const filter = this.getAttribute('data-filter');
+                    fetchDashboardData(filter);
+                });
+            });
+        });
+
+        // Initialize Dashboard
+        function initializeDashboard() {
+            fetchDashboardData('week'); // Default view
+        }
+
+        // Fetch Dashboard Data
+        async function fetchDashboardData(filter) {
+            try {
+                const response = await fetch(`/api/v1/admin/dashboard/report?filter=${filter}`);
+                if (!response.ok) throw new Error(`Failed to fetch data (Status: ${response.status})`);
+
+                const data = await response.json();
+                console.log('Dashboard Data:', data);
+
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                alert('Failed to load dashboard data. Please try again.');
+            }
+        }
+
+        // Update the Dashboard
+        function updateDashboard(data) {
+            console.log('data inside function : total revanue:', data.summary.totalRevanue);
+            
+            // Update Summary
+            document.getElementById('totalDeliveredOrders').textContent = data.summary.totalDeliveredOrders || 0;
+            document.getElementById('totalCancelledOrders').textContent = data.summary.totalCancelledOrders || 0;
+            document.getElementById('totalDiscounts').textContent = `₹${data.summary.totalDiscounts || 0}`;
+            document.getElementById('totalRevanue').textContent = `₹${data.summary.totalRevanue || 0}`;
+
+            // Update Top Sellers
+            populateTopSellersList('topCategories', data.topCategories);
+            populateTopSellersList('topBrands', data.topBrands);
+            populateTopSellersList('topProducts', data.topProducts);
+
+            // Update Chart
+            updateChart(data.chartData);
+        }
+
+        // Populate Top Sellers List
+        function populateTopSellersList(elementId, data) {
+            const list = document.getElementById(elementId);
+            list.innerHTML = ''; // Clear the previous list
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="item-name">${item._id || 'Unknown'}</span>
+                    <span class="item-value">${item.totalSales || 0}</span>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Update Chart
+        function updateChart(chartData) {
+            console.log('wegh',chartData);
+            
+            const ctx = document.getElementById('salesChart').getContext('2d');
+
+            if (salesChart) salesChart.destroy(); // Destroy previous chart instance
+
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.map(item => item._id),
+                    datasets: [
+                        {
+                            label: 'Delivered Orders',
+                            data: chartData.map(item => item.deliveredOrders || 0),
+                            backgroundColor: 'green',
+                        },
+                        {
+                            label: 'Cancelled Orders',
+                            data: chartData.map(item => item.cancelledOrders || 0),
+                            backgroundColor: 'red',
+                        },
+                        {
+                            label: 'Total Discounts',
+                            data: chartData.map(item => item.totalDiscounts || 0),
+                            backgroundColor: 'orange',
+                        },
+                        {
+                            label: 'Total Revenue',
+                            data: chartData.map(item => item.totalRevenue || 0),
+                            backgroundColor: 'blue',
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true },
+                    },
+                },
+            });
+        }
+    </script>
 </div>
+
 <%- include('../partials/admin/footer') %>

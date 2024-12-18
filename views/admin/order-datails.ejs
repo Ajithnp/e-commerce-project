@@ -81,6 +81,9 @@
     }
     .status-cancelled {
     color: red; /* Change text color to red */
+   }
+   .status-failed {
+    color: red; /* Change text color to red */
 }
     .order-items h2 .material-icons {
         margin-right: 10px;
@@ -158,7 +161,7 @@
             <div class="info-item">
                 <span class="material-icons">confirmation_number</span>
                 <span>Order ID:<br>
-                    #<%= order._id %></span>
+                     <%= order.orderId %></span>
             </div>
             <div class="info-item">
                 <span class="material-icons">calendar_today</span>
@@ -179,7 +182,7 @@
             <div class="info-item">
                 <span class="material-icons">local_shipping</span>
                 <span>Status: 
-                    <span class="order-status <%= order.orderStatus === 'Cancelled' ? 'status-cancelled' : '' %>">
+                    <span class="order-status <%= order.orderStatus === 'Cancelled' || 'Failed' ? 'status-cancelled' : '' %>">
                         <%= order.orderStatus %>
                     </span>
                 </span>

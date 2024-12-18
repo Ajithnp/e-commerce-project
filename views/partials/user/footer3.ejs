@@ -421,11 +421,18 @@ async function addToCart(productId) {
     } catch (error) {
         console.error('An error occured while adding product in cart',error);
         Swal.fire({
-            icon: 'warning',
-            title: 'Notice!',
-            text: error.message,
-            confirmButtonText: 'OK'
-        });
+    icon: 'warning',
+    title: 'Notice!',
+    text: error.message,
+    showCancelButton: true, // Enables a second button
+    confirmButtonText: 'OK', // Primary button text
+    cancelButtonText: 'Go to Cart', // Secondary button text
+}).then((result) => {
+    if (result.isDismissed) {
+        // Logic for 'Go to Cart' button click
+        window.location.href = '/beats/cart'; // Replace '/cart' with your cart URL
+    }
+});
         
     }
 					

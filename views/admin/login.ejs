@@ -157,7 +157,7 @@
                         data: { email ,password },
                         success: function( response ){
                             // redirect on success
-                            window.location.href = '/api/v1/admin'
+                            window.location.href = '/api/v1/admin/dashboard'
                         },
                         error : function ( xhr ) {
                             const errorMessage = xhr.responseJSON.message  // get error message from response

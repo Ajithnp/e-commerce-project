@@ -13,13 +13,14 @@ exports.getUsers = async (req, res, next)=>{
         // query = query.skip(skip).limit(limit);
 
         const totalUsers = await User.countDocuments()
-        const users = await User.find().skip(skip).limit(limit).exec()
+        const users = await User.find().sort({createdAt:-1}).skip(skip).limit(limit).exec()
        
 
         // render
         res.render('admin/users',{
             users,
             page,
+            totalUsers,
             totalPage: Math.ceil(totalUsers/limit)
         })
       

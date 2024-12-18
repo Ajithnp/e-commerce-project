@@ -4,8 +4,8 @@ const Category = require('../../../models/category-model')
 const User = require('../../../models/user-model')
 
 
- 
-exports.getStorePage = async (req, res, next)=>{
+
+exports.getStorePage = async (req, res, next) => {
     try {
         // Pagination setup
         const page = Number(req.query.page) || 1;
@@ -21,7 +21,7 @@ exports.getStorePage = async (req, res, next)=>{
 
         // Fetch categories and brands concurrently
         const [categories, brands] = await Promise.all([
-            Category.find({ isListed: false }),
+            Category.find({ isListed: false }), // Fetch only listed categories
             Brand.find({ isBlocked: false })
         ]);
 
@@ -43,12 +43,21 @@ exports.getStorePage = async (req, res, next)=>{
 
         // Handle category filtering
         if (req.query.category) {
+            console.log('filter category', req.query.category);
+            
             const selectedCategories = Array.isArray(req.query.category) ? req.query.category : [req.query.category];
             const categoryIds = await Promise.all(selectedCategories.map(async (categoryName) => {
-                const categoryDoc = await Category.findOne({ categoryName });
+                const categoryDoc = await Category.findOne({ name: categoryName });
+                console.log('category found', categoryDoc);
+                
                 return categoryDoc ? categoryDoc._id : null; // Return ObjectId or null if not found
             }));
             filters.category = { $in: categoryIds.filter(id => id !== null) }; // Filter out null values
+        }
+
+        // Handle price range filtering
+        if (req.query.priceLow && req.query.priceHigh) {
+            filters.salePrice = { $gte: Number(req.query.priceLow), $lte: Number(req.query.priceHigh) };
         }
 
         // Handle search query for product name, category name, and brand name
@@ -56,7 +65,7 @@ exports.getStorePage = async (req, res, next)=>{
             filters.$or = [
                 { productName: { $regex: new RegExp(req.query.q, 'i') } }, // Search by product name
                 { 'category.name': { $regex: new RegExp(req.query.q, 'i') } }, // Search by category name
-                { 'brand.name': { $regex: new RegExp(req.query.q, 'i') } } // Search by brand name
+                { 'brand.brandName': { $regex: new RegExp(req.query.q, 'i') } } // Search by brand name
             ];
         }
 
@@ -72,14 +81,15 @@ exports.getStorePage = async (req, res, next)=>{
             products: productData,
             page,
             totalPages,
-            brands
+            brands,
+            categories
         });
     } catch (error) {
         console.error('Error occurred while loading store page', error);
         next(error);
     }
+};
 
-}
 function getSortOptions(sortBy) {
     switch (sortBy) {
         case 'priceLowToHigh':
@@ -98,6 +108,7 @@ function getSortOptions(sortBy) {
             return {}; // Default to no sorting
     }
 }
+
 
 // Product Detail Page Handler....!
 exports.getProductDetail = async (req, res, next)=>{

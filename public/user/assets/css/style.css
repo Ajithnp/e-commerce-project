@@ -1167,7 +1167,8 @@ blockquote.text-white cite span {
   font-weight: 300;
 }
 .header-search-extended .form-control {
-  height: 44px;
+  /* height: 44px; */
+  margin-left: 1rem;
   padding-top: 1.2rem;
   padding-bottom: 1.2rem;
   padding-right: 2.4rem;

@@ -24,8 +24,11 @@ adminRoute.route('/login')
          .post(adminController.verifyLogin)
 
 // Dash board
-adminRoute.route('/')
+adminRoute.route('/dashboard')
        .get(auth.adminAuth,adminController.loadDashboard)
+
+adminRoute.route('/dashboard/report')
+       .get(adminController.loadDashboardData)       
 
 //  logout
 adminRoute.route('/logout')
@@ -92,7 +95,7 @@ adminRoute.route('/brands/listBrand')
 
 //Unlist
 adminRoute.route('/brands/unlistBrand')
-      .post(brandController.unlistBrand)
+      .post(auth.adminAuth,brandController.unlistBrand)
 
 // Product management...!
 adminRoute.route('/products')
@@ -117,19 +120,19 @@ adminRoute.route('/products/editProduct/:id')
        
 // list
 adminRoute.route('/products/listProduct')
-          .post(productController.listProduct)
+          .post(auth.adminAuth,productController.listProduct)
 
 //Unlist
 adminRoute.route('/products/unlistProduct')
-           .post(productController.unlistProduct)
+           .post(auth.adminAuth,productController.unlistProduct)
 
 adminRoute.route('/products/deleteImage')
-           .post(productController.deleteSingleProductImage)
+           .post(auth.adminAuth,productController.deleteSingleProductImage)
 
    //-------Offer-------------------//        
 //Add offer!
 adminRoute.route('/products/addOffer')
-          .post(productOfferController.addOffer)  
+          .post(auth.adminAuth,productOfferController.addOffer)  
 // Offer category
 adminRoute.route('/category/addOffer')
        .post(auth.adminAuth,productOfferController.addCategoryOffer)   
@@ -157,51 +160,51 @@ adminRoute.route('/coupons')
          
 //Add
 adminRoute.route('/coupons/add')
-       .get(couponController.getAddCoupon)
-       .post(couponController.addCoupon)
+       .get(auth.adminAuth,couponController.getAddCoupon)
+       .post(auth.adminAuth,couponController.addCoupon)
 
 // Edit
 adminRoute.route('/coupons/edit/:id')
-       .get(couponController.getEditForm)    
-       .put(couponController.updateCoupon)   
+       .get(auth.adminAuth,couponController.getEditForm)    
+       .put(auth.adminAuth,couponController.updateCoupon)   
 
 // List
 adminRoute.route('/coupons/list/:id')
-          .patch(couponController.listCoupon)
+          .patch(auth.adminAuth,couponController.listCoupon)
 
 // Unlist
 adminRoute.route('/coupons/unlist/:id')
-          .patch(couponController.unlistCoupon)
+          .patch(auth.adminAuth,couponController.unlistCoupon)
 
 //Delete
 adminRoute.route('/coupons/delete/:id')
-          .delete(couponController.deleteCoupon)    
+          .delete(auth.adminAuth,couponController.deleteCoupon)    
 //------------------Coupon management end-----------------------------//
 
 //------------------Order Producr Return management-------------------//
 adminRoute.route('/order/item/return')
-          .get(productReturnController.getReturnRequest)
+          .get(auth.adminAuth,productReturnController.getReturnRequest)
 // Accept!
 adminRoute.route('/order/item/return/accept/:id') 
-           .post(productReturnController.orderRequestAccept) 
+           .post(auth.adminAuth,productReturnController.orderRequestAccept) 
 // Reject!
 adminRoute.route('/order/item/return/reject/:id')
-          .post(productReturnController.orderRequestReject)           
+          .post(auth.adminAuth,productReturnController.orderRequestReject)           
 // View
 adminRoute.route('/order/item/return/view/:id')
-       .get(productReturnController.viewOrderReturnRequest)
+       .get(auth.adminAuth,productReturnController.viewOrderReturnRequest)
           
 // Sale report------------------------------!
 adminRoute.route('/sales/report')
-          .get(salesReportController.renderSalesReportPage)
+          .get(auth.adminAuth,salesReportController.renderSalesReportPage)
 // Fetch sales report.
 adminRoute.route('/sales/report/fetch')
-          .get(salesReportController.fetchSalesReport)   
+          .get(auth.adminAuth,salesReportController.fetchSalesReport)   
           
 // Download sales report!
 adminRoute.route('/sales/report/pdf')
-           .get(salesReportController.downloadSalesReportPdf)
+           .get(auth.adminAuth,salesReportController.downloadSalesReportPdf)
 adminRoute.route('/sales/report/excel')   
-            .get(salesReportController.downloadSalesReportExel)                  
+            .get(auth.adminAuth,salesReportController.downloadSalesReportExel)                  
 
 module.exports = adminRoute;         

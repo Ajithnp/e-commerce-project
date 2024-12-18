@@ -186,11 +186,11 @@
         </div>
         <div class="summary-item">
             <h3>Overall Order Amount</h3>
-            <p id="order-amount">$0.00</p>
+            <p id="order-amount">₹0.00</p>
         </div>
         <div class="summary-item">
             <h3>Overall Discount</h3>
-            <p id="total-discount">$0.00</p>
+            <p id="total-discount">₹0.00</p>
         </div>
     </div>
 
@@ -268,8 +268,8 @@
 
             // update summary!
             document.getElementById('sales-count').textContent = data.summary.salesCount;
-            document.getElementById('order-amount').textContent = `$${data.summary.orderAmount}`;
-            document.getElementById('total-discount').textContent = `$${data.summary.totalDiscount}`;
+            document.getElementById('order-amount').textContent = `₹${data.summary.orderAmount}`;
+            document.getElementById('total-discount').textContent = `₹${data.summary.totalDiscount}`;
         }catch(error){
             console.error('Error fetching report:', error);
 

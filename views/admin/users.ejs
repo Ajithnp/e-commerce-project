@@ -2,6 +2,41 @@
 
 <style>
 
+.user-count-box {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-count-icon {
+    font-size: 36px;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+.user-count-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-count-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.user-count-label {
+    font-size: 14px;
+    color: #666;
+}
+     
+
+
+
     .users-container {
         padding: 20px;
         color: #ffffff;
@@ -131,6 +166,15 @@
 
 <div class="users-container">
     <h1 class="page-title">USERS</h1>
+
+    <!-- New user count box -->
+    <div class="user-count-box">
+        <span class="user-count-icon material-icons">group</span>
+        <div class="user-count-info">
+            <span class="user-count-number"><%= totalUsers %></span>
+            <span class="user-count-label">Total Users</span>
+        </div>
+    </div>
     
     <div class="top-controls">
         <div class="search-bar">

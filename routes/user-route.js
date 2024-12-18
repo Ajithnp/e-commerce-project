@@ -148,7 +148,7 @@ userRoute.route('/beats/user/editAddress/:id')
 
 // User address delete..!
 userRoute.route('/beats/user/deleteAddress/:id')
-         .delete(userProfileController.deleteAddress)
+         .delete(auth.userAuth,userProfileController.deleteAddress)
 
 
 // User address get page 
@@ -171,32 +171,32 @@ userRoute.route('/beats/user/cancelOrder/:id')
          
 //-------------Product Return routes--------//
 userRoute.route('/order/product/return')
-         .post(productReturnController.itemReturnRequest)            
+         .post(auth.userAuth,productReturnController.itemReturnRequest)            
          
          
          // Wishlist
 // Add
 userRoute.route('/beats/user/wishlist/add')
-         .post(wishlistController.addWishlist)  
+         .post(auth.userAuth,wishlistController.addWishlist)  
 //Get
 userRoute.route('/beats/wishlist')
        .get(auth.userAuth, wishlistController.getWishlist)      
 //Remove
 userRoute.route('/beats/user/wishlist/remove/:id')
-         .delete(wishlistController.removeItemFromWishlist)
+         .delete(auth.userAuth,wishlistController.removeItemFromWishlist)
 
          // Wallet..!
 userRoute.route('/beats/user/wallet')
-         .get(walletController.getWallet)  
+         .get(auth.userAuth,walletController.getWallet)  
          
          //Coupon..!
 //Apply
 userRoute.route('/coupons/apply')
-          .post(couponController.couponApply) 
+          .post(auth.userAuth,couponController.couponApply) 
           
 //Remove
 userRoute.route('/coupons/remove')
-         .post(couponController.removeCoupon)        
+         .post(auth.userAuth,couponController.removeCoupon)        
 
 //------------------------------------------//
       
@@ -341,7 +341,7 @@ userRoute.post('/save/failedOrder', cartController.razorPayfailedOrderSave)
    
 // Invoice download.
 userRoute.route('/order/invoice/download/:orderId')
-         .get(invoiceDownloadController.downloadInvoice)
+         .get(auth.userAuth,invoiceDownloadController.downloadInvoice)
 
 
 // Authetication check route.
