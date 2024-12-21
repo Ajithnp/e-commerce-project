@@ -1,3 +1,4 @@
+
 async function addToWishlist(productId) {
 
     const authResponse = await fetch('/api/user/check-auth');
@@ -54,18 +55,17 @@ async function addToWishlist(productId) {
 
    }catch(error){
     console.error('An error occured while add item to wishlist..!');
-    Swal.fire({
-        showConfirmButton: false,
-        // icon: 'error',
-        background: 'white',
-        timer: 1000,
-        title: '<span class="inline-title"><i class="fas fa-circle-exclamation"></i> Product already in wishlist!</span>',
-        // text: error.message,
-        customClass: {
-            popup: 'custom-popup', 
-           },
-        
-    });
+    Toastify({
+        text: "Product already in wishlist!",
+        duration: 3000, 
+        close: true,   
+        gravity: "top", 
+        position: "right", // 
+        backgroundColor: "#f87171",
+        stopOnFocus: true,
+        className: "custom-toast", 
+        icon: "fas fa-circle-exclamation",
+    }).showToast();
    }
 }
 

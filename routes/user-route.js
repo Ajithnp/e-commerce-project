@@ -16,15 +16,18 @@ const productReturnController = require('../controllers/user/product-return-cont
 const invoiceDownloadController = require('../controllers/user/invoice-download/invoiceDownloadController')
 const Order = require('../models/order-modal')
 
+const nocache = require('../middleware/cache-middleware')
+
 const generate = require('../utils/receiptIdGenerator')
 
+const checkCartNotEmpty = require('../middleware/checkCart-empty');
 
 const auth = require('../middleware/auth')
 
 
 // Langin-page
 userRoute.route('/')
-       .get(userController.getLandingPage)
+       .get(nocache,userController.getLandingPage)
 
 // Log-in
 userRoute.route('/user/login')
@@ -110,7 +113,7 @@ userRoute.route('/beats/user/cart/update/:id')
 // User checkout..!
 
 userRoute.route('/beats/user/checkout')
-         .get(auth.userAuth,cartController.getCheckoutPage)
+         .get(auth.userAuth,checkCartNotEmpty,cartController.getCheckoutPage)
          .post(cartController.orderConfirm)
 
 // Checkout user address edit- fetch!

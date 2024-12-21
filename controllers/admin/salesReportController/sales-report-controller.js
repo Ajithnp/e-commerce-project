@@ -68,7 +68,7 @@ exports.fetchSalesReport = async (req, res, next) => {
                 start = new Date(new Date().getFullYear(), 0, 1) // Jan 1 of current year!
                 end = new Date(new Date().getFullYear(), 11, 31) // Dec 31 of current year!
                 break;
-            case 'custome':
+            case 'custom':
                 start = new Date(startDate);
                 end = new Date(endDate);
                 break;
@@ -150,7 +150,7 @@ const fetchSalesReportData = async (type, startDate, endDate) => {
           start = new Date(new Date().getFullYear(), 0, 1);
           end = new Date(new Date().getFullYear(), 11, 31);
           break;
-      case 'custome':
+      case 'custom':
           start = new Date(startDate);
           end = new Date(endDate);
           break;

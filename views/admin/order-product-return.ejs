@@ -42,9 +42,17 @@
                     <td data-label="Date"><%= returnRequest.productReturnDate.toLocaleDateString() %></td>
                     <td data-label="Status"><span class="status-badge return-request"><%= returnRequest.returnProductStatus %></span></td>
                     <td data-label="Actions">
+                     
                         <button class="action-btn view-btn" onclick="showReturnDetails('<%= returnRequest._id %>')">View</button>
-                        <button class="action-btn approve-btn" onclick="acceptReturn('<%= returnRequest._id %>')">Approve</button>
-                        <button class="action-btn reject-btn" onclick="rejectReturn('<%= returnRequest._id %>')">Reject</button>
+                        <button class="action-btn approve-btn" onclick="acceptReturn('<%= returnRequest._id %>')"
+                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
+                            
+                            >Approve</button>
+                        <button class="action-btn reject-btn" onclick="rejectReturn('<%= returnRequest._id %>')"
+                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
+                            
+                            >Reject</button>
+                       
                     </td>
                 </tr>
                 <% }); %>
@@ -79,6 +87,13 @@
         color: white;
         margin-bottom: 20px;
     }
+
+    button:disabled {
+    background-color: #e0e0e0; 
+    color: #a0a0a0; 
+    cursor: not-allowed; 
+    border: none;
+}
 
     .filters-container {
         display: flex;

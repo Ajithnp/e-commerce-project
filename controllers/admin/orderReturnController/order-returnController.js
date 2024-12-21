@@ -31,6 +31,9 @@ exports.getReturnRequest = async(req, res, next)=>{
               .skip(skip)
               .limit(limit)
 
+              console.log('product return ', productReturns);
+              
+
               const totalOrders = await ProductReturn.countDocuments();
 
               const totalPages = Math.ceil(totalOrders / limit);

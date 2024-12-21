@@ -13,6 +13,23 @@
         margin: 0 auto;
         padding: 20px;
     }
+
+    .status-delivered {
+    color: #48bb78; /* Green color */
+    font-weight: bold;
+}
+
+/* Cancelled Status - Red */
+.status-cancelled {
+    color: #e53e3e; /* Red color */
+    font-weight: bold;
+}
+
+/* Failed Status - Orange */
+.status-failed {
+    color: #ed8936; /* Orange color */
+    font-weight: bold;
+}
     .page-header {
         display: flex;
         justify-content: space-between;
@@ -128,13 +145,28 @@
                 <td><%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></td>
                 <td>₹<%= order.totalAmount.toFixed(2) %></td>
                 <td>
-                    <select class="status-select" data-order-id="<%= order._id %>" onchange="updateOrderStatus(this)">
-                        <option value="Processing" <% if (order.orderStatus === 'Processing') { %> selected <% } %>>Processing</option>
-                        <option value="Shipped" <% if (order.orderStatus === 'Shipped') { %> selected <% } %>>Shipped</option>
-                        <option value="Delivered" <% if (order.orderStatus === 'Delivered') { %> selected <% } %>>Delivered</option>
-                        <option value="Cancelled" <% if (order.orderStatus === 'Cancelled') { %> selected <% } %>>Cancelled</option>
-                    </select>
+                    <% if (order.orderStatus === 'Processing') { %>
+                        <select class="status-select" data-order-id="<%= order._id %>" onchange="updateOrderStatus(this)">
+                            <option value="" disabled selected>Processing</option> <!-- Disabled current status -->
+                            <option value="Shipped">Shipped</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    <% } else if (order.orderStatus === 'Shipped') { %>
+                        <select class="status-select" data-order-id="<%= order._id %>" onchange="updateOrderStatus(this)">
+                            <option value="" disabled selected>Shipped</option> <!-- Disabled current status -->
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    <% } else { %>
+                        <!-- Styled span for Cancelled, Delivered, and Failed statuses -->
+                        <span class="<%= order.orderStatus === 'Delivered' ? 'status-delivered' : order.orderStatus === 'Cancelled' ? 'status-cancelled' : order.orderStatus === 'Failed' ? 'status-failed' : '' %>">
+                            <%= order.orderStatus %>
+                        </span>
+                    <% } %>
                 </td>
+                
+                
+                
                 <td>
                     <button class="view-details-btn" onclick="viewOrderdetails('<%= order._id %>')">View Details</button>
 

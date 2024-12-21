@@ -945,14 +945,6 @@ toggleButton.addEventListener('click', () => {
 
 
 
-    console.log('grandTotal amount', grandTotalValue);
-    console.log('subTotal amount', subTotal);
-    console.log('savings amount', savings);
-    console.log('Retrieved coupon data:', couponData);
-    
-    
-    
-
     const selectedAddress = document.querySelector('input[name="address"]:checked');
     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
 
@@ -1018,7 +1010,6 @@ toggleButton.addEventListener('click', () => {
         if (result.isConfirmed) {
             if (paymentMethod === 'razorpay') {
                 try {
-                    console.log('inside razorpay');
                     
                     const response = await fetch('http://localhost:3001/order', {
                         method: 'POST',
@@ -1028,9 +1019,7 @@ toggleButton.addEventListener('click', () => {
                         body: JSON.stringify({ amount: grandTotalValue, currency: 'INR' })
                     });
 
-                    console.log('Raw Response:', response);
-                    
-                    
+
                     const data = await response.json();
 
                     if (data.order_id) {
@@ -1067,7 +1056,6 @@ toggleButton.addEventListener('click', () => {
                                 })
                                     .then(response => response.json())
                                     .then(paymentData => {
-                                        console.log('razorpay response',paymentData);
                                         
                                         if (paymentData.status === 'ok') {
                                             window.location.href = '/beats/orderSuccess';
@@ -1133,13 +1121,20 @@ toggleButton.addEventListener('click', () => {
                              })
                              .then(res => res.json())
                                 .then(saveResponse => {
-                                    console.log("Save Response:", saveResponse);
+                                 
                                     if (saveResponse.status === 'ok') {
                                         Swal.fire({
                                             icon: 'info',
                                             title: 'Payment Failed',
-                                            text: 'Order saved with failed payment status. Please try again.'
-                                        });
+                                            text: 'Order saved with failed payment status. Please try again.',
+                                             confirmButtonText: 'OK'
+                                        
+                                        }).then((result)=>{
+                                            if(result.isConfirmed){
+                                                 window.location.replace('/beats/user/orders')
+                                            }
+                                        })
+                                       
                                     } else {
                                         Swal.fire({
                                             icon: 'error',

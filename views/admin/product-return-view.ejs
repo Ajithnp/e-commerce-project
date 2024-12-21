@@ -68,6 +68,10 @@
                     <span class="info-label">Quantity:</span>
                     <span class="info-value"><%= returnRequest.productQuantity %></span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Total Amount:</span>
+                    <span class="info-value" id="total-amount"></span>
+                </div>
             </div>
         </div>
 
@@ -167,7 +171,7 @@
 
     .info-value {
         font-size: 16px;
-        color: rgb(80, 78, 78);
+        color: #fd8a14
     }
 
     .status-badge {
@@ -253,6 +257,15 @@
 </style>
 
 <script>
+
+    let productPrice = '<%= returnRequest.product.salePrice %>';
+    let productQuantity = '<%= returnRequest.productQuantity %>'
+    let totalPrice = parseFloat(productPrice*productQuantity)
+
+    document.getElementById('total-amount').textContent = totalPrice;
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const approveBtn = document.getElementById('approve-return');
     const rejectBtn = document.getElementById('reject-return');

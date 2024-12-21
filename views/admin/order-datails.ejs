@@ -66,8 +66,25 @@
     }
     .order-status {
         font-weight: bold;
-        color: #48bb78;
+      
     }
+    .order-status {
+    font-weight: bold;
+}
+
+
+.status-cancelled {
+    color: red;
+}
+
+.status-delivered {
+    color: #48bb78; 
+}
+
+
+.status-returned {
+    color: blue;
+}
     .order-items {
         background-color: #2d3748;
         border-radius: 8px;
@@ -79,12 +96,7 @@
         display: flex;
         align-items: center;
     }
-    .status-cancelled {
-    color: red; /* Change text color to red */
-   }
-   .status-failed {
-    color: red; /* Change text color to red */
-}
+  
     .order-items h2 .material-icons {
         margin-right: 10px;
     }
@@ -101,7 +113,7 @@
     .item-table th {
         background-color: #4a5568;
     }
-    .total-row {
+    .total-row-1 {
         font-weight: bold;
     }
     .action-buttons {
@@ -182,9 +194,17 @@
             <div class="info-item">
                 <span class="material-icons">local_shipping</span>
                 <span>Status: 
-                    <span class="order-status <%= order.orderStatus === 'Cancelled' || 'Failed' ? 'status-cancelled' : '' %>">
-                        <%= order.orderStatus %>
-                    </span>
+                    <span class="order-status 
+                       <% if (order.orderStatus === 'Cancelled' || order.orderStatus === 'Failed') { %>
+                           status-cancelled
+                       <% } else if (order.orderStatus === 'Delivered') { %>
+                             status-delivered
+                       <% } else if (order.orderStatus === 'Returned') { %>
+                           status-returned
+                       <% } %>">
+                       <%= order.orderStatus %>
+                     </span>
+
                 </span>
             </div>
         </div>
@@ -220,29 +240,29 @@
                         </div>
                     </td>
                     <td><%= item.quantity %></td>
-                    <td>$<%= item.price.toFixed(2) %></td>
-                    <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                    <td>₹<%= item.price.toFixed(2) %></td>
+                    <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
                 </tr>
                 <% }) %>
                 <tr class="total-row">
                     <td colspan="3">Sub Total</td>
-                    <td>$<%=order.subTotal %></td>
+                    <td>₹<%=order.subTotal %></td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="3">Savings</td>
-                    <td>$<%=order.savings %></td>
+                    <td colspan="3">Savings (ProductOffer)</td>
+                    <td>₹<%=order.savings %></td>
                 </tr>
                 <% if(order.couponDiscount){%>
                 <tr class="total-row">
                     <td colspan="3">Coupon Discount</td>
-                    <td>$<%=order.couponDiscount %></td>
+                    <td>₹<%=order.couponDiscount %></td>
                     
                 </tr>  
 
                 <% } %>
-                <tr class="total-row">
+                <tr class="total-row-1">
                     <td colspan="3">Grand Total</td>
-                    <td>$<%=order.totalAmount %></td>
+                    <td>₹<%=order.totalAmount %></td>
                 </tr>
 
             </tbody>
