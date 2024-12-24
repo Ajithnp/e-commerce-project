@@ -44,7 +44,14 @@
     .order-status {
         padding: 8px 16px;
         border-radius: 4px;
-        font-weight: bold;
+        /* font-weight: bold; */
+    }
+    .status-Full Order Returned{
+        background-color: chocolate;
+        color: white;
+        border-radius: 4px;
+        padding: 5px;
+
     }
     .status-Processing {
         background-color: #fef3c7;
@@ -200,7 +207,16 @@
                         <button id="backButton" class="btn btn-back" onclick="window.history.back()">← Back to Orders</button>
                         <div class="order-header">
                             <h4>Order Id <%= order.orderId%></h4>
-                               <span class="status status-<%= order.orderStatus %>"><strong><%= order.orderStatus %></strong></span>
+                            <% if (order.orderStatus === 'Full Order Returned') { %>
+                                <span class="status" style="background-color: #fca5a5; color: #991b1b; border-radius: 4px; padding: 5px;">
+                                    <strong><%= order.orderStatus %></strong>
+                                </span>
+                            <% } else { %>
+                                <span class="status status-<%= order.orderStatus %>">
+                                    <strong><%= order.orderStatus %></strong>
+                                </span>
+                            <% } %>
+                            
                             <!-- <span class="order-status status-processing">Processing</span> -->
                         </div>
                     
@@ -287,7 +303,7 @@
                             <!-- Return Button -->
                              <div style="display: flex; justify-content: space-between;">
 
-                            <button id="returnOrderBtn" class="btn btn btn-warning" onclick="returnOrder('<%= order._id %>')">Return</button>
+                            <!-- <button id="returnOrderBtn" class="btn btn btn-warning" onclick="returnOrder('<%= order._id %>')">Return</button> -->
                             <button id="downloadInvoice" class="btn btn-info" onclick="downloadInvoice('<%= order._id %>')">Download invoice</button>
                         </div>
                         <% } else if (order.orderStatus === 'Failed') { %> 

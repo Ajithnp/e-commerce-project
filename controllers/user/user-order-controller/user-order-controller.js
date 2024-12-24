@@ -118,11 +118,34 @@ exports.orderCancel = async (req, res, next) => {
             wallet.transactions.push({
             transactionType: 'credit',
             transactionAmount: refundAmount,
+            transactionDescription: 'Order amount refunded',
+            transactionId: `TXN-${Date.now()}`, 
+        });
+
+        await wallet.save();
+
+        }else if (order.paymentMethod === 'Wallet'){
+            const userId = order.userId;
+
+            const refundAmount = order.totalAmount;
+
+            const wallet = await Wallet.findByIdAndUpdate(
+                {userId},
+                {$inc: {walletBalance: refundAmount}},
+                {new:true, upsert:true}
+            )
+
+            wallet.transactions = wallet.transactions || [];
+            wallet.transactions.push({
+            transactionType: 'credit',
+            transactionAmount: refundAmount,
             transactionDescription: 'Order cancel amount refunded',
             transactionId: `TXN-${Date.now()}`, 
         });
 
         await wallet.save();
+
+
 
         }
 

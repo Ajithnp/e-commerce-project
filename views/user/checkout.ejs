@@ -238,8 +238,13 @@
                                         <!-- Payment Options with Radio Buttons -->
                                       
                                         <div class="payment-option">
-                                            <input class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-3"  type="radio" id="wallet" name="paymentMethod" value="Wallet" disabled>
+                                            <input class="collapsed" data-toggle="collapse" data-target="#collapse-wallet" aria-expanded="false" aria-controls="collapse-wallet"  type="radio" id="wallet" name="paymentMethod" value="Wallet">
                                             <label for="wallet">Wallet</label>
+                                            <div id="collapse-wallet" class="collapse" aria-labelledby="heading-wallet" data-parent="#accordion-payment">
+                                                <div class="card-body">
+                                                    Your wallet balance: ₹ <span style="color: green;"><%= walletAmount %></span>
+                                                </div>
+                                        </div>
                                             
                                         </div>
                                         <div class="payment-option">
@@ -906,11 +911,10 @@ icon:'error'
       
 
         // product details modall
-        // Get references to the button and dropdown container
 const toggleButton = document.getElementById('toggle-cart-details');
 const cartDetailsDropdown = document.getElementById('cart-details-dropdown');
 
-// Add click event listener to toggle the dropdown visibility
+
 toggleButton.addEventListener('click', () => {
     cartDetailsDropdown.classList.toggle('visible'); // Toggle the 'visible' class
 });
@@ -920,7 +924,8 @@ toggleButton.addEventListener('click', () => {
     document.getElementById('order-place').addEventListener('click', async function (e) {
     e.preventDefault();
 
-    console.log('userid', userId);
+    // fetching wallet amount:
+    let walletBalance = parseInt('<%= walletAmount %>');
 
     const grandTotalElement = document.getElementById("grandTotalAmount");
 
@@ -1170,7 +1175,48 @@ toggleButton.addEventListener('click', () => {
                         text: 'There was an error placing your order. Please try again.'
                     });
                 }
-            } else {
+            }else if(paymentMethod === 'Wallet'){
+
+                if(grandTotalValue > walletBalance){
+                    Toastify({
+                        text: "Insufficient wallet balance!",
+                        backgroundColor: "#f44336", 
+                        duration: 3000,
+                   }).showToast();
+                  return;
+
+                }
+
+                fetch("/beats/user/checkout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(orderDetails)
+                })
+
+                .then((response) => {
+                    if(response.ok){
+                        return response.json();
+                    }else {
+                        throw new Error ('Failed to place the order');
+                    }
+                })
+                .then((data)=>{
+                    sessionStorage.removeItem('appliedCoupon');
+                        sessionStorage.removeItem('appliedCouponCode');
+                        window.location.href = `/beats/orderSuccess`;
+                })
+                .catch((error)=>{
+                    console.error(error);
+                        Swal.fire(
+                            "Error",
+                            "There was an issue placing your order. Please try again later.",
+                            "error"
+                        );
+                })
+            
+        } else  {
                 
                 if (grandTotalValue >= 1000) {
    
@@ -1186,7 +1232,7 @@ toggleButton.addEventListener('click', () => {
                      backgroundColor: "#f44336",
                      duration: 3000,
                  }).showToast();
-               return; // Stop execution if the condition is not met
+               return; 
             }
 
             
@@ -1210,9 +1256,11 @@ toggleButton.addEventListener('click', () => {
                         const orderId = data.orderId;
                         console.log('orderId', orderId);
                         
-                        window.location.href = `/beats/orderSuccess?orderId=${orderId}`;
+
                         sessionStorage.removeItem('appliedCoupon');
                         sessionStorage.removeItem('appliedCouponCode');
+                        window.location.href = `/beats/orderSuccess?orderId=${orderId}`;
+                        
                     })
                     .catch((error) => {
                         console.error(error);

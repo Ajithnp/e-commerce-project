@@ -146,9 +146,19 @@
                                 <% } else { %>
                                     <% orders.forEach(order => { %>
                                 <tr>
-                                    <td>#<%= order._id %></td>
+                                    <td><%= order.orderId %></td>
                                     <td><%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></td>
-                                    <td><span class="status status-<%= order.orderStatus%>"><%= order.orderStatus %></span></td>
+                                    <td>
+                                        <% if (order.orderStatus === 'Full Order Returned') { %>
+                                            <span class="status" style="background-color: #fca5a5; color: #991b1b; border-radius: 4px; padding: 5px;">
+                                                <%= order.orderStatus %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="status status-<%= order.orderStatus %>">
+                                                <%= order.orderStatus %>
+                                            </span>
+                                        <% } %>
+                                    </td>
                                     <td>$<%= order.totalAmount.toFixed(2) %></td>
                                     <td><a href="#" class="btn" onclick="orderDetails('<%= order._id %>')">View Order</a></td>
                                 </tr>

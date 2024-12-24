@@ -52,6 +52,7 @@ exports.itemReturnRequest = async (req, res, next)=>{
         // create a return request
         const returnRequest = new ProductReturn({
             order:orderId,
+            returnId:`RTN-${Date.now()}`, 
             product:productId,
             orderItemId:orderItem._id,
             returnProductStatus: 'Return Request',

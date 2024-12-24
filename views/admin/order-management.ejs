@@ -140,7 +140,7 @@
         <tbody id="orders-body">
             <% orders.forEach(order => { %>
             <tr>
-                <td>#<%= order._id %></td>
+                <td><%= order.orderId %></td>
                 <td><%= order.userId ? order.userId.name : 'N/A' %></td>
                 <td><%= order.createdAt.getFullYear() + '-' + String(order.createdAt.getMonth() + 1).padStart(2, '0') + '-' + String(order.createdAt.getDate()).padStart(2, '0') %></td>
                 <td>₹<%= order.totalAmount.toFixed(2) %></td>
@@ -236,7 +236,9 @@ function viewOrderdetails(orderId){
                 text: result.message,
                 icon: 'success',
                 confirmButtonText: 'Okay'
-            });
+            }).then(()=>{
+                window.location.reload();
+            })
         } catch (error) {
             console.error('Error updating order status:', error);
             Swal.fire({

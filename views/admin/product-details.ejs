@@ -298,7 +298,9 @@
                 <span class="price-label">Sale Price:</span>
                 <span class="sale-price">$<%= product.salePrice.toFixed(2) %></span>
             </div>
-            <div class="offer-badge"><%= product.productOffer %>% OFF</div>
+            <div class="offer-badge"><span>Product:</span><%= product.productOffer %>% OFF</div>
+            <div class="offer-badge"><span>Brand:</span><%= product.brandOffer %>% OFF</div>
+            <div class="offer-badge"><span>Category:</span><%= product.categoryOffer %>% OFF</div>
         </div>
 
         <div class="action-buttons">

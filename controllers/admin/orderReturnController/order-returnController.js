@@ -19,7 +19,7 @@ exports.getReturnRequest = async(req, res, next)=>{
                 { 
                     path: 'order', 
                     model: 'Order', 
-                    select: '_id userId', 
+                    select: '_id userId orderId', 
                     populate: { path: 'userId', model: 'User', select: 'name' } 
                 },
                 {
@@ -204,7 +204,7 @@ exports.viewOrderReturnRequest = async(req, res, next)=>{
         const returnRequest = await ProductReturn.findById(returnId).populate([
            {
              path: 'order',
-             select: '_id ',
+             select: '_id orderId',
              populate:{
                 path: 'userId',
                 select: 'name email phone'

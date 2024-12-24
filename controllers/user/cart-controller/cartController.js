@@ -13,6 +13,7 @@ const Coupon = require('../../../models/coupon-model')
 const AppliedCoupon = require('../../../models/couponApplied-model')
 const generateOrderId = require('../../../utils/gererateOrderId')
 const isProductValid = require('../../../helpers/productIsValid')
+const  Wallet = require('../../../models/wallet-model')
 
 // const userAddress = require('../../../models/user-address')
 
@@ -238,6 +239,11 @@ exports.getCheckoutPage = async (req, res, next) => {
             Coupon.find({ isActive: true })
         ]);
 
+        // user wallet.
+        const wallet = await Wallet.findOne({userId})
+        let walletAmount = wallet.walletBalance;
+
+
         let totalSavings = 0;
         let totalAmount = 0; // Initialize total amount
         const validCartItems = []; // Array to hold valid cart items
@@ -288,6 +294,7 @@ exports.getCheckoutPage = async (req, res, next) => {
             totalSavings,
             totalAmount, // Include total amount in response
             coupons: availableCoupons,
+            walletAmount,
             cartItems: JSON.stringify(cart.items)
         });
     } catch (error) {
@@ -303,9 +310,33 @@ exports.orderConfirm = async (req, res, next)=>{
     
     const {userId, orderItems, address, paymentMethod,subTotal,savings,grandTotalValue,couponDiscount,couponId,couponCode} = req.body;
     
-    
 
     try {
+
+        let paymentStatus = 'Pending';
+
+
+        if(paymentMethod === 'Wallet'){
+
+            // find user wallet;
+            const wallet = await Wallet.findOne({userId});
+
+            if(!wallet || wallet.walletBalance < grandTotalValue){
+                return res.status(400).json({message: 'Insufficient wallet balance!'})
+            }
+
+            wallet.walletBalance -= grandTotalValue;
+
+            wallet.transactions.push({
+                transactionType: 'debit',
+                transactionAmount: grandTotalValue,
+                transactionId: `TXN-${Date.now()}`,
+                transactionDescription: 'Order amount deducted'
+            });
+        
+            await wallet.save();
+            paymentStatus = 'Completed';
+        }
         // Address fetching...!
         const addressDetails = await Address.findById(address)
 
@@ -334,6 +365,7 @@ exports.orderConfirm = async (req, res, next)=>{
             phone: addressDetails.altPhone,
             orderStatus : 'Processing',
             paymentMethod,
+            paymentStatus,
             subTotal,
             savings,
             couponDiscount:Number(couponDiscount),
@@ -342,7 +374,7 @@ exports.orderConfirm = async (req, res, next)=>{
             appliedCouponCode:couponCode
             
 
-            // totalAmount: createOrderitems.reduce((total, item)=> total+item.totalPrice,0)
+           
         })
 
         await createOrder.save();

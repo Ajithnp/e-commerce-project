@@ -82,10 +82,6 @@ userRoute.route('/user/logout')
 userRoute.route('/user/store')
           .get(storeController.getStorePage)  
 
-// Product Search..!
-// userRoute.route('/beats/productSearch/:name') 
-//          .get(storeController.productSearch)         
-
           
 
 // Product detail page          

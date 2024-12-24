@@ -1,78 +1,5 @@
 
 <%- include('../partials/admin/header') %>
-<div class="product-returns-container">
-    <h1 class="page-title">Product Returns</h1>
-
-    <div class="filters-container">
-        <div class="filter-group">
-            <label for="status-filter">Status:</label>
-            <select id="status-filter" class="filter-select">
-                <option value="">All</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-            </select>
-        </div>
-        <button id="apply-filters" class="filter-button">Apply Filter</button>
-    </div>
-
-    <div class="returns-table-container">
-        <table class="returns-table">
-            <thead>
-                <tr>
-                    <th>Return ID</th>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Product</th>
-                    <th>Reason</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% productReturns.forEach(returnRequest => { %>
-
-                <tr>
-                    <td data-label="Return ID"><span class="truncate"><%= returnRequest._id %></span></td>
-                    <td data-label="Order ID"><span class="truncate"><%= returnRequest.order._id %></span></td>
-                    <td data-label="Customer"><%= returnRequest.order.userId.name %></td>
-                    <td data-label="Product"><%= returnRequest.product.productName %></td>
-                    <td data-label="Reason"><%= returnRequest.productReturnReason %></td>
-                    <td data-label="Date"><%= returnRequest.productReturnDate.toLocaleDateString() %></td>
-                    <td data-label="Status"><span class="status-badge return-request"><%= returnRequest.returnProductStatus %></span></td>
-                    <td data-label="Actions">
-                     
-                        <button class="action-btn view-btn" onclick="showReturnDetails('<%= returnRequest._id %>')">View</button>
-                        <button class="action-btn approve-btn" onclick="acceptReturn('<%= returnRequest._id %>')"
-                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
-                            
-                            >Approve</button>
-                        <button class="action-btn reject-btn" onclick="rejectReturn('<%= returnRequest._id %>')"
-                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
-                            
-                            >Reject</button>
-                       
-                    </td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="pagination">
-        <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
-            <%= currentPage === 1 ? 'disabled' : '' %> >
-            <span class="material-icons">chevron_left</span>
-        </a>
-        <span class="page-number">Page <span id="current-page"><%= currentPage %></span> of <span id="total-pages"><%= totalPages %></span></span>
-        <a href="?page=<%= currentPage + 1 %>" class="pagination-btn" id="next-btn" 
-            <%= currentPage === totalPages ? 'disabled' : '' %> >
-            <span class="material-icons">chevron_right</span>
-        </a>
-    </div>
-    
-</div>
 
 <style>
     .product-returns-container {
@@ -302,6 +229,82 @@
         }
     }
 </style>
+
+<div class="product-returns-container">
+    <h1 class="page-title">Product Returns</h1>
+
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="status-filter">Status:</label>
+            <select id="status-filter" class="filter-select">
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+        <button id="apply-filters" class="filter-button">Apply Filter</button>
+    </div>
+
+    <div class="returns-table-container">
+        <table class="returns-table">
+            <thead>
+                <tr>
+                    <th>Return ID</th>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productReturns.forEach(returnRequest => { %>
+
+                <tr>
+                    <td data-label="Return ID"><span class="truncate"><%= returnRequest.returnId %></span></td>
+                    <td data-label="Order ID"><span class="truncate"><%= returnRequest.order.orderId %></span></td>
+                    <td data-label="Customer"><%= returnRequest.order.userId.name %></td>
+                    <td data-label="Product"><%= returnRequest.product.productName %></td>
+                    <td data-label="Reason"><%= returnRequest.productReturnReason %></td>
+                    <td data-label="Date"><%= returnRequest.productReturnDate.toLocaleDateString() %></td>
+                    <td data-label="Status"><span class="status-badge return-request"><%= returnRequest.returnProductStatus %></span></td>
+                    <td data-label="Actions">
+                     
+                        <button class="action-btn view-btn" onclick="showReturnDetails('<%= returnRequest._id %>')">View</button>
+                        <button class="action-btn approve-btn" onclick="acceptReturn('<%= returnRequest._id %>')"
+                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
+                            
+                            >Approve</button>
+                        <button class="action-btn reject-btn" onclick="rejectReturn('<%= returnRequest._id %>')"
+                            <%= returnRequest.returnProductStatus !== "Return Request" ? 'disabled' : '' %>
+                            
+                            >Reject</button>
+                       
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
+            <%= currentPage === 1 ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_left</span>
+        </a>
+        <span class="page-number">Page <span id="current-page"><%= currentPage %></span> of <span id="total-pages"><%= totalPages %></span></span>
+        <a href="?page=<%= currentPage + 1 %>" class="pagination-btn" id="next-btn" 
+            <%= currentPage === totalPages ? 'disabled' : '' %> >
+            <span class="material-icons">chevron_right</span>
+        </a>
+    </div>
+    
+</div>
+
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

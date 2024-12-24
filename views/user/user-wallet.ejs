@@ -54,12 +54,18 @@
                                     // Create a new Date object and format it
                                     var date = new Date(transaction.transactionDate);
                                     var formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+
+                                    var transactionSymbol = transaction.transactionType === 'credit' ? '+' : '-';
+                                    var transactionColor = transaction.transactionType === 'credit' ? 'green' : 'red';
+                                
                                 %>
                                     <td class="transaction-id"><%= transaction.transactionId %></td>
                                     <td class="transaction-date"><%= formattedDate %></td>
                                     <td><%= transaction.transactionDescription %></td>
                                     <td><%= transaction.transactionType %></td>
-                                    <td class="transaction-amount credit">+<%= transaction.transactionAmount %></td>
+                                    <td class="transaction-amount" style="color: <%= transactionColor %>;">
+                                        <%= transactionSymbol %><%= transaction.transactionAmount %>
+                                    </td>
                                 </tr>
                                 <% }) %>
                                 <% } %>

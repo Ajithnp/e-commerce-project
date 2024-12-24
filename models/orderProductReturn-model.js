@@ -21,6 +21,10 @@ const orderProductReturnSchema = new mongoose.Schema({
         default:"returnInitiated",
         required:true
       },
+      returnId:{
+        type: String,
+        required: true
+    },
     productRefundAmount:{
         type:Number,
         min: 0,

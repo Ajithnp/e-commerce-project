@@ -1,97 +1,5 @@
 
 <%- include('../partials/admin/header') %>
-<div class="product-return-view-container">
-    <div class="page-header">
-        <h1 class="page-title">Return Details - RET001</h1>
-        <a href="/api/v1/admin/order/item/return" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Returns
-        </a>
-    </div>
-
-    <div class="return-details-container">
-        <div class="return-info-section">
-            <h2 class="section-title">Return Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Return ID:</span>
-                    <span class="info-value"><%= returnRequest._id %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Order ID:</span>
-                    <span class="info-value"><%= returnRequest.order._id %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value"><span class="status-badge pending"><%= returnRequest.returnProductStatus %></span></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Date Requested:</span>
-                    <span class="info-value"><%= returnRequest.productReturnDate.getFullYear() + '-' + String(returnRequest.productReturnDate.getMonth() + 1).padStart(2, '0') + '-' + String(returnRequest.productReturnDate.getDate()).padStart(2, '0') %></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="customer-info-section">
-            <h2 class="section-title">Customer Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value"><%= returnRequest.order.userId.name %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value"><%= returnRequest.order.userId.email %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Phone:</span>
-                    <span class="info-value">+91 <%= returnRequest.order.userId.phone %></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-info-section">
-            <h2 class="section-title">Product Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Product Name:</span>
-                    <span class="info-value"><%= returnRequest.product.productName %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Color:</span>
-                    <span class="info-value"><%= returnRequest.productColor %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Price:</span>
-                    <span class="info-value">₹<%= returnRequest.product.salePrice %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Quantity:</span>
-                    <span class="info-value"><%= returnRequest.productQuantity %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Total Amount:</span>
-                    <span class="info-value" id="total-amount"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="return-reason-section">
-            <h2 class="section-title">Return Reason</h2>
-            <div class="info-grid">
-                <div class="info-item full-width">
-                    <span class="info-label">Reason:</span>
-                    <span class="info-value"><%= returnRequest.productReturnReason %></span>
-                </div>
-                <div class="info-item full-width">
-                    <span class="info-label">Customer Comments:</span>
-                    <span class="info-value">.</span>
-                </div>
-            </div>
-        </div>
-
-      
-    </div>
-</div>
 
 <style>
     .product-return-view-container {
@@ -255,6 +163,101 @@
         }
     }
 </style>
+
+<div class="product-return-view-container">
+    <div class="page-header">
+        <h1 class="page-title">Return Details - RET001</h1>
+        <a href="/api/v1/admin/order/item/return" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Returns
+        </a>
+    </div>
+
+    <div class="return-details-container">
+        <div class="return-info-section">
+            <h2 class="section-title">Return Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Return ID:</span>
+                    <span class="info-value"><%= returnRequest.returnId %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Order ID:</span>
+                    <span class="info-value"><%= returnRequest.order.orderId %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value"><span class="status-badge pending"><%= returnRequest.returnProductStatus %></span></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date Requested:</span>
+                    <span class="info-value"><%= returnRequest.productReturnDate.getFullYear() + '-' + String(returnRequest.productReturnDate.getMonth() + 1).padStart(2, '0') + '-' + String(returnRequest.productReturnDate.getDate()).padStart(2, '0') %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="customer-info-section">
+            <h2 class="section-title">Customer Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value"><%= returnRequest.order.userId.name %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value"><%= returnRequest.order.userId.email %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">+91 <%= returnRequest.order.userId.phone %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-info-section">
+            <h2 class="section-title">Product Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Product Name:</span>
+                    <span class="info-value"><%= returnRequest.product.productName %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Color:</span>
+                    <span class="info-value"><%= returnRequest.productColor %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Price:</span>
+                    <span class="info-value">₹<%= returnRequest.product.salePrice %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Quantity:</span>
+                    <span class="info-value"><%= returnRequest.productQuantity %></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Total Amount:</span>
+                    <span class="info-value" id="total-amount"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="return-reason-section">
+            <h2 class="section-title">Return Reason</h2>
+            <div class="info-grid">
+                <div class="info-item full-width">
+                    <span class="info-label">Reason:</span>
+                    <span class="info-value"><%= returnRequest.productReturnReason %></span>
+                </div>
+                <div class="info-item full-width">
+                    <span class="info-label">Customer Comments:</span>
+                    <span class="info-value">.</span>
+                </div>
+            </div>
+        </div>
+
+      
+    </div>
+</div>
+
+
 
 <script>
 

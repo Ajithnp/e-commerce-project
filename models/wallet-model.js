@@ -32,7 +32,7 @@ const walletSchema =  new mongoose.Schema({
         },
         transactionDescription:{
             type: String,
-            enum:['Order amount refunded', 'Amount added', 'Order cancel amount refunded'],
+            enum:['Order amount refunded', 'Order amount deducted', 'Amount added', 'Order cancel amount refunded'],
             required: true
         }
     }]
