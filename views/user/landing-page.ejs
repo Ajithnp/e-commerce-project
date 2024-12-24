@@ -126,7 +126,7 @@
                                 <h4 class="banner-subtitle text-white"><a href="#">Top Headsets Now on Sale! </a></h4><!-- End .banner-subtitle -->
                                 <h3 class="banner-title text-white"><a href="#">Experience Every Beat</a></h3><!-- End .banner-title -->
                                 <div class="banner-text text-white"><a href="#">from ₹ 4999</a></div><!-- End .banner-text -->
-                                <a href="#" class="btn btn-outline-white banner-link">Discover Now</a>
+                                <a href="/user/store" class="btn btn-outline-white banner-link">Discover Now</a>
                             </div><!-- End .banner-content -->
                         </div><!-- End .banner -->
                     </div><!-- End .col-lg-4 -->
@@ -138,10 +138,10 @@
                             </a>
 
                             <div class="banner-content banner-content-top">
-                                <h4 class="banner-subtitle text-white"><a href="#">High-Quality Headsets from</a></h4><!-- End .banner-subtitle -->
+                                <h4 class="banner-subtitle text-white"><a href="#">High-Quality Headsets </a></h4><!-- End .banner-subtitle -->
                                 <h3 class="banner-title text-white"><a href="#">Get Lost in the <br>Music</a></h3><!-- End .banner-title -->
                                 <div class="banner-text text-white"><a href="#">from ₹7999</a></div><!-- End .banner-text -->
-                                <a href="#" class="btn btn-outline-white banner-link">Discover Now</a>
+                                <a href="/user/store" class="btn btn-outline-white banner-link">Discover Now</a>
                             </div><!-- End .banner-content -->
                         </div><!-- End .banner -->
                     </div><!-- End .col-lg-4 -->
@@ -157,7 +157,7 @@
                                     <div class="banner-content">
                                         <h4 class="banner-subtitle text-white"><a href="#">New Arrivals</a></h4><!-- End .banner-subtitle -->
                                         <h3 class="banner-title text-white"><a href="#">Upgrade Your Audio music<br>Experience</a></h3><!-- End .banner-title -->
-                                        <a href="#" class="btn btn-outline-white banner-link">Shop Now</a>
+                                        <a href="/user/store" class="btn btn-outline-white banner-link">Shop Now</a>
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-sm-6 col-lg-12 -->
@@ -171,7 +171,7 @@
                                     <div class="banner-content">
                                         <h4 class="banner-subtitle text-white"><a href="#">New Arrivals</a></h4><!-- End .banner-subtitle -->
                                         <h3 class="banner-title text-white"><a href="#">Premium Sound, Unbeatable Price</a></h3><!-- End .banner-title -->
-                                        <a href="#" class="btn btn-outline-white banner-link">Shop Now</a>
+                                        <a href="/user/store" class="btn btn-outline-white banner-link">Shop Now</a>
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-sm-6 col-lg-12 -->
@@ -242,16 +242,6 @@
                     <h2 class="title">Trending Now</h2><!-- End .title -->
                 </div><!-- End .heading-left -->
 
-               <!-- <div class="heading-right">
-                    <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="trending-women-link" data-toggle="tab" href="#trending-women-tab" role="tab" aria-controls="trending-women-tab" aria-selected="true">Women's Clothing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="trending-men-link" data-toggle="tab" href="#trending-men-tab" role="tab" aria-controls="trending-men-tab" aria-selected="false">Men's Clothing</a>
-                        </li>
-                    </ul>
-               </div>End .heading-right -->
             </div><!-- End .heading -->
 
             <div class="tab-content tab-content-carousel">
@@ -284,15 +274,12 @@
                         <% for (let i=0; i< 4 && i< products.length; i++) {%>
                         <div class="product product-7 text-center">
                             <figure class="product-media">
+                                <span class="product-label label-sale"><%=products[i].finalOffer %>% off</span>
                                 <a href="/beats/product/productDetails/<%=products[i]._id%>">
                                     <img src="/uploads/re-image/<%= products[i].productImage[0]%>" alt="Product image" class="product-image">
                                     <img src="/uploads/re-image/<%= products[i].productImage[1]%>" alt="Product image" class="product-image-hover">
                                 </a>
 
-                                <div class="product-action-vertical">
-                                    <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                    <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-                                </div><!-- End .product-action-vertical -->
 
                                 <div class="product-action">
                                      <span><%=products[i].tags[0]%></span>
@@ -302,7 +289,8 @@
                             <div class="product-body">
                                 <h3 class="product-title"><a href="/beats/product/productDetails/<%=products[i]._id%>"><%=products[i].productName%></a></h3><!-- End .product-title -->
                                 <div class="product-price">
-                                    ₹<%=products[i].salePrice%>
+                                    <span class="new-price">Now ₹<%=products[i].salePrice%></span>
+                                    <span class="old-price">Was ₹<%=products[i].regularPrice%></span>
                                 </div><!-- End .product-price -->
 
                                 <div class="ratings-container">
@@ -359,18 +347,11 @@
     <div class="container featured mt-4 pb-2">
         <div class="heading heading-flex mb-3">
             <div class="heading-left">
-                <h2 class="title">Featured Footwear</h2><!-- End .title -->
+                <h2 class="title">Featured</h2><!-- End .title -->
             </div><!-- End .heading-left -->
 
            <div class="heading-right">
-                <!-- <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="featured-women-link" data-toggle="tab" href="#featured-women-tab" role="tab" aria-controls="featured-women-tab" aria-selected="true">Women's Shoes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="featured-men-link" data-toggle="tab" href="#featured-men-tab" role="tab" aria-controls="featured-men-tab" aria-selected="false">Men's Shoes</a>
-                    </li>
-                </ul> -->
+              
            </div><!-- End .heading-right -->
         </div><!-- End .heading -->
 
@@ -391,7 +372,7 @@
                                 <h4 class="text-white">Sale</h4>
                             </div>
                             <div class="product-price">
-                                <h4 class="text-white">₹ 29.99</h4>
+                                <h5 class="text-white">₹ 9599</h5>
                             </div>
                             <div class="product-txt">
                                 <p class="text-white">Hign battery power</p>
@@ -431,16 +412,13 @@
                            <% for (let i = 4; i < 7 && i < products.length; i++) { %>
                             <div class="product product-7">
                                 <figure class="product-media">
-                                    <!-- <span class="product-label label-sale">30% off</span> -->
+                                    <span class="product-label label-sale"><%=products[i].finalOffer %>% off</span>
                                     <a href="/beats/product/productDetails/<%=products[i]._id%>">
                                         <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="Product image" class="product-image">
                                         <img src="/uploads/re-image/<%= products[i].productImage[1]%>" alt="Product image" class="product-image-hover">
                                     </a>
 
-                                    <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-                                    </div><!-- End .product-action-vertical -->
+                                    
 
                                     <div class="product-action">
                                         <span><%=products[i].tags[0]%></span>
@@ -507,18 +485,11 @@
     <div class="container pb-2">
         <div class="heading heading-flex mb-3">
             <div class="heading-left">
-                <h2 class="title">Bags & Accessories</h2><!-- End .title -->
+                <h2 class="title">Limited Edition</h2><!-- End .title -->
             </div><!-- End .heading-left -->
 
            <div class="heading-right">
-                <!-- <ul class="nav nav-pills nav-border-anim justify-content-center" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="bags-women-link" data-toggle="tab" href="#bags-women-tab" role="tab" aria-controls="bags-women-tab" aria-selected="true">Women's</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="bags-men-link" data-toggle="tab" href="#bags-men-tab" role="tab" aria-controls="bags-men-tab" aria-selected="false">Men's</a>
-                    </li>
-                </ul> -->
+              
            </div><!-- End .heading-right -->
         </div><!-- End .heading -->
 
@@ -539,7 +510,7 @@
                                 <h4 class="text-white">Sale</h4>
                             </div>
                             <div class="product-price">
-                                <h4 class="text-white">₹129.99</h4>
+                                <h5 class="text-white">₹799</h5>
                             </div>
                             <div class="product-txt">
                                 <p class="text-white">High bass</p>
@@ -580,15 +551,11 @@
                             <% for (let i = 7; i < 10 && i < products.length; i++) { %>
                             <div class="product product-7 text-center">
                                 <figure class="product-media">
+                                    <span class="product-label label-sale"><%=products[i].finalOffer %>% off</span>
                                     <a href="/beats/product/productDetails/<%=products[i]._id%>">
                                         <img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="Product image" class="product-image">
                                         <img src="/uploads/re-image/<%=products[i].productImage[1]%>" alt="Product image" class="product-image-hover">
                                     </a>
-
-                                    <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-                                    </div><!-- End .product-action-vertical -->
 
                                     <div class="product-action">
                                       <span><%=products[i].tags[0]%></span>
@@ -598,14 +565,15 @@
                                 <div class="product-body">
                                     <h3 class="product-title"><a href="/beats/product/productDetails/<%=products[i]._id%>"><%=products[i].productName%></a></h3><!-- End .product-title -->
                                     <div class="product-price">
-                                        ₹<%=products[i].salePrice%>
+                                        <span class="new-price">Now ₹<%=products[i].salePrice%></span>
+                                        <span class="old-price">Was ₹<%=products[i].regularPrice%></span>
                                     </div><!-- End .product-price -->
 
                                     <div class="ratings-container">
                                         <div class="ratings">
                                             <div class="ratings-val" style="width: 100%;"></div><!-- End .ratings-val -->
                                         </div><!-- End .ratings -->
-                                        <span class="ratings-text">( )</span>
+                                        <span class="ratings-text"></span>
                                     </div><!-- End .rating-container -->
                                 </div><!-- End .product-body -->
                             </div><!-- End .product -->
@@ -656,15 +624,15 @@
             <div class="row justify-content-center">
                 <div class="col-sm-10 col-md-8 col-lg-6">
                     <div class="cta-heading text-center">
-                        <h3 class="cta-title">Sign Up for updates from Molla</h3><!-- End .cta-title -->
-                        <p class="cta-desc">and receive <span class="font-weight-normal">$20 coupon</span> for first shopping</p><!-- End .cta-desc -->
+                        <h3 class="cta-title">Sign Up for updates from beatsStudio</h3><!-- End .cta-title -->
+                        <p class="cta-desc">and receive <span class="font-weight-normal">exciting offers</span> for first shopping</p><!-- End .cta-desc -->
                     </div><!-- End .text-center -->
                 
                     <form action="#">
                         <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Enter your Email Address" aria-label="Email Adress" required>
+                            <input type="email" class="form-control" placeholder="Enter your Email Address" aria-label="Email Adress">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit" title="Sing up"><i class="icon-long-arrow-right"></i></button>
+                                <button id="signup" class="btn btn-primary" title="Sing up"><i class="icon-long-arrow-right"></i></button>
                             </div><!-- .End .input-group-append -->
                         </div><!-- .End .input-group -->
                     </form>
@@ -672,6 +640,14 @@
             </div><!-- End .row -->
         </div><!-- End .container -->
     </div><!-- End .cta -->
+
+    <script>
+        document.getElementById('signup').addEventListener('click', function(e){
+          e.preventDefault();
+          window.location.href = '/user/login'  
+        })
+       
+    </script>
 
     <div class="owl-carousel owl-simple" data-toggle="owl" 
         data-owl-options='{

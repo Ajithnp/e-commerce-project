@@ -71,7 +71,10 @@ exports.orderRequestAccept = async(req, res, next)=>{
         const returnRequest = await ProductReturn.findByIdAndUpdate(returnId)
                 .populate('product', 'saleprice colorStock')
                 .populate('order', 'userId couponDiscount orderItems')
+                .lean(); // reduce memory usage;
 
+
+     
          if(!returnRequest){
             return res.status(404).json({message: 'Return request not found..!'})
          }       
@@ -104,12 +107,33 @@ exports.orderRequestAccept = async(req, res, next)=>{
                 
             );
 
+            const orderId = returnRequest?.order?._id;
+            
+        
+            if(orderId){
+    
+                // Find the order!
+                const order = await Order.findById(orderId);
+    
+                const orderItems = order?.orderItems.length;
+    
+                // find the product return count!
+    
+                const returnedItemsCount = await ProductReturn.countDocuments({
+                    order: orderId,
+                    returnProductStatus: "Return Approved",
+                });
+                
+    
+                if(orderItems === returnedItemsCount){
+                    await Order.findByIdAndUpdate(orderId, {orderStatus: "Full Order Returned"});
+                }
+                
+            }
+    
+
             // add money to wallet.
             const userId = returnRequest.order.userId;
-
-            console.log('userid found..', userId);
-            console.log('refund amount.', refundAmount);
-            
 
             const wallet = await Wallet.findOneAndUpdate(
                 { userId },

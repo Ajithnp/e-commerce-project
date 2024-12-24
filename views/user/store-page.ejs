@@ -1,4 +1,4 @@
-<%- include('../partials/user/header2') %>
+<%- include('../partials/user/header3') %>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <main class="main">
@@ -16,34 +16,7 @@
 			</ol>
 		</div><!-- End .container -->
 	</nav><!-- End .breadcrumb-nav -->
-	<style>
-        #toastBox{
-            position: absolute;
-            top: 250px;
-            right: 40%;
-			color: #f0f0f0;
-            display: flex;
-            align-items: flex-end;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 20px;
-			z-index: 1;
-        }
-		.toast {
-    background-color: #00c642; /* Light red background */
-    color: #ffffff;           /* Dark red text */
-    padding: 5px 10px;
-    margin-top: 1px;
-    border: 1px solid #fcfbfb; /* Border matching the background */
-    border-radius: 20px;
-    font-size: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
-    animation: fadeIn 0.8s ease-out, fadeOut 0.5s ease-out 5s forwards;
-}
-    </style>
-    <div id="toastBox">
-		
-	</div>
+	
 	
 
 	<div class="page-content">
@@ -62,6 +35,7 @@
 								<label for="sortby">Sort by:</label>
 								<div class="select-custom">
 									<select name="sortby" id="sortOptions" class="form-control">
+										<option value="" disabled selected>Use filters</option>
 										<option value="priceLowToHigh">Price Low to High</option>
                                         <option value="priceHighToLow">Price High to Low</option>
 										<!-- <option value="popularity" selected="selected">Most Popular</option> -->
@@ -85,15 +59,14 @@
 							<div class="col-6 col-md-4 col-lg-4">
 								<div class="product product-7 text-center">
 									<figure class="product-media">
-										<span class="product-label label-new">New</span>
+										<span class="product-label label-sale"><%=products[i].finalOffer %>% off</span>
 										<a href="/beats/product/productDetails/<%=products[i]._id%>">
 											<img src="/uploads/re-image/<%=products[i].productImage[0]%>" alt="Product image" class="product-image">
 										</a>
 
 										<div class="product-action-vertical">
 											<a class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist('<%= products[i]._id %>')"><span style="cursor: pointer;">add to wishlist</span></a>
-											<a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-											<a href="#" class="btn-product-icon btn-compare" title="Compare"><span>Compare</span></a>
+											
 										</div><!-- End .product-action-vertical -->
 
 										<div class="product-action">
@@ -102,18 +75,17 @@
 									</figure><!-- End .product-media -->
 
 									<div class="product-body">
-										<div class="product-cat">
-											<a href="#">Women</a>
-										</div><!-- End .product-cat -->
+									
 										<h3 class="product-title"><a href="/beats/product/productDetails/<%=products[i]._id%>"><%=products[i].productName%></a></h3><!-- End .product-title -->
 										<div class="product-price">
-											₹<%=products[i].salePrice%>
+											<span class="new-price">Now ₹<%=products[i].salePrice%></span>
+											<span class="old-price">Was ₹<%=products[i].regularPrice%></span>
 										</div><!-- End .product-price -->
 										<div class="ratings-container">
 											<div class="ratings">
-												<div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+												<div class="ratings-val" style="width: 100%;"></div><!-- End .ratings-val -->
 											</div><!-- End .ratings -->
-											<span class="ratings-text">()</span>
+											<span class="ratings-text"></span>
 										</div><!-- End .rating-container -->
 									</div><!-- End .product-body -->
 								</div><!-- End .product -->
@@ -146,10 +118,7 @@
 				</div><!-- End .col-lg-9 -->
 				<aside class="col-lg-3 order-lg-first">
 					<div class="sidebar sidebar-shop">
-						<div class="widget widget-clean">
-							<label>Filters:</label>
-							<a href="#" class="sidebar-filter-clear">Clean All</a>
-						</div><!-- End .widget widget-clean -->
+						
 
 						<div class="widget widget-collapsible">
 							<h3 class="widget-title">
@@ -204,25 +173,28 @@
 							</div><!-- End .collapse -->
 						</div><!-- End .widget -->
 
-						<div class="widget widget-collapsible">
+						<!-- <div class="widget widget-collapsible">
 							<h3 class="widget-title">
 								<a data-toggle="collapse" href="#widget-5" role="button" aria-expanded="true" aria-controls="widget-5">
 									Price
 								</a>
-							</h3><!-- End .widget-title -->
+							</h3> -->
 
-							<div class="collapse show" id="widget-5">
+							<!-- <div class="collapse show" id="widget-5">
 								<div class="widget-body">
 									<div class="filter-price">
 										<div class="filter-price-text">
 											Price Range:
 											<span id="filter-price-range"></span>
-										</div><!-- End .filter-price-text -->
+										</div>
 
-										<div id="price-slider"></div><!-- End #price-slider -->
-									</div><!-- End .filter-price -->
-								</div><!-- End .widget-body -->
-							</div><!-- End .collapse -->
+										<div id="price-slider"></div>
+									</div>
+								</div>
+							</div> -->
+
+
+
 						</div><!-- End .widget -->
 					</div><!-- End .sidebar sidebar-shop -->
 				</aside><!-- End .col-lg-3 -->

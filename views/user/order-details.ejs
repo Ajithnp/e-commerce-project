@@ -293,8 +293,9 @@
                         <% } else if (order.orderStatus === 'Failed') { %> 
                             <!-- Cancel Order Button -->
                             <button id="paymentRetryBtn" class="btn btn-info" onclick="PaymentRetry('<%= order._id%>')">Continue Payment</button>
-                        <% } else { %>
+                        <% } else if (order.orderStatus === 'Processing') { %>
                             <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%= order._id %>')">Cancel Order</button>
+                            <% }else { %>
                             <% } %>
                     </div>
 
