@@ -171,8 +171,8 @@
         <h1 class="page-title">Products</h1>
         <div class="header-actions">
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
-                <button class="search-button">
+                <input type="text" id="search-input" placeholder="Search products..." value="<%= searchQuery %>">
+                <button class="search-button" id="search-button">
                     <span class="material-icons">search</span>
                 </button>
             </div>
@@ -199,6 +199,9 @@
             </div>
         <% }); %>
     </div>
+    <% if (data.length ===0) {%>
+        <p>No product Found!</p>
+        <% } else if (data.length > 1) {%>
     <div class="pagination">
         <button class="pagination-button" disabled>
             <span class="material-icons">chevron_left</span>
@@ -210,6 +213,7 @@
             <span class="material-icons">chevron_right</span>
         </button>
     </div>
+    <% } %>
  </div>
 </div>
 
@@ -217,8 +221,19 @@
 
 <script>
     document.getElementById('add-product').addEventListener('click', function(){
-        window.location.href = '/api/v1/admin/products/addProduct'
+        window.location.href = '/api/v1/admin/products/addProduct';
     })
+
+
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        searchButton.addEventListener('click', function(){
+            const inputValue = searchInput.value.trim();
+
+            if(inputValue){
+                window.location.href = `/api/v1/admin/products?search=${inputValue}`;
+            }
+        })
    
 </script>
  

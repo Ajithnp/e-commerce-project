@@ -15,14 +15,22 @@ exports.getProducts = async (req, res, next)=>{
            const page = req.query.page*1 || 1;
            const limit = req.query.limit*1 || 8
            const skip = (page -1) * limit
-           // query = query.skip(skip).limit(limit);
+           
+           // capturing seach value;
+           const searchQuery = req.query.search || '';
+
+           const filter = {};
+           if(searchQuery){
+            filter['productName'] = searchQuery;
+           }
    
-        const totalProducts = await Product.countDocuments()
-        const productData = await Product.find().skip(skip).limit(limit).exec()
+        const totalProducts = await Product.countDocuments(filter);
+        const productData = await Product.find(filter).skip(skip).limit(limit).exec()
         return res.status(200).render('admin/product-list',{
             data: productData,
             page,
-            totalPage: Math.ceil(totalProducts/limit)
+            totalPage: Math.ceil(totalProducts/limit),
+            searchQuery
         })
 
     } catch (error) {

@@ -179,7 +179,9 @@
             <% }) %>
         </tbody>
     </table>
-   <% if (orders.length > 1){%>
+   <% if (orders.length === 0){%>
+    <p>No orders found.</p>
+    <% } else if (orders.length > 1 ){%>
     <div class="pagination">
         <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
             <%= currentPage === 1 ? 'disabled' : '' %> >
