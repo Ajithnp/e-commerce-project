@@ -27,9 +27,9 @@ exports.getWishlist = async (req, res, next)=>{
             const product = item.productId;
             return (
                 product &&
-                !product.isBlocked && // Product is listed
-                product.brand && !product.brand.isBlocked && // Brand is unblocked
-                product.category && !product.category.isListed // Category is listed
+                !product.isBlocked && 
+                product.brand && !product.brand.isBlocked && 
+                product.category && !product.category.isListed 
             );
         })
         : [];
@@ -57,8 +57,6 @@ exports.addWishlist = async (req, res, next)=>{
     const userId = req.session.user.id;
     const {productId} = req.body;
 
-    console.log('productid', productId);
-    
 
     try{
 

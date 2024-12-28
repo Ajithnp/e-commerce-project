@@ -87,7 +87,7 @@ exports.addToCart = async (req, res, next) => {
             return res.status(404).json({ message: 'Color stock not found..!' });
         }
 
-        // Check if the requested quantity exceeds available stock
+        // Check  the requested quantity exceeds available stock
         if (quantity > colorStock.quantity) {
             return res.status(400).json({ message: 'Product is out of stock' });
         }
@@ -245,8 +245,8 @@ exports.getCheckoutPage = async (req, res, next) => {
 
 
         let totalSavings = 0;
-        let totalAmount = 0; // Initialize total amount
-        const validCartItems = []; // Array to hold valid cart items
+        let totalAmount = 0; 
+        const validCartItems = []; 
 
         // Validate products in the cart
         for (const item of cart.items) {
@@ -292,7 +292,7 @@ exports.getCheckoutPage = async (req, res, next) => {
             userAddress: address,
             cart,
             totalSavings,
-            totalAmount, // Include total amount in response
+            totalAmount,
             coupons: availableCoupons,
             walletAmount,
             cartItems: JSON.stringify(cart.items)

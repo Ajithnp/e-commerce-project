@@ -57,11 +57,6 @@ userRoute.route('/auth/google')
  userRoute.route('/auth/google/callback')
         .get(passport.authenticate('google', { failureRedirect: '/user/login'}),
         (req, res)=> {
-              // if(req.user && req.user.message) {
-              //        return res.status(400).json({code:'EMAIL_ALREADY_REGISTERED', message: 'Email already registered. please use your password to log in.'})
-              // }
-                //success login
-                // store user info: in session
                 req.session.user = {
                        name: req.user.name,
                        id: req.user._id
@@ -71,8 +66,6 @@ userRoute.route('/auth/google')
    ); 
          
 
-
-      
 // User Log-out        
 userRoute.route('/user/logout')
         .post(userController.userLogout)     

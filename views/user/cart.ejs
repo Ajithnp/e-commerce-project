@@ -6,32 +6,32 @@
         border: none;
     }
     .text-green {
-    color: #48bb78; /* Green */
+    color: #48bb78; 
     
 }
 
 .text-red {
-    color: #e53e3e; /* Red */
+    color: #e53e3e; 
     
 }
 
 .text-gray {
-    color: #a0aec0; /* Gray for unavailable or other statuses */
+    color: #a0aec0; 
     font-weight: bold;
 }
 
 
 .custom-popup {
   display: flex;
-  align-items: center; /* Align content vertically */
-  justify-content: start; /* Align content horizontally */
-  gap: 10px; /* Add space between icon and title */
+  align-items: center; 
+  justify-content: start; 
+  gap: 10px; 
 }
 
 .inline-title {
-  color: rgb(221, 35, 35); /* Title color */
-  font-size: 16px; /* Adjust title font size */
-  margin: 0; /* Remove any default margin */
+  color: rgb(221, 35, 35);
+  font-size: 16px; 
+  margin: 0; 
 }
 
 .empty-cart-message {
@@ -59,6 +59,13 @@
     .empty-cart-illustration .fa-shopping-cart {
         opacity: 0.3;
     }
+    .disabled-link {
+    pointer-events: none; 
+    cursor: default; 
+    text-decoration: none; 
+    color: gray; 
+}
+
     .empty-cart-illustration .fa-times {
         position: absolute;
         font-size: 32px;
@@ -144,13 +151,13 @@
                                     <td class="product-col">
                                         <div class="product">
                                             <figure class="product-media">
-                                                <a href="#">
+                                                <a href="#" class="disabled-link">
                                                     <img src="/uploads/re-image/<%=item.productId.productImage[0]%>" alt="Product image">
                                                 </a>
                                             </figure>
 
                                             <h3 class="product-title">
-                                                <a href="#"><%= item.productId.productName %></a>
+                                                <a href="/beats/product/productDetails/<%= item.productId._id %>"><%= item.productId.productName %>77</a>
                                             </h3><!-- End .product-title -->
                                         </div><!-- End .product -->
                                     </td>

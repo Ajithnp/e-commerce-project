@@ -49,14 +49,10 @@
                                 <a class="nav-link" id="tab-wallet-link" href="/beats/user/wallet" >Wallet</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="logout-button" href="/user/logout">Sign Out</a>
+                                <a class="nav-link" id="logout-button-d" style="cursor: pointer;">Sign Out</a>
                             </li>
                             
                             
-                            <!-- <li class="nav-item">
-                                <a class="nav-link" id="tab-account-add-link" data-toggle="tab" href="#tab-account-add" role="tab" aria-controls="tab-account-add" aria-selected="false">Add Address</a>
-
-                            </li> -->
                         </ul>
                     </aside><!-- End .col-lg-3 -->
 
@@ -101,10 +97,7 @@
                                             <p id="name-error" class="error-message"></p>
                                         </div><!-- End .col-sm-6 -->
 
-                                        <!-- <div class="col-sm-6">
-                                            <label>Last Name *</label>
-                                            <input type="text" class="form-control" required>
-                                        </div> -->
+                                        
                                     </div><!-- End .row -->
 
                                     <label>Email *</label>
@@ -151,7 +144,60 @@
     </div><!-- End .page-content -->
 </main><!-- End .main -->
 
+<script>
+    document.getElementById('logout-button-d').addEventListener('click', function(){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be logged out!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, log me out!',
+            cancelButtonText: 'Cancel'
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+            try {
+                const response = await fetch('/user/logout', { method: 'POST' });
 
+                if (response.ok) {
+                    
+                    Swal.fire({
+                        title: 'Logged Out!',
+                        text: "You have been logged out successfully.",
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Okay'
+                    }).then(() => {
+                        
+                        window.location.href = '/user/login'; 
+                    });
+                } else {
+                    
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "There was an issue logging you out. Please try again.",
+                        icon: 'error',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Okay'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: "Network error. Please check your connection.",
+                    icon: 'error',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Okay'
+                });
+            }
+        }
+            
+
+            
+        });
+    })
+</script>
 
 
 <%- include('../partials/user/footer') %>  

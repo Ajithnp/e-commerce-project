@@ -1,20 +1,28 @@
 <%- include('../partials/user/header2') %>  
 <style>
 .text-green {
-    color: green; /* For "In stock" */
+    color: green; 
 }
 
 .text-red {
-    color: red; /* For "Out of stock" */
+    color: red; 
 }
 
 .text-blue {
-    color: blue; /* For "Available" */
+    color: blue; 
 }
 
 .text-gray {
-    color: gray; /* For unavailable or other statuses */
+    color: gray; 
 } 
+
+.disabled-link {
+    pointer-events: none; 
+    cursor: default; 
+    text-decoration: none; 
+    color: gray; 
+}
+
 </style>
 
 <main class="main">
@@ -43,9 +51,7 @@
                         <th>Color</th>
                         <th>Price</th>
                         <th>Stock</th>
-
-                        <!-- <th>Stock Status</th> -->
-                        
+ 
                     </tr>
                 </thead>
 
@@ -58,13 +64,13 @@
                         <td class="product-col">
                             <div class="product">
                                 <figure class="product-media">
-                                    <a href="#">
+                                    <a href="#" class="disabled-link">
                                         <img src="/uploads/re-image/<%= item.productId.productImage[0] %>" alt="Product image">
                                     </a>
                                 </figure>
 
                                 <h3 class="product-title">
-                                    <a href="#"><%= item.productId.productName %></a>
+                                    <a href="/beats/product/productDetails/<%= item.productId._id %>"><%= item.productId.productName %></a>
                                 </h3><!-- End .product-title -->
                             </div><!-- End .product -->
                         </td>

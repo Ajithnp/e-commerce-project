@@ -6,6 +6,7 @@ const OrderItem = require('../../../models/oredr-items-model')
 const Order = require ('../../../models/order-modal')
 const ProductReturn = require('../../../models/orderProductReturn-model')
 const Wallet = require('../../../models/wallet-model')
+const mongoose = require('mongoose')
 
 
 // Orders getpage..!
@@ -85,6 +86,7 @@ exports.getOrderDetails = async (req, res, next)=>{
 exports.orderCancel = async (req, res, next) => {
     const orderId = req.params.id;
     const {reason}= req.body;
+    
 
     try {
         // Find the order and populate orderItems 
@@ -108,7 +110,7 @@ exports.orderCancel = async (req, res, next) => {
 
             const refundAmount = order.totalAmount;
 
-            const wallet = await Wallet.findByIdAndUpdate(
+            const wallet = await Wallet.findOneAndUpdate(
                 {userId},
                 {$inc: {walletBalance: refundAmount}},
                 {new:true, upsert:true}
@@ -125,15 +127,19 @@ exports.orderCancel = async (req, res, next) => {
         await wallet.save();
 
         }else if (order.paymentMethod === 'Wallet'){
+           
+
             const userId = order.userId;
 
             const refundAmount = order.totalAmount;
 
-            const wallet = await Wallet.findByIdAndUpdate(
+            const wallet = await Wallet.findOneAndUpdate(
                 {userId},
                 {$inc: {walletBalance: refundAmount}},
                 {new:true, upsert:true}
             )
+           
+            
 
             wallet.transactions = wallet.transactions || [];
             wallet.transactions.push({
@@ -164,7 +170,7 @@ exports.orderCancel = async (req, res, next) => {
 
                 if (selectedColorStock) {
                     selectedColorStock.quantity += item.quantity; // Restore the quantity
-                    selectedColorStock.status = selectedColorStock.quantity > 0 ? 'Available' : 'Out of stock';
+                    selectedColorStock.status = selectedColorStock.quantity > 0 ? 'In stock' : 'Out of stock';
                 }
             }
         }

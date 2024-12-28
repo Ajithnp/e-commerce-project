@@ -14,8 +14,16 @@ exports.getOrders = async (req, res, next)=>{
         const limit = 10; 
         const skip = (page - 1) * limit;
 
+        // capturing the search query
+        let searchQuery = req.query.search || '';
 
-        const orders = await Order.find()
+        const filter = {};
+        if(searchQuery){
+            filter['orderId'] = searchQuery
+        }
+
+
+        const orders = await Order.find(filter)
             .populate({
                 path: 'orderItems',
                 populate: {
@@ -29,14 +37,15 @@ exports.getOrders = async (req, res, next)=>{
             .limit(limit);
 
 
-            const totalOrders = await Order.countDocuments();
+            const totalOrders = await Order.countDocuments(filter);
 
             const totalPages = Math.ceil(totalOrders / limit);
 
             res.status(200).render('admin/order-management', {
                 orders,
                 currentPage: page,
-                totalPages:totalPages
+                totalPages:totalPages,
+                searchQuery
             });
         
     } catch (error) {

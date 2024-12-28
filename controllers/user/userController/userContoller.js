@@ -251,14 +251,13 @@ exports.userLogout = async(req, res, next )=>{
         req.session.destroy((err)=>{
             
             if (err) {
-                console.log('section destruction error', err.message);
+                
                 return res.status(500).json({ message :" Could not logout..!"})
                 
             }
             res.status(200).json({ message: "Logout successfull..!"})
         })
        
-        console.log('after session data:', req.session);
  
     } catch (error) {
         console.log('Error while user logout', error)

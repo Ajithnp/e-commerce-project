@@ -973,7 +973,7 @@ toggleButton.addEventListener('click', () => {
 
     let address = selectedAddress.value;
     let paymentMethod = selectedPaymentMethod.value;
-    const cartItems = <%- cartItems %>; 
+     const cartItems = <%- cartItems %>;
 
     const orderItems = cartItems.map(item => ({
         product: item.productId,
@@ -1176,6 +1176,10 @@ toggleButton.addEventListener('click', () => {
                     });
                 }
             }else if(paymentMethod === 'Wallet'){
+                console.log('grandtotal value', grandTotalValue);
+                console.log('wallet balance', walletBalance);
+                
+                
 
                 if(grandTotalValue > walletBalance){
                     Toastify({

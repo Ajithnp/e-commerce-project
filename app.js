@@ -61,6 +61,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MONGO DB connection setup
+
 mongoose.connect (process.env.MONGODB_URL)
     .then(()=>console.log( "mongoDB_connected"))
    .catch((error)=>console.log('mongoDB_connection failes...!',error));

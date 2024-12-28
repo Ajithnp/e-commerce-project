@@ -72,12 +72,22 @@
                                
                             </tbody>
                         </table>
+                        
+                        <div class="pagination">
+                            <button class="pagination-button" disabled>
+                                <span class="material-icons">chevron_left</span>
+                            </button>
+                            <%for (let i=1; i<=totalPage; i++) {%>
+                                <a href="?page=<%= i %>" class="pagination-button <%= page === i ? 'active' : '' %>"><%= i %></a>
+                                <% } %>
+                            <button class="pagination-button">
+                                <span class="material-icons">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
                     
                     <script>
-                        // This script can be used to dynamically load and display wallet data
-                        // For demonstration purposes, it's left empty
-                        // In a real application, you would fetch data from your server and update the DOM
+                      
                     </script>
 
                 </div>
