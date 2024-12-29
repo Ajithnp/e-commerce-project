@@ -200,6 +200,7 @@
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>Order Id</th>
                     <th>Total order</th>
                     <th>Discount total</th>
                     <th>Coupon discount</th>
@@ -264,6 +265,8 @@
             .map(row =>`
              <tr>
                  <td>${row._id}</td>
+                  <td>${row.orderId}</td>
+
                   <td>${row.totalOrders}</td>
                  <td>${row.totalDiscount}</td>
                  <td>${row.totalCouponDiscount}</td>

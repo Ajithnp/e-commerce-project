@@ -238,9 +238,9 @@
             <label for="status-filter">Status:</label>
             <select id="status-filter" class="filter-select">
                 <option value="">All</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+                <option value="Return Request">pending</option>
+                <option value="Return Approved">Approved</option>
+                <option value="returnRejected">Rejected</option>
             </select>
         </div>
         <button id="apply-filters" class="filter-button">Apply Filter</button>
@@ -313,9 +313,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     applyFiltersBtn.addEventListener('click', function() {
         const status = statusFilter.value;
-        console.log('Applying filter:', { status });
-        // Here you would typically make an API call to fetch filtered data
-        // and update the table contents
+      if(status){
+        
+        window.location.href = `/api/v1/admin/order/item/return?filter=${status}`;
+        statusFilter.innerText = '<%= filterData %>';
+
+      }else{
+        alert('apply any options')
+      }
+       
     });
 
     

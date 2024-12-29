@@ -10,11 +10,21 @@ const ProductReturn = require('../../../models/orderProductReturn-model')
 
 exports.getReturnRequest = async(req, res, next)=>{
     try {
+
+        //Capturing the filter value
+        const filterData = req.query.filter || '';
+
         const page = parseInt(req.query.page) || 1; 
         const limit = 5; 
         const skip = (page - 1) * limit;
 
-        const productReturns = await ProductReturn.find({})
+        const filter = {};
+        if(filterData && filterData !== 'All'){
+            filter['returnProductStatus'] = filterData;
+        }
+
+
+        const productReturns = await ProductReturn.find(filter)
             .populate([
                 { 
                     path: 'order', 
@@ -31,10 +41,9 @@ exports.getReturnRequest = async(req, res, next)=>{
               .skip(skip)
               .limit(limit)
 
-              console.log('product return ', productReturns);
               
 
-              const totalOrders = await ProductReturn.countDocuments();
+              const totalOrders = await ProductReturn.countDocuments(filter);
 
               const totalPages = Math.ceil(totalOrders / limit);
 
@@ -52,7 +61,9 @@ exports.getReturnRequest = async(req, res, next)=>{
        res.status(200).render('admin/order-product-return',{
         productReturns,
         currentPage:page,
-        totalPages:totalPages
+        totalPages:totalPages,
+        filterData
+
        })                              
     } catch (error) {
         console.error('An error occured while loading the order product return page', error)

@@ -6,14 +6,23 @@ const User = require ('../../../models/user-model')
 exports.getUsers = async (req, res, next)=>{
     try {
 
+        // Capturing searchValue
+        const searchQuery = req.query.search ? req.query.search.trim().toLowerCase() : '';
+
         //Pagination
         const page = req.query.page*1 || 1;
         const limit = req.query.limit*1 || 4
         const skip = (page -1) * limit
-        // query = query.skip(skip).limit(limit);
 
-        const totalUsers = await User.countDocuments()
-        const users = await User.find().sort({createdAt:-1}).skip(skip).limit(limit).exec()
+        const filter = {};
+        if(searchQuery){
+            filter['name'] = {$regex: `^${searchQuery}`, $options: 'i'};
+        }
+       
+
+
+        const totalUsers = await User.countDocuments(filter)
+        const users = await User.find(filter).sort({createdAt:-1}).skip(skip).limit(limit).exec()
        
 
         // render
@@ -21,7 +30,8 @@ exports.getUsers = async (req, res, next)=>{
             users,
             page,
             totalUsers,
-            totalPage: Math.ceil(totalUsers/limit)
+            totalPage: Math.ceil(totalUsers/limit),
+            searchQuery
         })
       
     } catch (error) {

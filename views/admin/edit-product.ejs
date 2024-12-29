@@ -43,9 +43,9 @@
                             <label for="brand">Brand*</label>
                             <select id="brand" name="brand" required>
                                 <%for(let i=0; i<brand.length; i++) {%>
-                                <option value="<%= brand[i].brandName%>">
-                                    <%=brand[i].brandName%>
-                                </option>
+                                    <option value="<%= brand[i]._id %>" <%= brand[i]._id.equals(product.brand._id) ? 'selected' : '' %> >
+                                        <%= brand[i].brandName %>
+                                    </option>
                                 <% } %>
                              
                             </select>
@@ -55,9 +55,9 @@
                             <label for="category">Category*</label>
                             <select id="category" name="category" required>
                                 <%for(let i=0; i<cat.length; i++) {%>
-                                <option value="<%=cat[i].name%>">
-                                    <%=cat[i].name%>
-                                </option>
+                                    <option value="<%= cat[i]._id %>" <%= cat[i]._id.equals(product.category._id) ? 'selected' : '' %> >
+                                        <%= cat[i].name %>
+                                    </option>
                                 <% } %>
                               
                             </select>
@@ -85,17 +85,7 @@
                             <div id="productOffer-error" class="error-message"></div>
                         </div>
                         
-                        <div class="form-group">
-                            <label>Is Blocked</label>
-                            <div class="radio-group">
-                                <label>
-                                    <input type="radio" name="isBlocked" value="false" checked> No
-                                </label>
-                                <label>
-                                    <input type="radio" name="isBlocked" value="true"> Yes
-                                </label>
-                            </div>
-                        </div>
+                        
 
 
                         <div class="form-group">
@@ -283,7 +273,7 @@
                 colorStockCount++;
                
     
-                  // Add validation for the quantity field
+                 
                 const quantityInput = newColorStock.querySelector(`#quantity-${colorStockCount - 1}`);
                 quantityInput.addEventListener('input', function() {
                 validateQuantity(quantityInput,`productQuantity-error-${colorStockCount}`);
@@ -291,7 +281,7 @@
     
             
     
-                // Add event listener to the new remove button
+               
                 newColorStock.querySelector('.remove-color-stock-button').addEventListener('click', function() {
                     colorStockContainer.removeChild(newColorStock);
                 });
@@ -389,7 +379,7 @@
                      fetch(preview.src)
                        .then(res => res.blob())
                        .then(blob => {
-                        const fileName = `productImage${index + 1}.png`; // Customize the file name
+                        const fileName = `productImage${index + 1}.png`; 
                         formData.append('productImage', blob, fileName);
                     });
                }
