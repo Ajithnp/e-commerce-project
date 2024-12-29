@@ -200,18 +200,12 @@
     <div class="top-controls">
         <div class="search-sort">
             <div class="search-bar">
-                <input type="text" placeholder="Search brands...">
-                <button class="search-button">
+                <input type="text" placeholder="Search brands..." id="search-input" value="<%= searchQuery %>">
+                <button class="search-button" id="search-btn">
                     <span class="material-icons">search</span>
                 </button>
             </div>
-            <div class="sort-dropdown">
-                <select>
-                    <option value="">Sort By</option>
-                    <option value="name">Name</option>
-                    <option value="status">Status</option>
-                </select>
-            </div>
+            
         </div>
         
             <a href="/api/v1/admin/brands/addBrand" class="add-brand-btn">
@@ -260,19 +254,31 @@
                     <button class="action-btn edit-btn" onclick="editBrand('<%= model._id%>')">
                         <span class="material-icons">edit</span>
                     </button>
-                    <button class="action-btn offer-btn" onclick="addOffer('<%= model._id %>', this)"
+                    <!-- <button class="action-btn offer-btn" onclick="addOffer('<%= model._id %>', this)"
                         style="<% if (model.brandOffer >0) { %> background-color: #ed8936; <% } else { %> background-color: #48bb78; <% } %>">
                         <span class="material-icons">local_offer</span>
-                        <% if (model.modelOffer >0) { %>Edit Offer <% }
+                        <% if (model.modelOffer > 0) { %>Edit Offer <% }
                         else { %> Add Offer <% } %>
-                    </button>
+                    </button> -->
+                    <button class="action-btn offer-btn" 
+                        onclick="addOffer('<%= model._id %>', this)"
+                        style="<% if (model.brandOffer > 0) { %> background-color: #ed8936; <% } else { %> background-color: #48bb78; <% } %>">
+                        <span class="material-icons">local_offer</span>
+                    <% if (model.brandOffer > 0) { %>
+                         Edit Offer
+                    <% } else { %>
+                        Add Offer
+                     <% } %>
+                   </button>
                 </td>
             </tr>
             <%})%>
            
         </tbody>
     </table>
-
+    <%if (brand.length === 0) {%>
+        <p>No Brand found!</p>
+        <%} else if (brand.length > 1) {%>
     <div class="pagination">
         <button class="pagination-button" disabled>
             <span class="material-icons">chevron_left</span>
@@ -284,6 +290,7 @@
             <span class="material-icons">chevron_right</span>
         </button>
     </div>
+    <% } %>
 </div>
 
 <script>
@@ -302,7 +309,10 @@ function confirmList(id, button) {
                     method: 'POST'
                 }).then(response => response.json()).then(data => {
                     Swal.fire(data.message, "",'success');
-                    location.reload() 
+                    setTimeout(()=>{
+                        location.reload() 
+                    },1000)
+                  
                 }).catch(error => {
                     Swal.fire('Error!', error.message, 'error');
                 });
@@ -323,7 +333,9 @@ function confirmList(id, button) {
                     method: 'POST'
                 }).then(response => response.json()).then(data => {
                     Swal.fire(data.message, '', 'success');
-                    location.reload()
+                    setTimeout(()=>{
+                        location.reload() 
+                    },1000)
                 }).catch(error =>{
                     Swal.fire('Error!'. error.message, 'error');
                 });
@@ -373,6 +385,26 @@ function confirmList(id, button) {
     function editBrand(id){
         window.location.href = `/api/v1/admin/brands/editBrand?id=${id}`
     }
+
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-btn');
+
+    searchButton.addEventListener('click', function(){
+        const searchValue = searchInput.value.trim();
+        if(searchValue){
+          window.location.href = `/api/v1/admin/brands?search=${searchValue}`;
+        }else{
+            Toastify({
+        text: "Enter any input here!",
+        duration: 3000, 
+        close: true, 
+        gravity: "top", 
+        position: "right", 
+        backgroundColor: "#FF5733", 
+        stopOnFocus: true,
+    }).showToast();
+        }
+    })
 </script>
 <%- include('../partials/admin/footer') %>
 

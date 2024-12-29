@@ -226,9 +226,7 @@ exports.loadDashboardData = async( req, res, next )=>{
         { $limit: 10 }, 
     ]);
     
-    console.log('Top Brands:', JSON.stringify(topBrands, null, 2));
-    
-    
+
 
        // Top products
 

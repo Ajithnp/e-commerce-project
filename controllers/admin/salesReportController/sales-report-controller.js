@@ -35,8 +35,6 @@ exports.renderSalesReportPage = async (req, res, next)=>{
 
 exports.fetchSalesReport = async (req, res, next) => {
 
-
-    console.log('hellooo guys');
     
     try {
         const {type, startDate, endDate} = req.query;
@@ -85,13 +83,14 @@ exports.fetchSalesReport = async (req, res, next) => {
             {
                 $group:{
                     _id:{$dateToString: { format: '%Y-%m-%d', date: '$createdAt'}},
+                    orderIds: { $push: '$orderId' },
                     totalOrders: {$sum: 1},
                     totalDiscount: {$sum: '$totalDiscount'},
                     totalCouponDiscount: {$sum: '$couponDiscount'},
                     totalRevanue: {$sum: '$totalAmount'},
                 },
             },
-            {$sort: {_id: 1}}, // sort by date
+            {$sort: {_id: -1}}, // sort by date
         ]);
 
         // summary
@@ -109,7 +108,7 @@ exports.fetchSalesReport = async (req, res, next) => {
 
         res.json({
             report,
-            summary:summary[0] || {salesCount:0, orderAmount:0, totalDiscount:0},
+            summary:summary[0] || {salesCount:0, orderAmount:0, totalDiscount:0,orderIds: []},
         });
     } catch (error) {
         console.error('An error occured while getting seles report!',error)
@@ -166,13 +165,14 @@ const fetchSalesReportData = async (type, startDate, endDate) => {
       {
           $group: {
               _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+              orderIds: { $push: '$orderId' },
               totalOrders: { $sum: 1 },
               totalDiscount: { $sum: '$totalDiscount' },
               totalCouponDiscount: { $sum: '$couponDiscount' },
               totalRevanue: { $sum: '$totalAmount' },
           },
       },
-      { $sort: { _id: 1 } },
+      { $sort: { _id: -1 } },
   ]);
 
     // Aggregation for summary data
@@ -192,7 +192,6 @@ const fetchSalesReportData = async (type, startDate, endDate) => {
     ? summaryResult[0]
     : { salesCount: 0, orderAmount: 0, totalDiscount: 0 };
 
-  console.log('aggregation result', summary);
   
 
   return { report, summary };
@@ -207,18 +206,14 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
     try {
       const { type, startDate, endDate } = req.query;
 
-      console.log('start date and end date', startDate, endDate);
-      
-  
-      // Fetch the sales report data based on the provided date range
+
       const { report = [], summary = { salesCount: 0, orderAmount: 0, totalDiscount: 0 } } = await fetchSalesReportData(type, startDate, endDate);
   
       const printer = new PdfPrinter(fonts);
 
-      console.log('summary', summary);
-      
+ 
   
-      // Define the document structure
+      //  document structure
       const docDefinition = {
         content: [
           {
@@ -251,10 +246,11 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
           {
             table: {
               headerRows: 1,
-              widths: ["*", "auto", "auto", "auto", "auto"],
+              widths: ["auto", "auto", "auto", "auto", "auto", "auto"],
               body: [
                 [
                   { text: "Date", style: "tableHeader" },
+                  { text: "Order IDs", style: "tableHeader" },
                   { text: "Total Orders", style: "tableHeader" },
                   { text: "Total Discount", style: "tableHeader" },
                   { text: "Coupon Discount", style: "tableHeader" },
@@ -262,6 +258,7 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
                 ],
                 ...report.map((item) => [
                   item._id, // Date
+                  item.orderIds.length > 0 ? item.orderIds.join(', ') : 'No Orders',
                   item.totalOrders, // Total Orders
                   `${item.totalDiscount.toFixed(2)}`, // Total Discount
                   `${item.totalCouponDiscount.toFixed(2)}`, // Coupon Discount
@@ -319,7 +316,7 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
             bold: true,
             fontSize: 12,
             color: "black",
-            fillColor: "#f2f2f2", // Header background color
+            fillColor: "#f2f2f2", 
             alignment: "center",
           },
           summaryText: {
@@ -337,14 +334,14 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
   
       const pdfDoc = printer.createPdfKitDocument(docDefinition);
   
-      // Set headers for the PDF response
+      //  headers for the PDF response
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
         `attachment; filename=Sales_Report_${type || 'custom'}.pdf`
       );
   
-      // Pipe the document to the response and end it
+      
       pdfDoc.pipe(res);
       pdfDoc.end();
     } catch (error) {
@@ -365,41 +362,51 @@ exports.downloadSalesReportPdf = async (req, res, next) => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Sales Report');
 
-        // Add Summary Section
+        // Summary Section
         worksheet.addRow(['Summary Report']).font = { bold: true, size: 14 };
-        worksheet.addRow([]); // Blank row for spacing
+        worksheet.addRow([]); 
         worksheet.addRow(['Total Sales Count:', summary.salesCount || 0]);
         worksheet.addRow(['Total Order Amount:', `₹${summary.orderAmount?.toFixed(2) || 0}`]);
         worksheet.addRow(['Total Discounts:', `₹${summary.totalDiscount?.toFixed(2) || 0}`]);
-        worksheet.addRow([]); // Blank row for spacing
+        worksheet.addRow([]); 
 
-        // Add Headers for Report Data
+        //  Headers for Report Data
         worksheet.addRow(['Sales Report Data']).font = { bold: true, size: 12 };
-        worksheet.addRow([]); // Blank row for spacing
+        worksheet.addRow([]);
         worksheet.columns = [
             { header: 'Date', key: '_id', width: 15 },
+            { header: 'Order IDs', key: 'orderIds', width: 30 },
             { header: 'Total Orders', key: 'totalOrders', width: 15 },
             { header: 'Total Discount', key: 'totalDiscount', width: 15 },
             { header: 'Coupon Discount', key: 'totalCouponDiscount', width: 15 },
             { header: 'Total Revenue', key: 'totalRevanue', width: 15 },
         ];
 
-        // Add Report Data Rows
+
         report.forEach(item => {
             worksheet.addRow({
                 _id: item._id,
+                orderIds: item.orderIds.join('\n'),
                 totalOrders: item.totalOrders,
                 totalDiscount: `₹${item.totalDiscount?.toFixed(2) || 0}`,
                 totalCouponDiscount: `₹${item.totalCouponDiscount?.toFixed(2) || 0}`,
                 totalRevanue: `₹${item.totalRevanue?.toFixed(2) || 0}`,
             });
+
+            
         });
 
-        // Apply styling for headers
-        worksheet.getRow(8).font = { bold: true }; // Assuming row 8 contains headers
+        
+        worksheet.getRow(8).font = { bold: true }; 
         worksheet.getRow(8).alignment = { horizontal: 'center' };
 
-        // Set the response headers
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber > 8) { 
+              row.getCell(2).alignment = { wrapText: true }; 
+          }
+      });
+
+        //  response headers
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
 

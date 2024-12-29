@@ -45,7 +45,7 @@ async function deleteCoupon(couponId){
 
 // Unlist coupon function
 
-async function confirmUnlist(couponId){
+async function confirmUnlistCoupon(couponId){
     Swal.fire({
         title: 'Are you sure?', 
         text: 'Do you want to Unlist this coupon?', 
@@ -53,7 +53,7 @@ async function confirmUnlist(couponId){
         showCancelButton: true, 
         confirmButtonColor: '#e53e3e',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, delete it!', 
+        confirmButtonText: 'Yes, Unlist it!', 
         cancelButtonText: 'Cancel', 
       }).then(async(result)=>{
         if(result.isConfirmed){
@@ -91,7 +91,7 @@ async function confirmUnlist(couponId){
 
 // Unlist coupon function
 
-async function confirmList(couponId){
+async function confirmListCoupon(couponId){
     Swal.fire({
         title: 'Are you sure?', 
         text: 'Do you want to List this coupon?', 
@@ -99,7 +99,7 @@ async function confirmList(couponId){
         showCancelButton: true, 
         confirmButtonColor: '#e53e3e',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, delete it!', 
+        confirmButtonText: 'Yes, list it!', 
         cancelButtonText: 'Cancel', 
       }).then(async(result)=>{
         if(result.isConfirmed){

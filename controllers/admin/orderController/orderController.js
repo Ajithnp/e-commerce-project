@@ -19,7 +19,7 @@ exports.getOrders = async (req, res, next)=>{
 
         const filter = {};
         if(searchQuery){
-            filter['orderId'] = searchQuery
+            filter['orderId'] = {$regex: new RegExp(searchQuery, 'i')};
         }
 
 

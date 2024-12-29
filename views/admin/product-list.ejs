@@ -232,6 +232,16 @@
 
             if(inputValue){
                 window.location.href = `/api/v1/admin/products?search=${inputValue}`;
+            }else{
+                Toastify({
+        text: "Enter any input here!",
+        duration: 3000, 
+        close: true, 
+        gravity: "top", 
+        position: "right", 
+        backgroundColor: "#FF5733", 
+        stopOnFocus: true,
+    }).showToast();
             }
         })
    

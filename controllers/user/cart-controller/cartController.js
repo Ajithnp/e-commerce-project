@@ -236,7 +236,7 @@ exports.getCheckoutPage = async (req, res, next) => {
             User.findById(userId),
             Address.find({ user: userId }),
             Cart.findOne({ userId }).populate('items.productId'),
-            Coupon.find({ isActive: true })
+            Coupon.find({ isActive: true }).sort({createdAt:-1})
         ]);
 
         // user wallet.
@@ -272,10 +272,10 @@ exports.getCheckoutPage = async (req, res, next) => {
             }
         }
 
-        // Update the cart with only valid items
+        //  cart with only valid items
         cart.items = validCartItems;
 
-        // Filter available coupons
+        //  available coupons
         const usedCoupons = await AppliedCoupon.find({ userId }).select('couponId');
         const usedCouponIds = usedCoupons.map(uc => uc.couponId.toString());
 

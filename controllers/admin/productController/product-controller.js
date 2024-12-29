@@ -17,11 +17,11 @@ exports.getProducts = async (req, res, next)=>{
            const skip = (page -1) * limit
            
            // capturing seach value;
-           const searchQuery = req.query.search || '';
+           const searchQuery = req.query.search ? req.query.search.trim().toLowerCase() : '';
 
            const filter = {};
            if(searchQuery){
-            filter['productName'] = searchQuery;
+            filter['productName'] = {$regex: `^${searchQuery}`, $options:'i'}
            }
    
         const totalProducts = await Product.countDocuments(filter);
@@ -222,7 +222,6 @@ exports.editProduct = async (req, res, next)=>{
         const id = req.params.id;
         // const product = await Product.findOne({_id: id});
         const data = req.body
-        console.log('product edit handler...', data);
 
         // Check the product Exists
        const product = await Product.findOne({_id: id });
@@ -244,8 +243,8 @@ exports.editProduct = async (req, res, next)=>{
 
         // Fetching brand category
         const [brandId, categoryId] = await Promise.all([
-            Brand.findOne({ brandName: data.brand }),
-            Category.findOne({ name: data.category})
+            Brand.findOne({ _id: data.brand }),
+            Category.findOne({ _id: data.category})
         ]);
 
         if(! brandId) {
@@ -268,29 +267,11 @@ exports.editProduct = async (req, res, next)=>{
           ? Math.round(regularPrice - (regularPrice * finalOffer) / 100)
            : regularPrice;
 
-        // const images =[];
-
-        // if(req.files && req.files.length > 0){
-        //     for(let i=0; i<req.files.length; i++){
-        //         images.push(req.files[i].filename);
-        //     }
-        // }
+       
 
         const images = req.files ? req.files.map(file => file.filename) : [];
 
-    //     const colorStock = [];
-    //     for (let i = 0; i < req.body.colorStock.length; i++) {
-    //        const color = req.body.colorStock[i].color;
-    //        const quantity = Number(req.body.colorStock[i].quantity); // Convert to number
-    //        const status = req.body.colorStock[i].status;
 
-    //    colorStock.push({
-    //       color: color,
-    //       quantity: quantity,
-    //       status: status,
-    //   });
-
-    // }
 
     const colorStock =(data.colorStock || []).map(item =>({
         color: item.color,
@@ -322,17 +303,6 @@ exports.editProduct = async (req, res, next)=>{
     };
        
 
-
-        // if(images.length > 0){
-        //    await Product.findByIdAndUpdate(id, {
-        //     $push: { productImage: { $each: images }},
-        //     ...updatedFields
-        //    }, { new: true });
-
-        // } else {
-        //     await Product.findByIdAndUpdate(id, updatedFields,{new: true});
-
-        // }
         await Product.findByIdAndUpdate(id, {
             $push: { productImage: { $each: images}},
             ...updatedFields

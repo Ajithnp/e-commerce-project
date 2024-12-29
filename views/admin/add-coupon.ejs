@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 text: 'Coupon added successfully.',
                 confirmButtonColor: '#48bb78',
             }).then(() => {
-                window.location.reload();
+                window.location.href = '/api/v1/admin/coupons';
             });
 
         } catch (error) {

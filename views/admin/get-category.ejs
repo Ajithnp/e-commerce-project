@@ -13,7 +13,7 @@
 
     .top-controls {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         margin-bottom: 20px;
     }
  
@@ -138,8 +138,15 @@
 
 <div class="categories-container">
     <h1 class="page-title">CATEGORIES</h1>
+   
     
-    <div class="top-controls">
+    <div class="top-controls" >
+        <div class="search-bar">
+            <input type="text" placeholder="Search categories..." id="search-input" value="<%= searchQuery %>">
+            <button class="search-button" id="search-btn">
+                <span class="material-icons">search</span>
+            </button>
+        </div>
        
             <a href="/api/v1/admin/addCategory" class="add-category-btn">
             <span class="material-icons">add</span>
@@ -183,7 +190,9 @@
             <% }) %>
         </tbody>
     </table>
-
+    <% if(category.length === 0) {%>
+        <p>No Category found!</p>
+        <% } else if (category.length > 0) {%>
     <div class="pagination">
         <button class="pagination-button" disabled>
             <span class="material-icons">chevron_left</span>
@@ -195,6 +204,7 @@
             <span class="material-icons">chevron_right</span>
         </button>
     </div>
+    <% } %>
 </div>
 
 <script>
@@ -288,6 +298,27 @@
      
         window.location.href = `/api/v1/admin/category/editCategory?id=${id}`
     }
+
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-btn');
+
+    searchButton.addEventListener('click', function(){
+        const searchValue = searchInput.value.trim();
+
+        if(searchValue){
+           window.location.href = `/api/v1/admin/category?search=${searchValue}`;
+        }else{
+            Toastify({
+        text: "Enter any input here!",
+        duration: 3000, 
+        close: true, 
+        gravity: "top", 
+        position: "right", 
+        backgroundColor: "#FF5733", 
+        stopOnFocus: true, 
+    }).showToast();
+        }
+    })
     
 </script>
 

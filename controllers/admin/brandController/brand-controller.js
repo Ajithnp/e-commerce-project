@@ -6,17 +6,25 @@ exports.getBrands = async (req, res, next)=>{
               const page = req.query.page*1 || 1;
               const limit = req.query.limit*1 || 4
               const skip = (page -1) * limit
-              // query = query.skip(skip).limit(limit);
+              
+              // capture search query!
+              const searchQuery = req.query.search || '';
+
+              const filter = {};
+              if(searchQuery){
+                filter['brandName'] = { $regex: new RegExp(searchQuery, 'i') };
+              }
       
-              const totalBrands = await Brand.countDocuments()
-              const brand = await Brand.find().skip(skip).limit(limit).exec()
+              const totalBrands = await Brand.countDocuments(filter)
+              const brand = await Brand.find(filter).skip(skip).limit(limit).exec()
              
       
               // render
               res.status(200).render('admin/brands',{
                   brand,
                   page,
-                  totalPage: Math.ceil(totalBrands/limit)
+                  totalPage: Math.ceil(totalBrands/limit),
+                  searchQuery
               })
     } catch (error) {
         console.error(error)

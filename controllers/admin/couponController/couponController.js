@@ -12,17 +12,26 @@ exports.showCoupons = async (req, res, next)=>{
         const limit = 8; 
         const skip = (page - 1) * limit;
 
-        // Get all coupons..!
-        const coupons = await Coupon.find({}).sort({createdAt:-1}).skip(skip).limit(limit)
+        // capture search query!
+        let searchQuery = req.query.search || '';
 
-        const totalOrders = await Coupon.countDocuments();
+        let filter = {};
+        if(searchQuery){
+            filter['code'] = {$regex: new RegExp(searchQuery, 'i')};
+        }
+
+        // Get all coupons..!
+        const coupons = await Coupon.find(filter).sort({createdAt:-1}).skip(skip).limit(limit)
+
+        const totalOrders = await Coupon.countDocuments(filter);
 
         const totalPages = Math.ceil(totalOrders / limit);
         
         res.status(200).render('admin/coupn-management',{
             coupons,
             currentPage:page,
-            totalPages:totalPages
+            totalPages:totalPages,
+            searchQuery
         });
     } catch (error) {
         console.error('An error occured while loading the coupon page..!')

@@ -4,6 +4,12 @@
 <div class="coupon-list-container">
     <div class="page-header">
         <h1 class="page-title">Coupon Management</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search Coupons..." id="search-input" value="<%= searchQuery %>">
+            <button class="search-button" id="search-btn">
+                <span class="material-icons">search</span>
+            </button>
+        </div>
         <a href="/api/v1/admin/coupons/add" class="add-coupon-btn">
             <i class="fas fa-plus"></i> Add New Coupon
         </a>
@@ -51,9 +57,9 @@
                         <%}%>
                     <td class="action-buttons">
                        <% if (coupon.isActive) {%>
-                        <button class="action-btn unlist-btn" onclick="confirmUnlist('<%= coupon._id %>')">Unlist</button>
+                        <button class="action-btn unlist-btn" onclick="confirmUnlistCoupon('<%= coupon._id %>')">Unlist</button>
                         <% } else {%>
-                            <button class="action-btn list-btn" onclick="confirmList('<%= coupon._id %>')">List</button>
+                            <button class="action-btn list-btn" onclick="confirmListCoupon('<%= coupon._id %>')">List</button>
                             <% } %>
 
                         <button class="action-btn edit-btn" onclick="editCoupon('<%= coupon._id %>')">Edit</button>
@@ -65,6 +71,9 @@
             </tbody>
         </table>
     </div>
+    <% if(coupons.length === 0) {%>
+        <p>No orders found!</p>
+        <%} else if(coupons.length> 1){%>
 
     <div class="pagination">
         <a href="?page=<%= currentPage - 1 %>" class="pagination-btn" id="prev-btn" 
@@ -77,6 +86,7 @@
             <span class="material-icons">chevron_right</span>
         </a>
     </div>
+    <% } %>
 
 </div>
 
@@ -233,6 +243,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const editButtons = document.querySelectorAll('.edit-btn');
     const listButtons = document.querySelectorAll('.list-btn');
   
+    const searchButton = document.getElementById('search-btn')
+    const searchInput = document.getElementById('search-input')
+
+    searchButton.addEventListener('click',function(){
+        const inputValue = searchInput.value.trim();
+
+        if(inputValue){
+            window.location.href = `/api/v1/admin/coupons?search=${inputValue}`;
+
+        }else{
+            Toastify({
+        text: "Enter any input here!",
+        duration: 3000,
+        close: true, 
+        gravity: "top", 
+        position: "right", 
+        backgroundColor: "#FF5733", 
+        stopOnFocus: true, 
+    }).showToast();
+        }
+    })
 
     
 

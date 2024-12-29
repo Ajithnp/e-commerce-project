@@ -253,9 +253,6 @@
 
             
             const data = await response.json();
-            console.log('Report data received:', data);
-            console.log('aall ethiii');
-            
 
             // populate table!
             const tbody = document.getElementById('report-data');
@@ -265,9 +262,8 @@
             .map(row =>`
              <tr>
                  <td>${row._id}</td>
-                  <td>${row.orderId}</td>
-
-                  <td>${row.totalOrders}</td>
+                 <td>${row.orderIds.join(',<br>')}</td>
+                  <td>${row.totalOrders}</td> 
                  <td>${row.totalDiscount}</td>
                  <td>${row.totalCouponDiscount}</td>
                  <td>${row.totalDiscount + row.totalCouponDiscount}</td>

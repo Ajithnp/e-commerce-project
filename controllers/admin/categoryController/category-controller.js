@@ -10,17 +10,26 @@ exports.categoryInfo = async (req, res, next)=>{
            const page = req.query.page*1 || 1;
            const limit = req.query.limit*1 || 4
            const skip = (page -1) * limit
-           // query = query.skip(skip).limit(limit);
+          
+           // Capture the search Query!
+           const searchQuery = req.query.search || '';
+
+           const filter = {};
+           if(searchQuery){
+            filter['name'] = {$regex: new RegExp(searchQuery, 'i')};
+           }
+
    
-           const totalCategories = await Category.countDocuments()
-           const category = await Category.find().skip(skip).limit(limit).exec()
+           const totalCategories = await Category.countDocuments(filter)
+           const category = await Category.find(filter).skip(skip).limit(limit).exec()
           
    
            // render
            res.render('admin/get-category',{
                category,
                page,
-               totalPage: Math.ceil(totalCategories/limit)
+               totalPage: Math.ceil(totalCategories/limit),
+               searchQuery
            })
         
     } catch (error) {

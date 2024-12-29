@@ -33,7 +33,9 @@ exports.getStorePage = async (req, res, next) => {
 
         // Handle brand filtering
         if (req.query.brand) {
-            const selectedBrands = Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand];
+            var brandFilter = req.query.brand;
+
+            var selectedBrands = Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand];
             const brandIds = await Promise.all(selectedBrands.map(async (brandName) => {
                 const brandDoc = await Brand.findOne({ brandName });
                 return brandDoc ? brandDoc._id : null; // Return ObjectId or null if not found
@@ -43,13 +45,12 @@ exports.getStorePage = async (req, res, next) => {
 
         // Handle category filtering
         if (req.query.category) {
-            console.log('filter category', req.query.category);
-            
-            const selectedCategories = Array.isArray(req.query.category) ? req.query.category : [req.query.category];
+            var categoryFilter = req.query.category;
+
+            var selectedCategories = Array.isArray(req.query.category) ? req.query.category : [req.query.category];
             const categoryIds = await Promise.all(selectedCategories.map(async (categoryName) => {
                 const categoryDoc = await Category.findOne({ name: categoryName });
-                console.log('category found', categoryDoc);
-                
+
                 return categoryDoc ? categoryDoc._id : null; // Return ObjectId or null if not found
             }));
             filters.category = { $in: categoryIds.filter(id => id !== null) }; // Filter out null values
@@ -60,21 +61,25 @@ exports.getStorePage = async (req, res, next) => {
             filters.salePrice = { $gte: Number(req.query.priceLow), $lte: Number(req.query.priceHigh) };
         }
 
-        // Handle search query for product name, category name, and brand name
+        
         if (req.query.q) {
+            var searchQuery = req.query.q;
             filters.$or = [
-                { productName: { $regex: new RegExp(req.query.q, 'i') } }, // Search by product name
-                { 'category.name': { $regex: new RegExp(req.query.q, 'i') } }, // Search by category name
-                { 'brand.brandName': { $regex: new RegExp(req.query.q, 'i') } } // Search by brand name
+                { productName: { $regex: new RegExp(req.query.q.trim(), 'i') } }, // Search by product name
+                { 'category.name': { $regex: new RegExp(req.query.q.trim(), 'i') } }, // Search by category name
+                { 'brand.brandName': { $regex: new RegExp(req.query.q.trim(), 'i') } } // Search by brand name
             ];
         }
 
+
         // Fetch products with applied filters, sorting, and pagination
-        const productData = await Product.find(filters)
+        const productData = await Product.find(filters).populate([{path:'category',select: 'name'},{ path:'brand', select:'brandName'}])
             .sort(getSortOptions(req.query.sortBy))
             .skip(skip)
             .limit(limit)
             .exec();
+
+            const filtersApplied = !!(req.query.q || req.query.brand || req.query.category || (req.query.priceLow && req.query.priceHigh));
 
         return res.status(200).render('user/store-page', {
             user: userData,
@@ -82,7 +87,15 @@ exports.getStorePage = async (req, res, next) => {
             page,
             totalPages,
             brands,
-            categories
+            categories,
+            searchQuery: searchQuery || '',
+            brandFilter: selectedBrands || [],
+            categoryFilter: selectedCategories || [],
+            filtersApplied ,
+            sortBy: req.query.sortBy || '',
+
+         
+            
         });
     } catch (error) {
         console.error('Error occurred while loading store page', error);
