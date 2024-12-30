@@ -308,7 +308,13 @@
                         </div>
                         <% } else if (order.orderStatus === 'Failed') { %> 
                             <!-- Cancel Order Button -->
-                            <button id="paymentRetryBtn" class="btn btn-info" onclick="PaymentRetry('<%= order._id%>')">Continue Payment</button>
+                             <div style="display: flex; justify-content: space-between;">
+
+                                <button id="paymentRetryBtn" class="btn btn-info" onclick="PaymentRetry('<%= order._id%>')">Continue Payment</button>
+                                <button id="cancelOrderBtn" class="btn btn-cancel" onclick="failedOrderCancel('<%= order._id %>')">Cancel Order</button>
+
+                             </div>
+                            
                         <% } else if (order.orderStatus === 'Processing') { %>
                             <button id="cancelOrderBtn" class="btn btn-cancel" onclick="orderCancel('<%= order._id %>')">Cancel Order</button>
                             <% }else { %>
@@ -380,6 +386,54 @@ async function orderCancel(orderId) {
     }
    }
   }
+}
+
+// Failed order cancel button!.
+async function failedOrderCancel(orderId) {
+    const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you really want to cancel this order? This action cannot be undone.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#e53e3e', // Red color for cancel confirmation
+    cancelButtonColor: '#48bb78', // Green color for the cancel button
+    confirmButtonText: 'Yes, Cancel it!',
+    cancelButtonText: 'No, Keep it'
+  });
+
+  if(result.isConfirmed){
+
+    try {
+             const response = await fetch(`/beats/user/cancelOrder/${orderId}`, { method: 'PATCH' ,
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({flag:true})
+             });
+
+              if (!response.ok) {
+                const errorMessage = await response.json();
+                 throw new Error(errorMessage.message || 'An error occurred..!');
+           }
+
+         await Swal.fire(
+            'Cancelled!',
+             'Your order has been cancelled.',
+              'success'
+           );
+
+      window.location.href = '/beats/user/orders';
+    } catch (error) {
+      console.error('Error cancelling order:', error.message);
+      Swal.fire(
+        'Error!',
+        error.message,
+        'error'
+      );
+    }
+  }
+
+    
 }
 
 

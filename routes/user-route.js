@@ -266,23 +266,19 @@ userRoute.post('/order', async (req, res) => {
 
 // razor pay failed payment!
 userRoute.post('/retry/payment',async (req, res)=>{
-       console.log('helooo1');
-       
+
        const {pendingOrderId} = req.body;
-       console.log('hello2',pendingOrderId, req.body);
-       
+     
 
        try {
               
               
               const pendingOrder = await Order.findById(pendingOrderId).populate('orderItems');
-              console.log('order fetched', pendingOrder);
               
-
               if (!pendingOrder || pendingOrder.orderStatus !== 'Failed') {
                      return res.status(400).json({ error: 'Order not found or not eligible for retry.' });
                  }
-                 console.log('log3');
+                
                  
 
                   // Recreate Razorpay order
@@ -291,7 +287,7 @@ userRoute.post('/retry/payment',async (req, res)=>{
                      key_secret: process.env.RAZOR_PAY_SECRET_KEY,
                  });
 
-          console.log('log4');
+        
           
 
           const options = {
@@ -299,17 +295,13 @@ userRoute.post('/retry/payment',async (req, res)=>{
               currency: 'INR',
               receipt: pendingOrder._id.toString()
           };
-          console.log('log5');
-          
 
           const razorpayOrder = await razorpay.orders.create(options);
-         console.log('log6');
+   
          
           // Update the order with new Razorpay order ID
           pendingOrder.razorpayOrderId = razorpayOrder.id;
           await pendingOrder.save();
-          console.log('log7');
-          
 
           return res.status(200).json({
               status: 'ok',

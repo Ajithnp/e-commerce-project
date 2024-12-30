@@ -67,11 +67,14 @@ exports.loadDashboardData = async( req, res, next )=>{
         const {filter}= req.query; // week , month, year.
         const currentDate = new Date();
 
+        let labels = [];
+       
+
         let startDate;
 
         if(filter === 'week'){
             startDate = new Date(currentDate.setDate(currentDate.getDate() - 6)); // Last seven days.
-
+           
         }else if(filter === 'month'){
             startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(),1); // start of the month!;
         }else if (filter === 'year'){
@@ -92,7 +95,13 @@ exports.loadDashboardData = async( req, res, next )=>{
             },
             {
                 $group: {
-                    _id: {$dateToString: {format: '%Y-%m-%d', date: '$createdAt'}},
+                    // _id: {$dateToString: {format: '%Y-%m-%d', date: '$createdAt'}},
+                    _id: filter === 'week' 
+                    ? { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }} 
+                    : filter === 'month' 
+                    ? { $dateToString: { format: '%Y-%m', date: '$createdAt' }} 
+                    : { $dateToString: { format: '%Y', date: '$createdAt' }},
+
                     deliveredOrders: {$sum:{$cond: [{ $eq:['$orderStatus', 'Delivered']}, 1, 0]}},
                     cancelledOrders: {$sum:{$cond:[{$eq:['$orderStatus', 'Cancelled']}, 1, 0]}},
                     totalDiscounts: {$sum: '$totalDiscount'},
@@ -102,6 +111,7 @@ exports.loadDashboardData = async( req, res, next )=>{
             { $sort: {_id:1}},
         ]);
 
+       
         //------ Summary Data Aggregation------
 
         const summary = await Order.aggregate([
@@ -269,6 +279,7 @@ exports.loadDashboardData = async( req, res, next )=>{
 
         return res.status(200).json({
             chartData,
+            labels,
             summary: summary[0] || {},
             topCategories,
             topBrands,

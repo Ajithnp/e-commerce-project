@@ -112,7 +112,7 @@ exports.updateCoupon = async (req, res ,next)=>{
     const couponId = req.params.id;
 
 
-    console.log('font-end datas',req.body);
+   
 
     let {
         code,
@@ -150,9 +150,7 @@ exports.updateCoupon = async (req, res ,next)=>{
             conditions,
             minPurchaseAmount:Number(minimumPurchaseAmount)
         },{new:true})
-
-        console.log('updated coupon', updateCoupon);
-        
+    
 
         if(!updateCoupon){
             return res.status(404).json({message:'Coupon not fount..!'})

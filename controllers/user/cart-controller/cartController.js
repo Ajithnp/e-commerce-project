@@ -461,7 +461,7 @@ exports.razorPayOrderSave = async (req, res, next)=>{
            return res.status(400).send('Invalid signature');
        }
 
-       console.log('Payment is verified.');
+      
 
        try {
 
@@ -474,8 +474,6 @@ exports.razorPayOrderSave = async (req, res, next)=>{
                 {new: true}
             );
 
-            console.log('heloo order updating',existingOrder);
-            
 
             if (!existingOrder) {
                 return res.status(404).json({ message: 'Order not found!' });
@@ -484,7 +482,6 @@ exports.razorPayOrderSave = async (req, res, next)=>{
                 // Clear the user's cart
                  await Cart.findOneAndDelete({ userId });
 
-                 console.log('Order updated successfully for retry:', existingOrder);
                  return res.json({ status: 'ok', message: 'Retry payment successful!', order: existingOrder });
         }else {
 
@@ -637,12 +634,15 @@ exports.razorPayfailedOrderSave = async (req, res, next) =>{
                 // Update product quantity..!
      for(item of orderItems){
         const product = await Product.findById(item.product);
-
+ 
         const selectedColorStock = product.colorStock.find(color=> color.color == item.color);
 
+    
 
         if(selectedColorStock){
            let newQuantity = selectedColorStock.quantity - item.quantity;
+          
+           
 
           selectedColorStock.quantity = newQuantity
             if(selectedColorStock.quantity <= 0){

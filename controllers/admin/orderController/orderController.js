@@ -23,7 +23,7 @@ exports.getOrders = async (req, res, next)=>{
         }
 
 
-        const orders = await Order.find(filter)
+        const orders = await Order.find({...filter,paymentStatus:{$ne:'Failed'}})
             .populate({
                 path: 'orderItems',
                 populate: {

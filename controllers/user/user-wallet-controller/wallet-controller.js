@@ -8,22 +8,35 @@ exports.getWallet = async (req, res, next)=>{
 
     try {
 
-        // const page = req.query.page*1 || 1;
-        // const limit = req.query.limit*1 || 4
-        // const skip = (page -1) * limit
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5; 
+        const skip = (page - 1) * limit;
 
-        // const walletCount = await Wallet.countDocuments()
-        // const wallet = await Wallet.findOne({userId}).skip(skip).limit(limit).exec()
+        // const walletCount = await Wallet.countDocuments({ userId })
+        const wallet = await Wallet.findOne({userId});
 
-        // Find the wallet for the user!
-        // const wallet = await Wallet.findOne({userId})
+
+        if (!wallet) {
+            return res.status(404).render('user/user-wallet', {
+                walletBalance: 0,
+                transactions: [],
+                page,
+                totalPage: 0 // No pages if no wallet found
+            });
+        }
+
+        const sortedTransactions = wallet.transactions.sort((a, b) => b.transactionDate - a.transactionDate);
+
+        const walletCount =sortedTransactions.length;
+        const transactions = sortedTransactions.slice(skip, skip + limit);
 
 
         res.status(200).render('user/user-wallet', {
             walletBalance: wallet.walletBalance || 0, 
-            transactions: wallet.transactions || []  ,
+            transactions:transactions || []  ,
             page,
-            totalPage:Math.ceil(walletCount)
+            totalPage:Math.ceil(walletCount/limit),
+            limit
 
         });
     } catch (error) {

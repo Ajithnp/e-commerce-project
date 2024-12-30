@@ -1,5 +1,37 @@
 <%- include('../partials/user/header2') %>  
+<style>
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
 
+    .pagination-button {
+        background-color: #2d3748;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+    }
+
+    .pagination-button.active {
+        background-color: #4a5568;
+        font-weight: bold;
+        font-family: normal;
+    }
+
+    .pagination-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
 
 <main class="main">
     <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
@@ -74,16 +106,12 @@
                         </table>
                         
                         <div class="pagination">
-                            <button class="pagination-button" disabled>
-                                <span class="material-icons">chevron_left</span>
-                            </button>
-                            <%for (let i=1; i<=totalPage; i++) {%>
-                                <a href="?page=<%= i %>" class="pagination-button <%= page === i ? 'active' : '' %>"><%= i %></a>
-                                <% } %>
-                            <button class="pagination-button">
-                                <span class="material-icons">chevron_right</span>
-                            </button>
+                            <% for (let i = 1; i <= totalPage; i++) { %>
+                                <a href="?page=<%= i %>&limit=<%= limit %>" class="pagination-button <%= page === i ? 'active' : '' %>"><%= i %></a>
+                            <% } %>
                         </div>
+                        
+                        
                     </div>
                     
                     <script>

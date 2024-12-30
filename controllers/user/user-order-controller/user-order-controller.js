@@ -86,6 +86,7 @@ exports.getOrderDetails = async (req, res, next)=>{
 exports.orderCancel = async (req, res, next) => {
     const orderId = req.params.id;
     const {reason}= req.body;
+    const {flag} = req.body;
     
 
     try {
@@ -103,7 +104,7 @@ exports.orderCancel = async (req, res, next) => {
         }
 
         // check the Order payment method.
-        if(order.paymentMethod === 'razorpay'){
+        if(order.paymentMethod === 'razorpay' && !flag){
             const userId = order.userId;
 
             // Find the order Amount!
@@ -163,10 +164,12 @@ exports.orderCancel = async (req, res, next) => {
         // Restore product quantities
         for (const item of order.orderItems) {
             const product = item.product; 
+            
 
             if (product) {
                 // Find the corresponding color stock
                 const selectedColorStock = product.colorStock.find(color => color.color === item.color);
+
 
                 if (selectedColorStock) {
                     selectedColorStock.quantity += item.quantity; // Restore the quantity

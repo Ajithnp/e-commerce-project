@@ -202,6 +202,8 @@
             <ul id="topProducts" class="top-sellers-list"></ul>
         </div>
     </div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -232,7 +234,6 @@
                 if (!response.ok) throw new Error(`Failed to fetch data (Status: ${response.status})`);
 
                 const data = await response.json();
-                console.log('Dashboard Data:', data);
 
                 updateDashboard(data);
             } catch (error) {
@@ -275,49 +276,51 @@
         }
 
         // Update Chart
-        function updateChart(chartData) {
-            console.log('wegh',chartData);
-            
-            const ctx = document.getElementById('salesChart').getContext('2d');
+     
+     function updateChart(chartData) {
+    const ctx = document.getElementById('salesChart').getContext('2d');
 
-            if (salesChart) salesChart.destroy(); // Destroy previous chart instance
+    if (salesChart) salesChart.destroy(); 
 
-            salesChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(item => item._id),
-                    datasets: [
-                        {
-                            label: 'Delivered Orders',
-                            data: chartData.map(item => item.deliveredOrders || 0),
-                            backgroundColor: 'green',
-                        },
-                        {
-                            label: 'Cancelled Orders',
-                            data: chartData.map(item => item.cancelledOrders || 0),
-                            backgroundColor: 'red',
-                        },
-                        {
-                            label: 'Total Discounts',
-                            data: chartData.map(item => item.totalDiscounts || 0),
-                            backgroundColor: 'orange',
-                        },
-                        {
-                            label: 'Total Revenue',
-                            data: chartData.map(item => item.totalRevenue || 0),
-                            backgroundColor: 'blue',
-                        },
-                    ],
+    salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.map(item => item._id), 
+            datasets: [
+                {
+                    label: 'Delivered Orders',
+                    data: chartData.map(item => item.deliveredOrders || 0),
+                    backgroundColor: 'green',
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true },
-                    },
+                {
+                    label: 'Cancelled Orders',
+                    data: chartData.map(item => item.cancelledOrders || 0),
+                    backgroundColor: 'red',
                 },
-            });
-        }
+                {
+                    label: 'Total Discounts',
+                    data: chartData.map(item => item.totalDiscounts || 0),
+                    backgroundColor: 'orange',
+                },
+                {
+                    label: 'Total Revenue',
+                    data: chartData.map(item => item.totalRevenue || 0),
+                    backgroundColor: 'blue',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true },
+            },
+        },
+    });
+}
+
+
+
     </script>
-</div>
+
 
 <%- include('../partials/admin/footer') %>
