@@ -81,6 +81,7 @@ exports.userRegistration = async (req,res, next )=>{
        // Generate OTP and Time
        const otpExpirationT =  Date.now() +  60 * 1000;
         const otp = generateOTP();
+      
      
 
         //send OTP email
@@ -92,9 +93,6 @@ exports.userRegistration = async (req,res, next )=>{
 
         res.status(201).json({ message : 'User registered successfully! Please check your email for OTP.'})
         
-        
-        // After success reidtration render OTP page.
-        // res.status(200).render('user/otp',{otpExpiration:req.session.otpExpiration})
         
     } catch (error) {
         console.error(error)

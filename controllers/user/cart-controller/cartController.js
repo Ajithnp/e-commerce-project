@@ -241,14 +241,24 @@ exports.getCheckoutPage = async (req, res, next) => {
             Coupon.find({ isActive: true }).sort({createdAt:-1})
         ]);
 
+       
+        
+
         // user wallet.
         const wallet = await Wallet.findOne({userId})
-        let walletAmount = wallet.walletBalance;
+        if(wallet){
+            var walletAmount = wallet.walletBalance || 0;
+        }
+        
+        
+        
 
 
         let totalSavings = 0;
         let totalAmount = 0; 
         const validCartItems = []; 
+        
+        
 
         // Validate products in the cart
         for (const item of cart.items) {
@@ -275,6 +285,8 @@ exports.getCheckoutPage = async (req, res, next) => {
                 }
             }
         }
+        
+        
 
         //  cart with only valid items
         cart.items = validCartItems;

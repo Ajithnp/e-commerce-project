@@ -161,7 +161,7 @@
                         },
                         error : function ( xhr ) {
                             const errorMessage = xhr.responseJSON.message  // get error message from response
-                            alert ( errorMessage)  // Dispaly error message to admin
+                            $('#passwordError').text(errorMessage);  // Dispaly error message to admin
                         }
                     })
                 }

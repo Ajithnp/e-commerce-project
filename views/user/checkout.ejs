@@ -237,17 +237,18 @@
                                     <h6>Select a Payment Method</h6>
                                     <form id="payment-form">
                                         <!-- Payment Options with Radio Buttons -->
-                                      
+                                       <%if(walletAmount > 0) {%>
                                         <div class="payment-option">
                                             <input class="collapsed" data-toggle="collapse" data-target="#collapse-wallet" aria-expanded="false" aria-controls="collapse-wallet"  type="radio" id="wallet" name="paymentMethod" value="Wallet">
                                             <label for="wallet">Wallet</label>
                                             <div id="collapse-wallet" class="collapse" aria-labelledby="heading-wallet" data-parent="#accordion-payment">
                                                 <div class="card-body">
-                                                    Your wallet balance: ₹ <span style="color: green;"><%= walletAmount %></span>
+                                                    Your wallet balance: ₹ <span style="color: green;"><%= walletAmount || 0 %></span>
                                                 </div>
-                                        </div>
+                                            </div>
                                             
                                         </div>
+                                        <% } %>
                                         <div class="payment-option">
                                             <!-- <input type="radio" id="cod" name="paymentMethod" value="COD"> -->
                                             <input class="collapsed" data-toggle="collapse" data-target="#collapse-cod" aria-expanded="false" aria-controls="collapse-cod" type="radio" id="cod" name="paymentMethod" value="COD">
@@ -348,10 +349,12 @@
                     <div>
                         <label for="address-form-name">Name:</label>
                         <input type="text" id="name-e" name="name" required>
+                        <p id="name-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-lastName">Last Name:</label>
                         <input type="text" id="last-name-e" name="lastName">
+                        <p id="last-name-err-e" class="error-message"></p>
                     </div>
                 </div>
 
@@ -359,10 +362,12 @@
                     <div>
                         <label for="address-form-email">Email:</label>
                         <input type="email" id="email-e" name="email" required>
+                        <p id="email-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-companyName">Company Name:</label>
                         <input type="text" id="companyName-e" name="companyName">
+                        <p id="company-err-e" class="error-message"></p>
                     </div>
                 </div>
 
@@ -370,6 +375,7 @@
                     <div>
                         <label for="address-form-phone">Phone:</label>
                         <input type="tel" id="altPhone-e" name="phone" required>
+                        <p id="phone-err-e" class="error-message"></p>
                     </div>
                   
                 </div>
@@ -378,10 +384,12 @@
                     <div>
                         <label for="address-form-streetAddress">Street Address:</label>
                         <input type="text" id="streetAddress-e" name="streetAddress" required>
+                        <p id="streetAddress-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-landmark">Landmark:</label>
                         <input type="text" id="landmark-e" name="landmark">
+                        <p id="landmark-err-e" class="error-message"></p>
                     </div>
                 </div>
 
@@ -389,10 +397,12 @@
                     <div>
                         <label for="address-form-city">City:</label>
                         <input type="text" id="city-e" name="city" required>
+                        <p id="city-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-district">District:</label>
                         <input type="text" id="dist-e" name="district">
+                        <p id="dist-err-e" class="error-message"></p>
                     </div>
                 </div>
 
@@ -400,10 +410,12 @@
                     <div>
                         <label for="address-form-state">State:</label>
                         <input type="text" id="state-e" name="state" required>
+                        <p id="state-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-country">Country:</label>
                         <input type="text" id="country-e" name="country" required>
+                        <p id="country-err-e" class="error-message"></p>
                     </div>
                 </div>
 
@@ -411,6 +423,7 @@
                     <div>
                         <label for="address-form-zip">ZIP Code:</label>
                         <input type="text" id="zip-e" name="zip" required>
+                        <p id="zip-err-e" class="error-message"></p>
                     </div>
                     <div>
                         <label for="address-form-addressType">Address Type:</label>
@@ -596,6 +609,9 @@
     document.getElementById('userAddress-edit').addEventListener('submit', async function (e) {
         e.preventDefault();
 
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(error => error.innerText = '');
+
         const id = document.getElementById('hiddenId').value;;
        
 
@@ -612,6 +628,8 @@
    const altPhone = document.getElementById('altPhone-e').value.trim();
    const email = document.getElementById('email-e').value.trim();
 
+
+
    const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
 
    if (!addressType) {
@@ -621,6 +639,98 @@
             icon: 'error'
         });
     }
+
+    if(!name){
+        document.getElementById('name-err-e').innerText ='Name is required';
+        return;
+    }else if(name.length < 3 || !/^[a-zA-Z\s]+$/.test(name)){
+        document.getElementById('name-err-e').innerText ='First name must be at least 3 characters and contain only alphabets.';
+        return;
+    }
+
+    if (lastName) {
+      if (lastName.length < 2) {
+        
+        document.getElementById('last-name-err-e').innerText = 'Last name must be at least 2 characters.';
+        return;
+      } else if (!/^[A-Za-z][A-Za-z0-9\s]*$/.test(lastName)) {
+      
+        document.getElementById('last-name-err-e').innerText = 'Last name must start with an alphabet and contain only letters, numbers, or spaces.';
+        return;
+      }
+    }
+
+    if (zip && !/^\d{5,6}$/.test(zip)) {
+     
+      document.getElementById('zip-err-e').innerText = 'Zip code must be 5-6 digits.';
+      return;
+    }
+
+    if (altPhone && !/^\d{10}$/.test(altPhone)) {
+     
+      document.getElementById('phone-err-e').innerText = 'Alternate phone must be a valid 10-digit number.';
+      return;
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+
+      document.getElementById('email-err-e').innerText = 'Please enter a valid email address.';
+      return;
+    }
+
+    if (companyName && !/^[a-zA-Z0-9\s]+$/.test(companyName)) {
+
+      document.getElementById('company-err-e').innerText = 'Company name can only contain letters, numbers, and spaces.';
+      return;
+    }
+
+    if (!country) {
+   
+      document.getElementById('country-err-e').innerText = 'Country is required.';
+      return;
+    } else if (!/^[A-Za-z]+$/.test(country)) {
+
+      document.getElementById('country-err-e').innerText = 'Only alphabetic characters are allowed!';
+      return;
+    }
+
+    if (!state) {
+
+      document.getElementById('state-err-e').innerText = 'State is required.';
+      return;
+    } else if (!/^[A-Za-z]+$/.test(state)) {
+     
+      document.getElementById('state-err-e').innerText = 'Only alphabetic characters are allowed!';
+      return;
+    }
+    
+    if (!dist) {
+    
+      document.getElementById('dist-err-e').innerText = 'District is required.';
+      return;
+    } else if (!/^[A-Za-z]+$/.test(dist)) {
+
+      document.getElementById('state-err-e').innerText = 'Only alphabetic characters are allowed!';
+      return;
+    }
+
+    if (!city) {
+     
+      document.getElementById('city-err-e').innerText = 'City is required.';
+      return;
+    } else if (!/^[A-Za-z]+$/.test(city)) {
+     
+      document.getElementById('city-err-e').innerText='Only alphabetic characters are allowed!';
+      return;
+      
+    }
+
+    if (!streetAddress) {
+    
+      document.getElementById('streetAddress-err-e').innerText = 'Street address is required.';
+      return;
+    }
+
 
 
 
