@@ -10,8 +10,6 @@ exports.couponApply = async (req, res,next)=>{
         // Find coupon using code..!
         const coupon = await Coupon.findOne({code: couponCode});
 
-        console.log('coupon found:', coupon);
-        
 
         if(!coupon){
             return res.status(404).json({message: 'Coupon is Invalid..!'})

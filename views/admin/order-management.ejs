@@ -209,8 +209,6 @@ function viewOrderdetails(orderId){
     const orderId = selectElement.getAttribute('data-order-id');
     const newStatus = selectElement.value;
 
-    console.log('datas', orderId, newStatus)
-
     // Show confirmation alert
     const result = await Swal.fire({
         title: 'Are you sure?',

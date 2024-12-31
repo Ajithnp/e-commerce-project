@@ -37,7 +37,7 @@ exports.downloadInvoice = async (req, res, next)=>{
     select:'name email phone'
 
 }]);
-console.log('order:',order)
+
   
     if (!order) {
       return res.status(404).json({ message: "Order not found" });

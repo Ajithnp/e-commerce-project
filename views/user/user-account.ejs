@@ -232,27 +232,25 @@
 
       clearErrorsValidations();
       const name = document.getElementById("acc-name").value.trim();
-      console.log('datas', name)
+    
       const phone = document.getElementById("acc-phone").value.trim();
-      console.log('datas', name, phone)
+     
       const password = document
         .getElementById("acc-current-password")
         .value.trim();
-        console.log('datas', name, phone, password)
+       
       const newPassword = document
         .getElementById("acc-new-password")
         .value.trim();
-        console.log('datas', name, phone, password, newPassword)
+      
       const confirmPassword = document
         .getElementById("acc-confirm-password")
         .value.trim();
-        console.log('datas', name, phone, password, newPassword, confirmPassword)
+      
 
       // Validations
       isValid = true;
       let data = {};
-
-      console.log('datas', name, phone, password, newPassword, confirmPassword)
 
       // Name-------------
       const namePattern = /^[a-zA-Z][a-zA-Z\s]*$/;

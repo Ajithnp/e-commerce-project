@@ -1,5 +1,5 @@
 async function deleteCoupon(couponId){
-    console.log('coupon id hiii', couponId)
+  
 
     Swal.fire({
         title: 'Are you sure?', 

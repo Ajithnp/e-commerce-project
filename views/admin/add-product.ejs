@@ -351,7 +351,7 @@
        
 
             try {
-                const response = await fetch('http://localhost:3001/api/v1/admin/products/addProduct',{
+                const response = await fetch('/api/v1/admin/products/addProduct',{
                     method: 'POST',
                     body: formData
                 }); 
@@ -493,9 +493,6 @@
                 isValid = false
             }
 
-            
-            console.log(`Regular Price: ${typeof regularPrice}, Sale Price: ${typeof salePrice}`);
-            console.log(`productname: ${name}, description: ${description}`);
 
             //Product Offer:
             if(productOffer < 0 || productOffer > 100 ){

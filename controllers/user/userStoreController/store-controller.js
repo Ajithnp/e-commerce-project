@@ -141,7 +141,7 @@ exports.getProductDetail = async (req, res, next)=>{
         }
        
         const userDate = user ? await User.findById(user.id) : null;
-        console.log('userdata or null', userDate);
+       
         
         
 

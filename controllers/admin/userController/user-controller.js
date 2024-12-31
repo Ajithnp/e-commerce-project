@@ -43,8 +43,7 @@ exports.getUsers = async (req, res, next)=>{
 exports.blockUser = async (req, res, next)=>{
     const userId = req.params.id;
    
-    console.log('useris',userId);
-    
+
   
     try {
         await User.findByIdAndUpdate(userId, { isBlocked: true}); // Block

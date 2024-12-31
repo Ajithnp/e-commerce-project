@@ -49,7 +49,7 @@ exports.userAuth = async (req, res, next )=>{
         }
     }
     catch(error) {
-                console.log('Error in user Authentication',error.message);
+                console.error('Error in user Authentication',error.message);
                 res.status(500).send('Internal server error')
                 
             }

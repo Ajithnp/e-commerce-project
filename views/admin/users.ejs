@@ -284,7 +284,7 @@ function confirmAction(action, userId) {
         confirmButtonText: `Yes, ${actionText}!`
     }).then((result) => {
         if (result.isConfirmed) {
-            console.log(`User ID before fetch: ${userId}`);
+          
             // request to block or unblock the user
             fetch(`/api/v1/admin/${action}Customer/${userId}`, {
                 method: 'POST' 

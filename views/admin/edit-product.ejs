@@ -368,9 +368,7 @@
                 if (validationForm()){
     
                 const formData = new FormData(this)
-                console.log('form data', formData);
-                
-    
+
                 // Ensure all cropped images are added to the FormData
                const previews = document.querySelectorAll('.cropped-preview');
                  previews.forEach((preview, index) => {
@@ -387,7 +385,7 @@
            
     
                 try {
-                    const response = await fetch('http://localhost:3001/api/v1/admin/products/editProduct/<%=product._id%>',{
+                    const response = await fetch('/api/v1/admin/products/editProduct/<%=product._id%>',{
                         method: 'POST',
                         body: formData
                     }); 
@@ -537,10 +535,7 @@
                     isValid = false
                 }
     
-                
-                console.log(`Regular Price: ${typeof regularPrice}, Sale Price: ${typeof salePrice}`);
-                console.log(`productname: ${name}, description: ${description}`);
-    
+       
                 //Product Offer:
                 if(productOffer < 0 || productOffer > 100 ){
                     displayErrorMessage('productOffer-error','Enter valid product offer..!')
@@ -594,7 +589,7 @@
 
        function deleteSingleImage(imageId, productId) {
         $.ajax({
-            url: 'http://localhost:3001/api/v1/admin/products/deleteImage',
+            url: '/api/v1/admin/products/deleteImage',
             method: 'POST',
             data: {imageNameToServer: imageId, productIdToServer: productId},
 

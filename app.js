@@ -11,9 +11,7 @@ const adminRoute = require ('./routes/admin-route')
 
 const errorHandler = require('./middleware/error-handler')
 const morgan = require('morgan')
-const crypto = require('crypto')
-const Razorpay = require('razorpay')
-const generate = require('./utils/receiptIdGenerator')
+
 
 const app = express()
 
@@ -27,7 +25,11 @@ app.use(nocache())
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+
+
 // Session handling
+
+
 app.use(session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
@@ -38,9 +40,11 @@ app.use(session({
     }
 }));
 
-// Morgan middleware...!
 
-// app.use(morgan('common'))
+// passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 
 // flash messages,
@@ -49,9 +53,7 @@ app.use(function (req, res, next) {
   res.locals.messages = require('express-messages')(req, res);
   next();
 });
-// passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 // Set ejs template engine
 app.set('view engine', 'ejs')
@@ -81,19 +83,12 @@ mongoose.connect (process.env.MONGODB_URL)
  // Error handler
  app.use(errorHandler);
 
- //RAZOR PAY INTEGRATION---
 
 
-
-
-
-
-
-
- app.use((req, res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.path}`);
-    next();
-});
+//  app.use((req, res, next) => {
+//     console.log(`Incoming request: ${req.method} ${req.path}`);
+//     next();
+// });
 
 
 

@@ -228,9 +228,8 @@ userRoute.route('/beats/user/forgotPassword/newPassword')
 
  
 userRoute.post('/order', async (req, res) => {
-       console.log('helloo razorpay',);
-      
-       
+     
+
        // initializing razorpay
        const razorpay = new Razorpay({
            key_id: process.env.RAZOR_PAY_ID,
@@ -328,8 +327,13 @@ userRoute.route('/order/invoice/download/:orderId')
          .get(auth.userAuth,invoiceDownloadController.downloadInvoice)
 
 
+userRoute.route('/order/items/check')
+
+           .post(auth.userAuth,cartController.orderItemsCheck)
+
 // Authetication check route.
 userRoute.route('/api/user/check-auth')
          .get(auth.isAuthenticated)          
+
          
 module.exports = userRoute

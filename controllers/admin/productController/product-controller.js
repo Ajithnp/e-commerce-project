@@ -207,17 +207,15 @@ exports.getProductEdit = async (req, res, next)=>{
             brand,
         })
     } catch (error) {
-        console.log('Error loading product edit page', error)
+        console.error('Error loading product edit page', error)
         next(error)
     }
 }
 
 // product Edit post Handler
 exports.editProduct = async (req, res, next)=>{
-    console.log('product editinf route', req.body);
-    console.log('Product id in edit route', req.params.id);
-    
-    
+   
+
     try {
         const id = req.params.id;
         // const product = await Product.findOne({_id: id});
@@ -362,7 +360,7 @@ exports.unlistProduct  = async (req, res, next)=>{
 
 // Product image delete
 exports.deleteSingleProductImage = async (req, res, next)=>{
-    console.log('heelloo image delete');
+   
     
     try {
         const {imageNameToServer, productIdToServer}=req.body;
@@ -372,10 +370,10 @@ exports.deleteSingleProductImage = async (req, res, next)=>{
 
         if(fs.existsSync(imagePath)){
             await fs.unlinkSync(imagePath);
-            console.log(`Image ${imageNameToServer}deleted successfully`);
+           
             
         }else{
-            console.log(`Image ${imageNameToServer} not found`);
+            
             
         }
         res.send({status: true});

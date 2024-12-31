@@ -192,15 +192,13 @@
 
         // Form submission
         let email = sessionStorage.getItem('resetEmail')
-        console.log('email received', email);
+
         
 
         $(document).ready(function(){
           $('#otpForm').on('submit', function(event){
             event.preventDefault();
 
-            // var email = $('#email').val();
-            // var otp = $('#otp').val();
 
             const otp = Array.from(otpInputs).map(input => input.value).join('');
 

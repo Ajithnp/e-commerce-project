@@ -4,7 +4,7 @@ const singleReturnBtn = document.getElementById('single-return-button')
 
 
 async function returnProduct(productId,orderId,color,quantity,salePrice){
-    console.log('found productId and orderID:', productId, orderId);
+   
     if (!productId || !orderId) {
         console.error('Invalid productId or orderId:', productId, orderId);
         return Swal.fire('Error', 'Invalid product or order ID!', 'error');

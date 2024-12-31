@@ -21,7 +21,7 @@ exports.addOffer = async (req, res, next)=>{
     
     
     const {productId, offerPercentage} = req.body;
-    console.log('helloo',productId,typeof offerPercentage);
+  
 
     if (!productId || offerPercentage >= 100 || offerPercentage < 1) {
         return res.status(400).json({ success: false, message: 'Invalid product ID or percentage!' });
@@ -82,7 +82,7 @@ exports.addCategoryOffer = async (req, res, next)=>{
         res.status(200).json({message: ' Category Offer added successfully..!' })
 
     } catch (error) {
-        console.log('An error occured while adding category offer!')
+        console.error('An error occured while adding category offer!')
         next(error)
         
     }
@@ -92,7 +92,7 @@ exports.addCategoryOffer = async (req, res, next)=>{
 exports.addBrandOffer = async (req,res, next)=>{
     const {brandId, percentage} = req.body;
 
-    console.log('heelooo brandId fetched', brandId);
+   
 
     if (! percentage || isNaN(percentage) || percentage <0 || percentage >=100){
         return res.status(400).json({ message: 'Please enter a valid percentage between 1 and 100'});
@@ -108,7 +108,7 @@ exports.addBrandOffer = async (req,res, next)=>{
         // Find all products under the brand.!
         const products = await Product.find({brand:brandId});
 
-        console.log('heelooo brand fetched', products);
+     
         
 
         await Promise.all(

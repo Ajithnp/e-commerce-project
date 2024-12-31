@@ -14,6 +14,8 @@ const AppliedCoupon = require('../../../models/couponApplied-model')
 const generateOrderId = require('../../../utils/gererateOrderId')
 const isProductValid = require('../../../helpers/productIsValid')
 const  Wallet = require('../../../models/wallet-model')
+const Brand = require('../../../models/brand-model')
+const Category = require('../../../models/category-model')
 
 // const userAddress = require('../../../models/user-address')
 
@@ -40,7 +42,7 @@ exports.getUserCart = async (req, res, next)=>{
 
         // count cart documents..!
         const cartCount = await Cart.countDocuments()
-        console.log('cart count documents', cartCount);
+   
         
         return res.status(200).render('user/cart',{cart,user:userData,cartCount})
     } catch (error) {
@@ -71,7 +73,7 @@ exports.addToCart = async (req, res, next) => {
             item.productId.toString() === productId && item.selectedColor === color
         );
 
-        console.log('Item exists with:', existingItem); // Debugging statement
+    
 
         // Fetch product details
         const product = await Product.findById(productId);
@@ -256,12 +258,14 @@ exports.getCheckoutPage = async (req, res, next) => {
             if (!product.isBlocked && !product.brand.isBlocked && !product.category.isListed) {
                 validCartItems.push(item); // Add valid item to the list
 
+
                 // Calculate savings for valid products
                 const savingsPerItem = (product.regularPrice - product.salePrice) * item.quantity;
                 totalSavings += Math.max(savingsPerItem, 0);
 
                 // Calculate total amount for valid products
                 totalAmount += product.salePrice * item.quantity; // Use sale price for total calculation
+
 
                 // Check color stock quantities
                 const selectedColorStock = product.colorStock.find(color => color.color === item.selectedColor);
@@ -303,10 +307,37 @@ exports.getCheckoutPage = async (req, res, next) => {
 };
 
 
+exports.orderItemsCheck = async (req, res, next) => {
+    try {
+        const { orderItems } = req.body;
+
+        // Fetch product details from the database
+        const products = await Product.find({ _id: { $in: orderItems.map(item => item.product) } }).populate('brand', 'category');
+
+
+
+        // Check if any product, category, or brand is blocked
+        const blockedItems = products.filter(product =>
+            product.isBlocked || product.category.isListed || product.brand.isBlocked
+        );
+
+        if (blockedItems.length > 0) {
+            return res.status(400).json({
+                message: "Some products are blocked in this order, go to cart and continue again."
+            });
+        }
+
+        res.status(200).json({ message: "All items are valid." });
+    } catch (error) {
+        console.error("Error checking order items:", error);
+       next(error)
+    }
+};
+
 
 // Checkout post handler (order confirm)
 exports.orderConfirm = async (req, res, next)=>{
-    console.log('coupon data from session:', req.session.couponData);
+   
     
     const {userId, orderItems, address, paymentMethod,subTotal,savings,grandTotalValue,couponDiscount,couponId,couponCode} = req.body;
     
@@ -440,7 +471,7 @@ exports.razorPayOrderSave = async (req, res, next)=>{
 
     const { pendingOrderId } = req.body;
 
-    console.log('Pending orderId',pendingOrderId)
+   
 
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature, userId, orderItems, address, paymentMethod,subTotal, savings, grandTotalValue,couponDiscount,couponCode,couponId } = req.body;
 
@@ -682,8 +713,7 @@ exports.razorPayfailedOrderSave = async (req, res, next) =>{
 
 exports.orderSuccessPage = async (req, res, next)=>{
     const {orderId} = req.query;
-    console.log('helloo order successpage ', orderId);
-    
+
     const userId = req.session.user.id;
 
     try {

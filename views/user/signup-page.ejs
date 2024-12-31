@@ -261,7 +261,7 @@
                 password
             }
             // const formData = new FormData(this)
-            console.log('form data',userData);
+           
             
 
             fetch('/user/signup', {
@@ -279,7 +279,7 @@
                 }
                 return response.json()
             }).then(data => {
-                console.log(data.message);
+               
                 window.location.href ='/user/otp'
                 
             }).catch (err => {

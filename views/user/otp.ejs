@@ -190,7 +190,7 @@
 
         if(sessionStorage.getItem('otpExpiration')) {
             const expirationTime = parseInt(sessionStorage.getItem('otpExpiration'));
-            console.log(('Time found from session', expirationTime));
+           
             timeRemaining =Math.max(0, Math.floor((expirationTime - Date.now()) /1000));
             
         }else {
@@ -218,12 +218,12 @@
             const otp = Array.from(otpInput)
             .map(input => input.value)
             .join('');
-            console.log('combined otp', otp);
+           
             
 
             if (otp.length === otpInputs.length) {
-            // Process the OTP (e.g., send to backend)
-            console.log('OTP entered:', otp);
+          
+           
             document.getElementById('otp-error').innerText = ""; // Clear any error
         } else {
             document.getElementById('otp-error').innerText = "Please enter the complete OTP.";

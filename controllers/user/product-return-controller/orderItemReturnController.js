@@ -10,7 +10,7 @@ const ProductReturn = require('../../../models/orderProductReturn-model')
 
 
 exports.itemReturnRequest = async (req, res, next)=>{
-    console.log('ivide ethii: product return');
+  
     
     const {productId, orderId, reason, color, quantity}= req.body;
 
@@ -21,12 +21,12 @@ exports.itemReturnRequest = async (req, res, next)=>{
 
         const product = await Product.findById(productId, { salePrice: 1, _id: 0 });
 
-        console.log('product sale price found', product.salePrice);
+     
         
 
         // find the order..!
         const order = await Order.findById(orderId).populate('orderItems')
-        console.log('populated order details:', order);
+      
         if(!order){
             return res.status(404).json({message: 'Order not found..!'})
         }

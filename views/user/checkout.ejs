@@ -203,13 +203,14 @@
                                    
                                     <tr class="summary-subtotal">
                                         <td>Subtotal:</td>
-                                        <td id="subTotalAmount">₹<%= cart.subTotal %></td>
+                                        <td id="subTotalAmount">₹<%= totalAmount %></td>
                                     </tr><!-- End .summary-subtotal -->
                                     <tr>
                                         <td>Savings:</td>
                                         <td style="color: green;">₹<%= totalSavings %></td>
                                     </tr>
-                                    <input type="hidden" id="sub-value" value="<%= cart.subTotal %>">
+                                    <!-- <input type="hidden" id="sub-value" value="<%= cart.subTotal %>"> -->
+                                    <input type="hidden" id="sub-value" value="<%= totalAmount %>">
 
                                     <tr>
                                         <td>Coupon discount:</td>
@@ -221,7 +222,7 @@
                                     </tr>
                                     <tr class="summary-total">
                                         <td>Total:</td>
-                                        <td id="grandTotalAmount">₹<%= cart.subTotal %> </td>
+                                        <td id="grandTotalAmount">₹<%= totalAmount %> </td>
                                     </tr><!-- End .summary-total -->
                                     
                                     <% } %>
@@ -550,7 +551,7 @@
     document.getElementById("address-form-modal").style.display = "block";
 
     try {
-        console.log('address, data', addressId)
+      
         const response = await fetch(`/beats/user/getAddress/${addressId}`,{method:'GET'});
 
         if(!response.ok){
@@ -558,7 +559,7 @@
          }
 
     const addressData = await response.json();
-    console.log('address data', addressData);
+ 
     
     document.getElementById('name-e').value = addressData.name;
     document.getElementById('last-name-e').value = addressData.lastName;
@@ -596,7 +597,7 @@
         e.preventDefault();
 
         const id = document.getElementById('hiddenId').value;;
-        console.log('helooooo', id)
+       
 
    const name =  document.getElementById('name-e').value.trim();
    const lastName = document.getElementById('last-name-e').value.trim();
@@ -840,9 +841,6 @@ const values = getInputValues();
 
 
 
-console.log('captured data,',data);
-
-
 try{
 const response = await fetch('/beats/user/addAddress',{
 method: 'POST',
@@ -938,7 +936,7 @@ toggleButton.addEventListener('click', () => {
   }
     
 
-  const subTotal = parseFloat('<%= cart.subTotal %>');
+  const subTotal = parseFloat('<%= totalAmount %>');
   const savings = parseFloat('<%= totalSavings %>');
 
 
@@ -976,6 +974,47 @@ toggleButton.addEventListener('click', () => {
         totalPrice: item.totalPrice
     }));
 
+
+    try {
+    const response = await fetch('/order/items/check', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ orderItems })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        // Check for blocked product error
+        if (errorData.message === 'Some products are blocked in this order, go to cart and continue again.') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Blocked Products Detected',
+                text: errorData.message,
+                confirmButtonText: 'Go to cart'
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    window.location.href = '/beats/cart';
+                }
+            });
+            return; // Exit the function
+        }
+        throw new Error(errorData.message || 'An error occurred!');
+    }
+} catch (error) {
+    console.error('Error occurred when checking order items:', error);
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: error.message || 'Something went wrong while placing the order.',
+    });
+    return; 
+}
+
+
+
+
     const orderDetails = {
         userId, // Ensure userId is defined earlier
         orderItems,
@@ -1009,7 +1048,7 @@ toggleButton.addEventListener('click', () => {
             if (paymentMethod === 'razorpay') {
                 try {
                     
-                    const response = await fetch('http://localhost:3001/order', {
+                    const response = await fetch('/order', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1169,10 +1208,7 @@ toggleButton.addEventListener('click', () => {
                     });
                 }
             }else if(paymentMethod === 'Wallet'){
-                console.log('grandtotal value', grandTotalValue);
-                console.log('wallet balance', walletBalance);
-                
-                
+              
 
                 if(grandTotalValue > walletBalance){
                     Toastify({
@@ -1251,9 +1287,7 @@ toggleButton.addEventListener('click', () => {
                     })
                     .then((data) => {
                         const orderId = data.orderId;
-                        console.log('orderId', orderId);
-                        
-
+  
                         sessionStorage.removeItem('appliedCoupon');
                         sessionStorage.removeItem('appliedCouponCode');
                         window.location.href = `/beats/orderSuccess?orderId=${orderId}`;

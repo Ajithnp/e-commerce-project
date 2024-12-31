@@ -96,7 +96,7 @@ exports.editBrand = async (req, res, next )=>{
     // const { id }=req.query;
   
     const { id, name, description}= req.body;
-    console.log('id from query', id);
+   
 
     let logo;
     if ( req.file){

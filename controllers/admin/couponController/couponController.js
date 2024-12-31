@@ -129,8 +129,6 @@ exports.updateCoupon = async (req, res ,next)=>{
     try {
         const existCouponCode = await Coupon.findOne({ code, _id: { $ne: couponId } });
 
-        console.log('Existing coupon with same code:', existCouponCode);
-
         if(existCouponCode){
             return res.status(400).json({message: 'Coupon code is already exists..!'});
         }

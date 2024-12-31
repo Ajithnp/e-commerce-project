@@ -61,8 +61,7 @@ exports.loadDashboard = async (req, res, next)=>{
 
 // Admin Dashboard Hanler..!
 exports.loadDashboardData = async( req, res, next )=>{
-    console.log('hellooo');
-    
+
     try {
         const {filter}= req.query; // week , month, year.
         const currentDate = new Date();
@@ -178,10 +177,7 @@ exports.loadDashboardData = async( req, res, next )=>{
             { $limit: 10 }, 
         ]);
         
-        console.log('Top Categories:', JSON.stringify(topCategories, null, 2));
-        
-        
-        
+
 
        // Top Brands
 
@@ -297,7 +293,7 @@ exports.logout = async (req, res, next)=>{
         // session destroy
         req.session.destroy((err)=>{
             if (err){
-                console.log('session destruction error...', err.message);;
+             
               return  res.status(500).json({ message : "could not logout..!"})
             }
             // clear cookie

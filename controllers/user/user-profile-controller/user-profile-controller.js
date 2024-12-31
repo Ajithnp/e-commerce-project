@@ -124,7 +124,7 @@ exports.addNewAddress = async(req, res, next)=>{
 
         // Find userid
         const userId = req.session.user?.id
-        console.log('user id undoooo',userId);
+      
         
         if(!userId){
             return res.status(404).message({message:'User not found..!'})
@@ -162,7 +162,7 @@ exports.addNewAddress = async(req, res, next)=>{
 
 exports.getAddress = async (req, res, next)=>{
     const addressId = req.params.id;
-    console.log('address id', addressId);
+ 
     
     try {
         // Fetching Address..!
@@ -189,7 +189,7 @@ exports.getAddress = async (req, res, next)=>{
 exports.editAddress = async (req, res,next)=>{
     const {id}= req.params;
     const {name, lastName, companyName, streetAddress, landmark, country, state, dist, city, zip, altPhone, email, addressType}=req.body;
-   console.log('Ivde aaall inddooooo', id);
+  
    
     try {
         // fields updating..!
@@ -264,7 +264,7 @@ exports.showAddress = async (req, res, next)=>{
 // Checkout page user address edit -fetch handler!
 exports.checkOutEditAddress = async (req, res, next)=>{
     const addressId = req.params.id;
-    console.log('helloooo');
+  
     
     try {
         const address = await Address.findById(addressId);

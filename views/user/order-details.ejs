@@ -440,10 +440,10 @@ async function failedOrderCancel(orderId) {
 // payment retry function.!
 
 async function PaymentRetry(pendingOrderId) {
-    console.log('Pending order ID:', pendingOrderId);
+ 
     
     const grandTotal = '<%= order.totalAmount %>';
-    console.log('Grand Total:', grandTotal);
+ 
 
     Swal.fire({
         title: 'Continue payment!',
@@ -556,14 +556,14 @@ async function PaymentRetry(pendingOrderId) {
                 });
             }
         } else if (result.isDismissed) {
-            console.log('Payment attempt canceled.');
+          
         }
     });
 }
 
 // Dowload invoice fn.
 function downloadInvoice(orderId){
-        console.log('OrderId', orderId)
+      
         window.location.href = `/order/invoice/download/${orderId}`
     }
 

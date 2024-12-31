@@ -81,7 +81,7 @@ exports.userRegistration = async (req,res, next )=>{
        // Generate OTP and Time
        const otpExpirationT =  Date.now() +  60 * 1000;
         const otp = generateOTP();
-        console.log(`Your OTP is ${otp}`);
+     
 
         //send OTP email
         await sendEmail ({to: email, otp})
@@ -116,7 +116,7 @@ exports.resendOtp = async (req, res, next)=>{
      
         const otp = generateOTP()
         const newExpirationTime = Date.now() + 1 * 60 * 1000;
-        console.log('Resend otp send',otp);
+    
         
 
         req.session.otp = otp;
@@ -154,7 +154,7 @@ exports.getOtpPage = async (req, res, next)=>{
 exports.verifyOtp = async (req, res, next) =>{
     try {
         const { otp } = req.body;
-        console.log('OTP receievd in verification route', otp)
+      
         const storedOtp = req.session.otp?.toString();
         const otpExpiration = req.session.otpExpiration;
         
@@ -255,12 +255,15 @@ exports.userLogout = async(req, res, next )=>{
                 return res.status(500).json({ message :" Could not logout..!"})
                 
             }
+
+            // Clear the admin session cookie
+            res.clearCookie('user.sid');
             res.status(200).json({ message: "Logout successfull..!"})
         })
        
  
     } catch (error) {
-        console.log('Error while user logout', error)
+        console.error('Error while user logout', error)
         next(error)
         
     }
@@ -316,9 +319,7 @@ exports.verifyEmail = async (req, res, next)=>{
         //
         const otp = generateOTP();
         const expiryTime = Date.now()+ 60 * 1000;
-        console.log('Your reset password OTP',otp);
 
-       
 
          // Send OTP corresponding email!
          await sendEmail({to: email, otp})
@@ -340,9 +341,7 @@ exports.verifyEmail = async (req, res, next)=>{
 //Forgot Password resend OTP handler..!
 exports.forgotResendOtp = async (req, res, next)=>{
     const {email} = req.body;
-    console.log('emailreceievd',email);
-    
-    
+
     try {
 
         if(!email){
@@ -350,14 +349,13 @@ exports.forgotResendOtp = async (req, res, next)=>{
         }
         const otp = generateOTP();
         const expiryTime = Date.now() + 1 *60 * 1000;
-        console.log('forgot resend OTP ',otp)
+    
 
         await sendEmail({to: email, otp})
 
         req.session.otp = otp;
-        console.log('resent otp reassign session',req.session.otp);
-        
-        
+     
+
         req.session.otpExpiration = expiryTime;
 
         res.status(200).json({otp,otpExpiration:expiryTime, message: "A new OTP has been send..!"})
@@ -389,7 +387,7 @@ exports.forgotPasswordOtpVerify = async(req, res, next)=>{
 
     try{
     const storedOtp = req.session.otp?.toString();
-    console.log('stored otp',typeof storedOtp+ 'normal otp',typeof otp);
+  
     
     const otpExpiration = req.session.otpExpiration || null;
 
@@ -433,13 +431,13 @@ exports.newResetPassword = async (req, res, next)=>{
 exports.confirmResetPassword = async(req, res, next)=>{
     const email = req.session.email;
     const {newPassword} = req.body;
-    console.log('prefrences',email, newPassword);
+  
     
    try{
 
     // Finding user details with email
     const user = await User.findOne({email})
-    console.log('userDetails', user);
+  
     if(!user){
         return res.status(404).json({message:'User not found..! try again'});
 

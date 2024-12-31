@@ -165,16 +165,16 @@ e.preventDefault()
 clearErrors();
 
 const name = document.getElementById('name').value.trim();
-console.log('name',name);
+
 
 const email = document.getElementById('email1').value.trim();
-console.log('name',email);
+
 const phone = document.getElementById('phone').value.trim();
-console.log('name',phone);
+
 const password = document.getElementById('password1').value.trim();
-console.log('name',password);
+
 const confirmPassword = document.getElementById('confirm-password').value.trim();
-console.log('name',confirmPassword);
+
 
 const values = {
     name,
@@ -184,7 +184,7 @@ const values = {
     confirmPassword
 }
 
-console.log('register form datas', values);
+
 
 
 if( name.length == 0 || email1.length == 0 || phone.length == 0 || confirmPassword.length == 0 || password1.length == 0){
@@ -237,7 +237,7 @@ let userData = {
     password
 }
 // const formData = new FormData(this)
-console.log('form data',userData);
+
 
 try {
 const response = await fetch('/user/signup', {
@@ -319,7 +319,7 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
 			}
 
 			const data = await response.json()
-			console.log('Log in successfull',data);  // redirect
+		
 			// After successful login 
 			window.location.href = '/';
 			
@@ -327,7 +327,7 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
 		} catch (error) {
 			// Display error messages to the user
 			errorMessageDiv.innerText = error.message;
-			console.log('an error occured',error);
+			console.error('an error occured',error);
 		}
 
 
