@@ -12,7 +12,7 @@
         </div><!-- End .container -->
     </nav><!-- End .breadcrumb-nav -->
     <div class="container">
-        <div class="page-header page-header-big text-center" style="background-image: url('assets/images/contact-header-bg.jpg')">
+        <div class="page-header page-header-big text-center" style="background-image: url('/user/assets/images/about/contact-header-bg.jpg')">
             <h1 class="page-title text-white">Contact us<span class="text-white">keep in touch with us</span></h1>
         </div><!-- End .page-header -->
     </div><!-- End .container -->
@@ -22,7 +22,8 @@
             <div class="row">
                 <div class="col-lg-6 mb-2 mb-lg-0">
                     <h2 class="title mb-1">Contact Information</h2><!-- End .title mb-2 -->
-                    <p class="mb-3">Vestibulum volutpat, lacus a ultrices sagittis, mi neque euismod dui, eu pulvinar nunc sapien ornare nisl. Phasellus pede arcu, dapibus eu, fermentum et, dapibus sed, urna.</p>
+                    <p class="mb-3">We’re here to help! Reach out to us for any inquiries, support, or feedback. Our team is committed to providing quick and reliable assistance to enhance your experience with BeatsStudio.</p>
+                    
                     <div class="row">
                         <div class="col-sm-7">
                             <div class="contact-info">
@@ -39,7 +40,7 @@
                                     </li>
                                     <li>
                                         <i class="icon-envelope"></i>
-                                        <a href="mailto:#">info@Molla.com</a>
+                                        <a href="mailto:#">info@beatsstudio.com</a>
                                     </li>
                                 </ul><!-- End .contact-list -->
                             </div><!-- End .contact-info -->
@@ -65,18 +66,20 @@
                 </div><!-- End .col-lg-6 -->
                 <div class="col-lg-6">
                     <h2 class="title mb-1">Got Any Questions?</h2><!-- End .title mb-2 -->
-                    <p class="mb-2">Use the form below to get in touch with the sales team</p>
+                    <p class="mb-2">Use the form below to get in touch with our team</p>
 
-                    <form action="#" class="contact-form mb-3">
+                    <form action="#" class="contact-form mb-3" id="contact-form">
                         <div class="row">
                             <div class="col-sm-6">
-                                <label for="cname" class="sr-only">Name</label>
+                                <label for="cname" class="sr-only" >Name</label>
                                 <input type="text" class="form-control" id="cname" placeholder="Name *" required>
+                                <p id="cname-error" style="color: red; font-size: 12px;"></p>
                             </div><!-- End .col-sm-6 -->
 
                             <div class="col-sm-6">
                                 <label for="cemail" class="sr-only">Email</label>
                                 <input type="email" class="form-control" id="cemail" placeholder="Email *" required>
+                                <p id="cemail-error" style="color: red; font-size: 12px;"></p>
                             </div><!-- End .col-sm-6 -->
                         </div><!-- End .row -->
 
@@ -84,16 +87,19 @@
                             <div class="col-sm-6">
                                 <label for="cphone" class="sr-only">Phone</label>
                                 <input type="tel" class="form-control" id="cphone" placeholder="Phone">
+                                <p id="cphone-error" style="color: red; font-size: 12px;"></p>
                             </div><!-- End .col-sm-6 -->
 
                             <div class="col-sm-6">
                                 <label for="csubject" class="sr-only">Subject</label>
                                 <input type="text" class="form-control" id="csubject" placeholder="Subject">
+                                <p id="csubject-error" style="color: red; font-size: 12px;"></p>
                             </div><!-- End .col-sm-6 -->
                         </div><!-- End .row -->
 
                         <label for="cmessage" class="sr-only">Message</label>
                         <textarea class="form-control" cols="30" rows="4" id="cmessage" required placeholder="Message *"></textarea>
+                        <p id="cmessage-error" style="color: red; font-size: 12px;"></p>
 
                         <button type="submit" class="btn btn-outline-primary-2 btn-minwidth-sm">
                             <span>SUBMIT</span>
@@ -103,67 +109,148 @@
                 </div><!-- End .col-lg-6 -->
             </div><!-- End .row -->
 
-            <hr class="mt-4 mb-5">
+            
 
-            <div class="stores mb-4 mb-lg-5">
-                <h2 class="title text-center mb-3">Our Stores</h2><!-- End .title text-center mb-2 -->
-
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="store">
-                            <div class="row">
-                                <div class="col-sm-5 col-xl-6">
-                                    <figure class="store-media mb-2 mb-lg-0">
-                                        <img src="assets/images/stores/img-1.jpg" alt="image">
-                                    </figure><!-- End .store-media -->
-                                </div><!-- End .col-xl-6 -->
-                                <div class="col-sm-7 col-xl-6">
-                                    <div class="store-content">
-                                        <h3 class="store-title">Wall Street Plaza</h3><!-- End .store-title -->
-                                        <address>88 Pine St, New York, NY 10005, USA</address>
-                                        <div><a href="tel:#">+1 987-876-6543</a></div>
-
-                                        <h4 class="store-subtitle">Store Hours:</h4><!-- End .store-subtitle -->
-                                        <div>Monday - Saturday 11am to 7pm</div>
-                                        <div>Sunday 11am to 6pm</div>
-
-                                        <a href="#" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-                                    </div><!-- End .store-content -->
-                                </div><!-- End .col-xl-6 -->
-                            </div><!-- End .row -->
-                        </div><!-- End .store -->
-                    </div><!-- End .col-lg-6 -->
-
-                    <div class="col-lg-6">
-                        <div class="store">
-                            <div class="row">
-                                <div class="col-sm-5 col-xl-6">
-                                    <figure class="store-media mb-2 mb-lg-0">
-                                        <img src="assets/images/stores/img-2.jpg" alt="image">
-                                    </figure><!-- End .store-media -->
-                                </div><!-- End .col-xl-6 -->
-
-                                <div class="col-sm-7 col-xl-6">
-                                    <div class="store-content">
-                                        <h3 class="store-title">One New York Plaza</h3><!-- End .store-title -->
-                                        <address>88 Pine St, New York, NY 10005, USA</address>
-                                        <div><a href="tel:#">+1 987-876-6543</a></div>
-
-                                        <h4 class="store-subtitle">Store Hours:</h4><!-- End .store-subtitle -->
-                                        <div>Monday - Friday 9am to 8pm</div>
-                                        <div>Saturday - 9am to 2pm</div>
-                                        <div>Sunday - Closed</div>
-
-                                        <a href="#" class="btn btn-link" target="_blank"><span>View Map</span><i class="icon-long-arrow-right"></i></a>
-                                    </div><!-- End .store-content -->
-                                </div><!-- End .col-xl-6 -->
-                            </div><!-- End .row -->
-                        </div><!-- End .store -->
-                    </div><!-- End .col-lg-6 -->
-                </div><!-- End .row -->
-            </div><!-- End .stores -->
+          
         </div><!-- End .container -->
-        <div id="map"></div><!-- End #map -->
+      
     </div><!-- End .page-content -->
 </main><!-- End .main -->
+
+<script>
+    // Contact
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+
+    const name = document.getElementById("cname").value.trim();
+    const email = document.getElementById("cemail").value.trim();
+    const phone = document.getElementById("cphone").value.trim();
+    const subject = document.getElementById("csubject").value.trim();
+    const message = document.getElementById("cmessage").value.trim();
+
+    const nameError = document.getElementById("cname-error");
+    const emailError = document.getElementById("cemail-error");
+    const phoneError = document.getElementById("cphone-error");
+    const subjectError = document.getElementById("csubject-error");
+    const messageError = document.getElementById("cmessage-error");
+
+    // Clear previous errors
+    nameError.textContent = "";
+    emailError.textContent = "";
+    phoneError.textContent = "";
+    subjectError.textContent = "";
+    messageError.textContent = "";
+
+    let isValid = true;
+
+    // Validate Name
+    if (!name) {
+        nameError.textContent = "Name is required.";
+        isValid = false;
+    } else if (!/^[a-zA-Z]/.test(name)) {
+        nameError.textContent = "Name must start with a letter.";
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        nameError.textContent = "Name can only contain letters and spaces.";
+        isValid = false;
+    } else if (name.length < 4) {
+        nameError.textContent = "Name must be at least 4 characters long.";
+        isValid = false;
+    }
+
+    // Validate Email
+    if (!email) {
+        emailError.textContent = "Email is required.";
+        isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.textContent = "Invalid email format.";
+        isValid = false;
+    }
+
+    // Validate Phone
+    if (phone && !/^\d{10}$/.test(phone)) {
+        phoneError.textContent = "Invalid phone number.";
+        isValid = false;
+    }
+
+    // Validate Subject
+    if (!subject) {
+        subjectError.textContent = "Subject is required.";
+        isValid = false;
+    } else if (!/^[a-zA-Z]/.test(subject)) {
+        subjectError.textContent = "Subject must start with a letter.";
+        isValid = false;
+    } else if (subject.length < 5) {
+        subjectError.textContent = "Subject must be at least 5 characters long.";
+        isValid = false;
+    }
+
+    // Validate Message
+    if (!message) {
+        messageError.textContent = "Message is required.";
+        isValid = false;
+    } else if (!/^[a-zA-Z]/.test(message)) {
+        messageError.textContent = "Message must start with a letter.";
+        isValid = false;
+    } else if (message.length < 5) {
+        messageError.textContent = "Message must be at least 5 characters long.";
+        isValid = false;
+    }
+
+    // 
+    if (isValid) {
+        const formData = {
+            name: name,
+            email: email,
+            phone: phone,
+            subject: subject,
+            message: message,
+        };
+
+        try {
+            const response = await fetch('/beats/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An error occurred!');
+            }
+
+            const successData = await response.json();
+
+            // Success Toast
+            Toastify({
+                text: "Your enquiry has been sent successfully!",
+                duration: 3000,
+                backgroundColor: "green", 
+                close: true,
+                gravity: "top", 
+                position: "right",
+            }).showToast();
+
+            document.getElementById("contact-form").reset();
+
+        } catch (error) {
+            // Error Toast
+            Toastify({
+                text: error.message || 'An error occurred while sending your enquiry.',
+                duration: 3000,
+                backgroundColor: "red", 
+                close: true,
+                gravity: "top",
+                position: "right",
+            }).showToast();
+
+            console.error('An error occurred while sending enquiries:', error);
+        }
+    }
+});
+
+
+</script>
 <%- include('../partials/user/footer') %>  

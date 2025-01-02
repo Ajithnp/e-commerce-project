@@ -200,6 +200,7 @@ userRoute.route('/beats/about')
 // Contact...!
 userRoute.route('/beats/contact')
        .get(userController.contactPage)
+       .post(userController.enquiryData)
 
 
 // User forgot Password Handler..!

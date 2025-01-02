@@ -40,6 +40,8 @@ exports.fetchSalesReport = async (req, res, next) => {
         const {type, startDate, endDate} = req.query;
 
         let matchCriteria = {orderStatus: 'Delivered'}; // here only count delivered orders!
+       
+
         let start, end;
 
         switch(type){
@@ -68,7 +70,9 @@ exports.fetchSalesReport = async (req, res, next) => {
                 break;
             case 'custom':
                 start = new Date(startDate);
-                end = new Date(endDate);
+                // end = new Date(endDate);
+                end = new Date(); 
+                end.setHours(23, 59, 59, 999)
                 break;
             default:
                 return res.status(400).json({error: 'Invalid report type'});           
@@ -93,18 +97,21 @@ exports.fetchSalesReport = async (req, res, next) => {
             {$sort: {_id: -1}}, // sort by date
         ]);
 
-        // summary
+     
+
         const summary = await Order.aggregate([
-            {$match: matchCriteria},
-            {
-                $group:{
-                    _id:null,
-                    salesCount: {$sum:1},
-                    orderAmount: {$sum: '$totalAmount'},
-                    totalDiscount: { $sum: '$totalDiscount'},
-                },
-            },
-        ]);
+          { $match: matchCriteria },
+          {
+              $group: {
+                  _id: null,
+                  salesCount: { $sum: 1 },
+                  orderAmount: { $sum: { $ifNull: ['$totalAmount', 0] } },
+                  totalDiscount: { $sum: { $ifNull: ['$totalDiscount', 0] } },
+                  totalCouponDiscount: { $sum: { $ifNull: ['$couponDiscount', 0] } },
+              },
+          },
+      ]);
+    
 
         res.json({
             report,

@@ -244,13 +244,13 @@
 
         // Update the Dashboard
         function updateDashboard(data) {
-         
             
+
             // Update Summary
             document.getElementById('totalDeliveredOrders').textContent = data.summary.totalDeliveredOrders || 0;
             document.getElementById('totalCancelledOrders').textContent = data.summary.totalCancelledOrders || 0;
             document.getElementById('totalDiscounts').textContent = `₹${data.summary.totalDiscounts || 0}`;
-            document.getElementById('totalRevanue').textContent = `₹${data.summary.totalRevanue || 0}`;
+            document.getElementById('totalRevanue').textContent = `₹${data.summary.totalRevenue || 0}`;
 
             // Update Top Sellers
             populateTopSellersList('topCategories', data.topCategories);
@@ -277,15 +277,19 @@
 
         // Update Chart
      
-     function updateChart(chartData) {
+        function updateChart(chartData, filter) {
     const ctx = document.getElementById('salesChart').getContext('2d');
 
-    if (salesChart) salesChart.destroy(); 
+    if (salesChart) salesChart.destroy();
+
+    const labels = filter === 'month'
+        ? chartData.map(item => new Date(`${item._id}-01`).toLocaleString('default', { month: 'long' })) // Convert to month names.
+        : chartData.map(item => item._id);
 
     salesChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: chartData.map(item => item._id), 
+            labels, // Use formatted labels.
             datasets: [
                 {
                     label: 'Delivered Orders',
@@ -317,6 +321,7 @@
         },
     });
 }
+
 
 
 

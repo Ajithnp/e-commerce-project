@@ -4,6 +4,7 @@ const bcrypt = require ('bcrypt')
 const Order = require('../../../models/order-modal')
 const OrderItem = require('../../../models/oredr-items-model')
 const Product = require('../../../models/product-model')
+const Contact = require('../../../models/contact-model')
 
 
 const securePassword = require ('../../../utils/hashpassword')
@@ -63,67 +64,104 @@ exports.loadDashboard = async (req, res, next)=>{
 exports.loadDashboardData = async( req, res, next )=>{
 
     try {
-        const {filter}= req.query; // week , month, year.
+        const { filter } = req.query; // week, month, year.
         const currentDate = new Date();
-
-        let labels = [];
-       
-
         let startDate;
+        let endDate;
+        let labels = [];
 
-        if(filter === 'week'){
+        if (filter === 'week') {
             startDate = new Date(currentDate.setDate(currentDate.getDate() - 6)); // Last seven days.
-           
-        }else if(filter === 'month'){
-            startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(),1); // start of the month!;
-        }else if (filter === 'year'){
-            startDate = new Date(currentDate.getFullYear(), 0, 1); // start of the year!
+            endDate = new Date();
+        } else if (filter === 'month') {
+            startDate = new Date(currentDate.getFullYear(), 0, 1); // Start of the year.
+            endDate = new Date(currentDate.getFullYear(), 11, 31); // End of the year.
+        } else if (filter === 'year') {
+            startDate = null; // No restriction for all years.
+            endDate = null;
         } else {
-            startDate = new Date(0)// Defualt to all time!
+            startDate = new Date(0); // Default to all time.
+            endDate = new Date();
         }
-
-        const endDate = new Date();
 
         //----- Chart Data Addregation-----
 
+        // const matchStage = filter !== 'year'
+        // ? { createdAt: { $gte: startDate, $lte: endDate } }
+        // : {}; 
+
+        const matchStage =
+            startDate && endDate
+                ? { createdAt: { $gte: startDate, $lte: endDate } }
+                : {};
+
+          
         const chartData = await Order.aggregate([
-            {
-                $match:{
-                    createdAt: {$gte: startDate, $lte: endDate},
-                },
-            },
+            { $match: matchStage },
             {
                 $group: {
-                    // _id: {$dateToString: {format: '%Y-%m-%d', date: '$createdAt'}},
-                    _id: filter === 'week' 
-                    ? { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }} 
-                    : filter === 'month' 
-                    ? { $dateToString: { format: '%Y-%m', date: '$createdAt' }} 
-                    : { $dateToString: { format: '%Y', date: '$createdAt' }},
-
-                    deliveredOrders: {$sum:{$cond: [{ $eq:['$orderStatus', 'Delivered']}, 1, 0]}},
-                    cancelledOrders: {$sum:{$cond:[{$eq:['$orderStatus', 'Cancelled']}, 1, 0]}},
-                    totalDiscounts: {$sum: '$totalDiscount'},
-                    totalRevenue: {$sum: '$totalAmount'},
+                    _id:
+                        filter === 'week'
+                            ? { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }
+                            : filter === 'month'
+                            ? { $dateToString: { format: '%Y-%m', date: '$createdAt' } } // Group by month for "month" filter.
+                            : { $dateToString: { format: '%Y', date: '$createdAt' } }, // Group by year for "year" filter.
+                    deliveredOrders: { $sum: { $cond: [{ $eq: ['$orderStatus', 'Delivered'] }, 1, 0] } },
+                    cancelledOrders: { $sum: { $cond: [{ $eq: ['$orderStatus', 'Cancelled'] }, 1, 0] } },
+                    totalDiscounts: { $sum: '$totalDiscount' },
+                    totalRevenue: { $sum: '$totalAmount' },
                 },
             },
-            { $sort: {_id:1}},
+            { $sort: { _id: 1 } },
         ]);
 
        
         //------ Summary Data Aggregation------
 
+      
+        
         const summary = await Order.aggregate([
             {
-                $group: {
-                    _id:null,
-                    totalDeliveredOrders: {$sum: {$cond: [{$eq: ['$orderStatus', 'Delivered']}, 1, 0]}},
-                    totalCancelledOrders: {$sum: {$cond:[{$eq:['$orderStatus', 'Cancelled']},1, 0]}},
-                    totalDiscounts: {$sum: '$totalDiscount'},
-                    totalRevanue: {$sum: '$totalAmount'},
+                $facet: {
+                    // Metrics for Delivered Orders
+                    deliveredMetrics: [
+                        { $match: { orderStatus: 'Delivered' } },
+                        {
+                            $group: {
+                                _id: null,
+                                totalDeliveredOrders: { $sum: 1 },
+                                totalDiscounts: { $sum: '$totalDiscount' },
+                                totalRevenue: { $sum: '$totalAmount' },
+                            },
+                        },
+                    ],
+                    // Metrics for Cancelled Orders
+                    cancelledMetrics: [
+                        { $match: { orderStatus: 'Cancelled' } },
+                        {
+                            $group: {
+                                _id: null,
+                                totalCancelledOrders: { $sum: 1 },
+                            },
+                        },
+                    ],
+                },
+            },
+           
+            
+            {
+                // Merge the results into a single object
+                $project: {
+                    totalDeliveredOrders: { $arrayElemAt: ['$deliveredMetrics.totalDeliveredOrders', 0] },
+                    totalDiscounts: { $arrayElemAt: ['$deliveredMetrics.totalDiscounts', 0] },
+                    totalRevenue: { $arrayElemAt: ['$deliveredMetrics.totalRevenue', 0] },
+                    totalCancelledOrders: { $arrayElemAt: ['$cancelledMetrics.totalCancelledOrders', 0] },
                 },
             },
         ]);
+
+        
+        
 
         //-------Top10 aggregations-------
         const topCategories = await OrderItem.aggregate([
@@ -307,3 +345,38 @@ exports.logout = async (req, res, next)=>{
     }
 }
 
+
+// Enquiry and contact.
+exports.getEnquiriesPage = async (req, res, next)=>{
+    try {
+
+        res.status(200).render('admin/contact&enquiry');
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.getEnquiries = async(req, res, next)=>{
+    try {
+        const enquiries = await Contact.find();
+        res.status(200).json(enquiries);
+    } catch (error) {
+        next(error);
+    }
+}
+//Delete enquiry handler.
+exports.deleteEnquiry = async(req, res, next)=>{
+    try {
+        const {id} = req.params;
+
+        const deleteEnquiry = await Contact.findByIdAndDelete(id);
+        if(!deleteEnquiry){
+            return res.status(404).json({message:'No enquiry found'});
+        }
+        res.status(200).json({message:'Enquiry deleted successfully'});
+    } catch (error) {
+        console.error('Error deleting enquiry:', error);
+        next(error)
+        
+    }
+}

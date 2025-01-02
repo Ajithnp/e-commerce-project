@@ -193,6 +193,14 @@ adminRoute.route('/order/item/return/reject/:id')
 // View
 adminRoute.route('/order/item/return/view/:id')
        .get(auth.adminAuth,productReturnController.viewOrderReturnRequest)
+
+// Enquiry and contact
+adminRoute.route('/allEnquiries')
+          .get(adminController.getEnquiries)
+adminRoute.route('/contactAndEnquiry')
+           .get(adminController.getEnquiriesPage)  
+adminRoute.route('/enquiries/delete/:id')
+            .delete(adminController.deleteEnquiry)                
           
 // Sale report------------------------------!
 adminRoute.route('/sales/report')

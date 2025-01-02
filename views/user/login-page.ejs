@@ -9,6 +9,25 @@
       margin: 0;
       padding: 0;
     }
+	.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+}
+
 </style>
 
         <main class="main">
@@ -43,11 +62,24 @@
 							    			
 							    		</div><!-- End .form-group -->
 
-							    		<div class="form-group">
-                                            <label for="singin-password">Password *</label>
-                                            <input type="password" class="form-control" id="password" required>
-							    			
-							    		</div><!-- End .form-group -->
+										<div class="form-group">
+											<label for="signin-password">Password *</label>
+											<div class="password-container">
+												<input 
+													type="password" 
+													class="form-control" 
+													id="password" 
+													placeholder="Enter your password" 
+													required
+												>
+												<span class="toggle-icon" onclick="togglePassword('password')">
+													<i id="eyeIcon" class="fa fa-eye"></i>
+												</span>
+											</div>
+										</div>
+										
+
+							    		<!-- End .form-group -->
 
 							    		<div class="form-footer">
 							    			<button type="submit" class="btn btn-outline-primary-2">
@@ -322,6 +354,25 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
 
 
         })
+
+
+
+		function togglePassword(inputId) {
+    const passwordField = document.getElementById(inputId);
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    // Toggle the input type
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    }
+}
+
 
 
 

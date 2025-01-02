@@ -3,6 +3,7 @@ const Category = require('../../../models/category-model')
 const Product = require('../../../models/product-model')
 const Brand =require('../../../models/brand-model')
 const Cart = require('../../../models/cart-model')
+const Contact = require('../../../models/contact-model')
 const bcrypt = require('bcrypt')
 
 const dotenv = require('dotenv').config()
@@ -200,6 +201,10 @@ exports.verifyOtp = async (req, res, next) =>{
 // Log-in page handler
 exports.loadLogin = async (req, res, next)=>{
     try {
+        res.setHeader('Cache-Control', 'no-store');
+        if(req.session.user){
+          return  res.redirect('/')
+        }
         return res.status(200).render('user/login-page')
     } catch (error) {
         console.error(error)
@@ -459,4 +464,28 @@ exports.confirmResetPassword = async(req, res, next)=>{
     console.error('An error occured..!',error)
     next(error)
    }
+}
+
+exports.enquiryData = async (req, res, next)=>{
+    const {name, email, phone, subject, message} = req.body;
+    
+    try {
+      
+        const newContact = new Contact({
+            name,
+            email,
+            phone,
+            subject,
+            message
+        })
+
+        newContact.save();
+
+        res.status(200).json({message:'Your enquiry is posted successfully !'})
+
+    } catch (error) {
+        console.error('An error while saving enquiries!',error)
+        next(error)
+        
+    }
 }
