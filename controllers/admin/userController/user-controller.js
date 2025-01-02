@@ -11,19 +11,26 @@ exports.getUsers = async (req, res, next)=>{
 
         //Pagination
         const page = req.query.page*1 || 1;
-        const limit = req.query.limit*1 || 4
+        const limit = req.query.limit*1 || 5
         const skip = (page -1) * limit
 
         const filter = {};
         if(searchQuery){
             filter['name'] = {$regex: `^${searchQuery}`, $options: 'i'};
         }
-       
 
-
-        const totalUsers = await User.countDocuments(filter)
-        const users = await User.find(filter).sort({createdAt:-1}).skip(skip).limit(limit).exec()
+        let totalUsers;
+        let users;
        
+       if(searchQuery){
+         totalUsers = await User.countDocuments(filter)
+         users = await User.find(filter).sort({createdAt:-1})
+       
+       }else{
+        totalUsers = await User.countDocuments()
+        users = await User.find().sort({createdAt:-1}).skip(skip).limit(limit).exec()
+       
+       }
 
         // render
         res.render('admin/users',{

@@ -237,14 +237,15 @@
         <div class="filter-group">
             <label for="status-filter">Status:</label>
             <select id="status-filter" class="filter-select">
-                <option value="">All</option>
-                <option value="Return Request">pending</option>
-                <option value="Return Approved">Approved</option>
-                <option value="returnRejected">Rejected</option>
+                <option value="true" <% if (filterData === 'true') { %>selected<% } %>>All</option>
+                <option value="Return Request" <% if (filterData === 'Return Request') { %>selected<% } %>>Pending</option>
+                <option value="Return Approved" <% if (filterData === 'Return Approved') { %>selected<% } %>>Approved</option>
+                <option value="returnRejected" <% if (filterData === 'returnRejected') { %>selected<% } %>>Rejected</option>
             </select>
         </div>
         <button id="apply-filters" class="filter-button">Apply Filter</button>
     </div>
+    
 
     <div class="returns-table-container">
         <table class="returns-table">
@@ -316,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if(status){
         
         window.location.href = `/api/v1/admin/order/item/return?filter=${status}`;
-        statusFilter.innerText = '<%= filterData %>';
+        statusFilter.textContent = '<%= filterData %>';
 
       }else{
         alert('apply any options')

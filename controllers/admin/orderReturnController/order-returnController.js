@@ -19,9 +19,12 @@ exports.getReturnRequest = async(req, res, next)=>{
         const skip = (page - 1) * limit;
 
         const filter = {};
-        if(filterData && filterData !== 'All'){
+        if (filterData && filterData !== 'true') { // Apply filters only when not "All"
             filter['returnProductStatus'] = filterData;
         }
+        // if(filterData && filterData !== 'All'){
+        //     filter['returnProductStatus'] = filterData;
+        // }
 
 
         const productReturns = await ProductReturn.find(filter)
