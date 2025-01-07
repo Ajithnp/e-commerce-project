@@ -298,6 +298,7 @@ exports.editProduct = async (req, res, next)=>{
         brandOffer:brandOffer,
         categoryOffer:categoryOffer,
         colorStock: colorStock,
+        finalOffer,
         // productImage: images,
         isBlocked: data.isBlocked === 'true', // Convert string to boolean
         tags:tags

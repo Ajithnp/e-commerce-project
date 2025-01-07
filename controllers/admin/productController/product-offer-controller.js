@@ -21,7 +21,7 @@ exports.addOffer = async (req, res, next)=>{
     
     
     const {productId, offerPercentage} = req.body;
-  
+
 
     if (!productId || offerPercentage >= 100 || offerPercentage < 1) {
         return res.status(400).json({ success: false, message: 'Invalid product ID or percentage!' });
