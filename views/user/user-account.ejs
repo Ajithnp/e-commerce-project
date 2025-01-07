@@ -167,7 +167,7 @@
               <div class="form-group">
                 <label for="display-name">Phone No *</label>
                 <input
-                  type="tel"
+                  type="text"
                   id="acc-phone"
                   name="phone"
                   value="<%= user.phone %>"
@@ -176,8 +176,8 @@
                 <div id="acc-phone-error" class="error-message"></div>
               </div>
 
-        
-
+              <button type="button" id="change-password-btn">Change Password</button>
+            <div id="password-fields" style="display: none;">
               <fieldset class="password-change">
                 <legend>Password change</legend>
 
@@ -214,6 +214,7 @@
                   ></div>
                 </div>
               </fieldset>
+            </div>
 
               <button type="submit" class="button">Save changes</button>
             </form>
@@ -254,7 +255,11 @@
 
       // Name-------------
       const namePattern = /^[a-zA-Z][a-zA-Z\s]*$/;
-
+      
+      if(!name){
+        document.getElementById("acc-name-error").innerText =
+            "Name is required!";
+      }
       if (name) {
         if (name.length < 3) {
           document.getElementById("acc-name-error").innerText =
@@ -274,17 +279,33 @@
       }
 
       // phone--!
-
+      const zeroCount = (phone.match(/0/g) || []).length;
       const phonePattern = /^[0-9]{10}$/;
       if (!phonePattern.test(phone)) {
         document.getElementById("acc-phone-error").innerText =
           "Phone number must be exactly 10 digits..!";
         isValid = false;
-      } else {
+      }else if(phone.startsWith("0")){
+        document.getElementById("acc-phone-error").innerText =
+        "Phone number cannot start with zero.";
+        isValid = false;
+      } else if(zeroCount > 5){
+        document.getElementById("acc-phone-error").innerText =
+        "Phone number cannot contain more than 5 zeros.";
+        isValid = false;
+      }
+       else {
         data.phone = phone;
       }
 
       // Password..!
+      if(password){
+        if(!newPassword){
+          document.getElementById("acc-new-password-error").innerText =
+          'Enter your new password!'
+          isValid = false;
+        }
+      }
       if (newPassword) {
         if (!password) {
           document.getElementById("acc-password-error").innerText =
@@ -367,5 +388,18 @@
     document.getElementById("acc-new-password-error").innerText = "";
     document.getElementById("acc-confirm-password-error").innerText = "";
   }
+
+  // change password button
+  document.getElementById("change-password-btn").addEventListener("click", function () {
+  const passwordFields = document.getElementById("password-fields");
+  if (passwordFields.style.display === "none") {
+    passwordFields.style.display = "block";
+    this.textContent = "Cancel Password Change";
+  } else {
+    passwordFields.style.display = "none";
+    this.textContent = "Change Password";
+  }
+});
+
 </script>
 <%- include('../partials/user/footer') %>

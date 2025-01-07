@@ -255,7 +255,7 @@
                                             <label for="cod">Cash on Delivery</label>
                                             <div id="collapse-cod" class="collapse" aria-labelledby="heading-cod" data-parent="#accordion-payment">
                                                 <div class="card-body">
-                                                    Cash on Delivery is only available for order amount above 1000.
+                                                    Cash on Delivery is only available for order amount below 1000.
                                                 </div>
                                         </div>
                                         <div class="payment-option">
@@ -1097,7 +1097,7 @@ toggleButton.addEventListener('click', () => {
     if (!response.ok) {
         const errorData = await response.json();
         // Check for blocked product error
-        if (errorData.message === 'Some products are blocked in this order, go to cart and continue again.') {
+        if (errorData.message === 'Some products are blocked in this order, go to cart and continue again.' || errorData.message === 'Insufficient stock') {
             Swal.fire({
                 icon: 'error',
                 title: 'Blocked Products Detected',
@@ -1361,7 +1361,7 @@ toggleButton.addEventListener('click', () => {
             
         } else  {
                 
-                if (grandTotalValue >= 1000) {
+                if (grandTotalValue <= 1000) {
    
                 Toastify({
                          text: "Your order is eligible for Cash on Delivery!",
@@ -1371,7 +1371,7 @@ toggleButton.addEventListener('click', () => {
               } else {
    
                 Toastify({
-                    text: "Cash on Delivery is only available for orders above 1000.",
+                    text: "Cash on Delivery is only available for orders below 1000.",
                      backgroundColor: "#f44336",
                      duration: 3000,
                  }).showToast();

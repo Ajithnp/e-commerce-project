@@ -277,6 +277,9 @@ exports.editProduct = async (req, res, next)=>{
         status: item.status,
     }));
 
+    
+    
+
 
        const tags = Array.isArray(data.tags) ? data.tags : [data.tags]; // Ensure tags is an array
 

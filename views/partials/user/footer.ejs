@@ -477,6 +477,8 @@ async function updateQuantity(itemId, change) {
     // Calculate new Quantity
     let newQuantity = currentQuantity + change;
 
+    let actualQuantity;
+
     // Ensure quantity limits (eg 1 to 5)
 
     if (newQuantity < 1) {
@@ -503,6 +505,7 @@ if (newQuantity > 5) {
 }
     // Update the displayed quantity
     quantityDisplay.innerText = newQuantity;
+    let colorQuantity=0;
 
     try {
         const response = await fetch(`/beats/user/cart/update/${itemId}`,{
@@ -515,10 +518,15 @@ if (newQuantity > 5) {
         
         if(!response.ok){
             const errorData = await response.json();
+            colorQuantity = errorData.colorQuantity
+          
+        
             throw new Error(errorData.message || 'An error occured while updating quantity.!');
         };
 
         const updatedCart = await response.json();
+     
+
 
         // Update total price for this item
 
@@ -531,6 +539,7 @@ if (newQuantity > 5) {
         subTotalCol.innerText = `$${updatedCart.subTotal.toFixed(2)}`;
         const total = document.getElementById('total1')
         total.innerText=`$${updatedCart.subTotal.toFixed(2)}`;
+        // quantityDisplay.innerText = 
     } catch (error) {
         console.error('Error updating quantity:', error);
         Swal.fire({
@@ -540,7 +549,15 @@ if (newQuantity > 5) {
             confirmButtonText: 'OK'
         });
         if (error.message.includes('exceeds available stock')) {
-            quantityDisplay.innerText = currentQuantity; // Revert to previous valid quantity
+            
+
+            // quantityDisplay.innerText = currentQuantity ; // Revert to previous valid quantity
+            quantityDisplay.innerText = colorQuantity ;
+         
+            
+            setTimeout(()=>{
+                window.location.reload()
+            },1000)
         }
         
     }

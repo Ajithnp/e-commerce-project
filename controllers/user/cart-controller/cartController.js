@@ -16,6 +16,7 @@ const isProductValid = require('../../../helpers/productIsValid')
 const  Wallet = require('../../../models/wallet-model')
 const Brand = require('../../../models/brand-model')
 const Category = require('../../../models/category-model')
+const { log } = require('console')
 
 // const userAddress = require('../../../models/user-address')
 
@@ -174,7 +175,7 @@ exports.removeCartItem = async(req, res, next)=>{
 exports.cartQuantityUpdate = async(req, res, next)=>{
     const userId = req.session.user.id;
     const {id} = req.params;
-    const {quantity} = req.body; // Get new quantity from request body.
+    let {quantity} = req.body; // Get new quantity from request body.
 
 
     try {
@@ -209,7 +210,16 @@ exports.cartQuantityUpdate = async(req, res, next)=>{
 
         // Check if requested quantity exceeds available stock
         if (quantity > colorStock.quantity) {
-          return res.status(400).json({ message: 'Product quantity exceeds available stock.' });
+
+            existingItem.quantity = colorStock.quantity;
+            existingItem.totalPrice = existingItem.price * existingItem.quantity;
+            cart.subTotal = cart.items.reduce((acc, item)=> acc+item.totalPrice,0);
+
+            // save
+            await cart.save()
+
+       
+          return res.status(400).json({ message: `Product quantity exceeds available stock.`,colorQuantity:colorStock.quantity });
         }
 
         // Update item quantity and total price..!
@@ -221,6 +231,8 @@ exports.cartQuantityUpdate = async(req, res, next)=>{
 
         // save
         await cart.save()
+        
+        
         return res.status(200).json(cart); // return updated cart as response..!
 
     } catch (error) {
@@ -250,18 +262,16 @@ exports.getCheckoutPage = async (req, res, next) => {
             var walletAmount = wallet.walletBalance || 0;
         }
         
-        
-        
-
 
         let totalSavings = 0;
         let totalAmount = 0; 
         const validCartItems = []; 
-        
-        
+       
+
 
         // Validate products in the cart
         for (const item of cart.items) {
+           
             const product = await Product.findById(item.productId).populate('brand category');
 
             // Check if product is blocked or if its brand or category is blocked
@@ -278,10 +288,26 @@ exports.getCheckoutPage = async (req, res, next) => {
 
 
                 // Check color stock quantities
-                const selectedColorStock = product.colorStock.find(color => color.color === item.selectedColor);
-                if (selectedColorStock && selectedColorStock.quantity <= 0) {
-                    // If stock is not available, skip this item
-                    continue; 
+                
+                const selectedColorStock = product.colorStock.find(
+                    (color) => color.color === item.selectedColor
+                );
+                
+        
+                if (
+                    selectedColorStock &&
+                    (selectedColorStock.quantity <= 0 || selectedColorStock.status === "Out of stock")
+                ) {
+                    return res.status(400).json({
+                        message: `The product, '${item.productId.productName}', is out of stock. Please remove it from the cart and continue!`,
+                    });
+                }
+                if (selectedColorStock.quantity < item.quantity) {
+                   
+                    return res.status(400).json({
+                        message: `The product '${item.productId.productName}' has only ${selectedColorStock.quantity} item(s) in stock. Please adjust the quantity in your cart and try again.`,
+                        
+                    });
                 }
             }
         }
@@ -323,10 +349,41 @@ exports.orderItemsCheck = async (req, res, next) => {
     try {
         const { orderItems } = req.body;
 
+
         // Fetch product details from the database
         const products = await Product.find({ _id: { $in: orderItems.map(item => item.product) } }).populate('brand', 'category');
 
+       // check the orderquantity match
+       for(item of orderItems){
+        const product = products.find(p => p._id.toString() === item.product._id);
 
+
+        if (!product) {
+            return res.status(400).json({ message: `Product not found: ${item.product.productName}` });
+        }
+
+        const colorStock = product.colorStock.find(stock => stock.color === item.color);
+
+        
+
+        if (!colorStock) {
+            return res.status(400).json({ message: `Color not available: ${item.color} for ${product.productName}` });
+        }
+
+         // Check if stock is sufficient
+         if (item.quantity > colorStock.quantity) {
+            return res.status(400).json({
+                message: `Insufficient stock for ${product.productName} in color ${item.color}. Available: ${colorStock.quantity}, Ordered: ${item.quantity} go to the cart and adjust the quantity!`
+            });
+        }
+        if(colorStock.status === 'Out of stock'){
+            return res.status(400).json({
+                message: `Insufficient stock for ${product.productName} in color ${item.color}. Available: ${colorStock.status},`
+            });
+        }
+          
+       }
+       
 
         // Check if any product, category, or brand is blocked
         const blockedItems = products.filter(product =>

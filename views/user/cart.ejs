@@ -290,8 +290,11 @@
                             confirmButtonColor: '#3085d6',
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Okay'
+                    }).then(()=>{
+                        window.location.reload();
                     });
                     throw new Error(data.message);
+                    
                   }
                   window.location.href = '/beats/user/checkout';
         } catch(error){
